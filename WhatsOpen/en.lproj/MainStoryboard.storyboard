@@ -424,6 +424,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="gmq-di-wKS"/>
                     <connections>
+                        <outlet property="navBar" destination="gmq-di-wKS" id="Dau-aN-Hhx"/>
                         <outlet property="placeTableView" destination="pBi-Yl-ERB" id="aaG-0u-aYi"/>
                     </connections>
                 </tableViewController>
@@ -474,40 +475,6 @@
         <image name="groceries.png" width="150" height="157"/>
         <image name="shopping.png" width="96" height="106"/>
     </resources>
-    <classes>
-        <class className="GroceriesViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/GroceriesViewController.h"/>
-        </class>
-        <class className="MainViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/MainViewController.h"/>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ShoppingViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ShoppingViewController.h"/>
-        </class>
-        <class className="listViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/listViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="placeTableView" candidateClass="UITableView"/>
-            </relationships>
-        </class>
-        <class className="placeDetailViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/placeDetailViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="viewDirections:"/>
-                <relationship kind="outlet" name="distanceLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="googleMap" candidateClass="UIWebView"/>
-                <relationship kind="outlet" name="loadingIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="phoneLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="placeNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="priceLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="ratingLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="viewDirections" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

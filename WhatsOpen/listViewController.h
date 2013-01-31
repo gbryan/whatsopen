@@ -17,6 +17,7 @@
     NSMutableArray *locationMeasurements;
     CLLocation *bestEffortAtLocation;
 }
+@property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
 @property (nonatomic, weak) IBOutlet UITableView *placeTableView;
 @property (nonatomic, retain) NSMutableArray *locationMeasurements;
 @property (nonatomic, retain) CLLocation *bestEffortAtLocation;

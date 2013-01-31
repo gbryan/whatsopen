@@ -20,6 +20,8 @@
     UIActivityIndicatorView *spinner;
     NSMutableArray *_placesArray;
     NSMutableArray *openPlaces;
+    NSString *googleTypesString;
+    int pageNum;
 }
 
 @end
@@ -49,12 +51,13 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
+    openPlaces = [[NSMutableArray alloc]init];
+    
     spinner = [[UIActivityIndicatorView alloc]
                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 200);
     spinner.hidesWhenStopped = YES;
     [self.view addSubview:spinner];
-    [spinner startAnimating];
     
     //set up device location manager and get current location
     locationManager = [[CLLocationManager alloc] init];
@@ -63,14 +66,16 @@
     [locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
     [locationManager startUpdatingLocation];
     deviceLocation = CLLocationCoordinate2DMake(locationManager.location.coordinate.latitude, locationManager.location.coordinate.longitude);
-    NSLog(@"%f %f", deviceLocation.latitude, deviceLocation.longitude);
+    NSLog(@"location: %f %f", deviceLocation.latitude, deviceLocation.longitude);
+    
+    pageNum = 1;
 }
 #pragma mark user authorized/denied location services
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     
     //user has allowed location services in this app
     if(status == 3) {
-        [self queryGooglePlaces:placesArray];
+//        [self queryGooglePlaces:placesArray];
     }
     else if(status == 2){
         UIAlertView *locationDisabled = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled" message:@"You have chosen to disable location services for WhatsUp, but the app cannot run without knowing your current location. Please enable location services for WhatsUp in the Settings menu, force the app to quit, and reopen it." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
@@ -92,9 +97,7 @@
         // store the location as the "best effort"
         self.bestEffortAtLocation = newLocation;
         
-        NSLog(@"%f, %f", deviceLocation.latitude, deviceLocation.longitude);
-//        [self queryGooglePlaces:[NSArray arrayWithObjects:@"bakery", @"cafe", @"restaurant", nil]];
-        [self queryGooglePlaces:placesArray];
+        [self queryGooglePlaces:placesArray nextPageToken:nil];
         [locationManager stopUpdatingLocation];
         
         // test the measurement to see if it meets the desired accuracy
@@ -217,12 +220,11 @@
      */
 }
 
--(void)queryGooglePlaces:(NSArray *)googleTypes
+-(void)queryGooglePlaces:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
 {
     NSLog(@"query executing");
-//    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@", deviceLocation.latitude, deviceLocation.longitude, googleType, GOOGLE_API_KEY];
     
-    NSString *googleTypesString = [[NSString alloc]initWithString:[googleTypes objectAtIndex:0]];
+    googleTypesString = [[NSString alloc]initWithString:[googleTypes objectAtIndex:0]];
     
     //if more than 1 type is supplied
     if ([googleTypes count]>1) {
@@ -240,9 +242,17 @@
         }
     }
     
-    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
+    NSString *url = [[NSString alloc]init];
     
-    //Formulate the string as URL object.
+    // CH is around here: 35.924270, -79.052075
+    
+    if ( [nextPageToken length] == 0) {
+        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
+    }
+    else {
+        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true&pagetoken=%@", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY, nextPageToken];
+    }
+
     NSURL *googleRequestURL=[NSURL URLWithString:url];
     
     // Retrieve the results of the URL.
@@ -253,20 +263,60 @@
 }
 
 - (void)fetchedData:(NSData *)responseData {
-    //parse out the json data
+    
     NSError* error;
     NSDictionary* json = [NSJSONSerialization
                           JSONObjectWithData:responseData
-                          
                           options:kNilOptions
                           error:&error];
+    NSString *nextPageToken = [json objectForKey:@"next_page_token"];
     
     _placesArray = [json objectForKey:@"results"];
-    openPlaces = [[NSMutableArray alloc]init];
 
+    /*
+     Fix to make it do all this:
+     - check each one to see if it's open
+     - if it's open, put it in a mutable array (available to all listViewController.m) and set key openWhen to "now"
+     - if not open, check if it's open at all today
+     - if it's open later today, put it in mutable array and set key openWhen to "today"
+     - if not open later today, don't put in array at all
+     - group open ones under "Open Now" heading in list view
+     - group "today" ones under "Open Later Today" heading in list view
+     
+     get initial results and call fetchedData.
+     - load results into array and display in list
+     - if <5 with openWhen=="now", then do the following:
+        - get next_page token and run a query to Google with that, calling fetchedPageTwo
+        - load results into array and display in list
+        - get next_page and run query with that, calling fetchedPageThree
+        - load results into array and display in list
+     */
+    
+    int numOpenNow = 0;
+    
     for (int i=0; i<_placesArray.count; i++) {
         
         NSMutableDictionary *place = [[NSMutableDictionary alloc]initWithDictionary:[_placesArray objectAtIndex:i]];
+        
+        //Get distance of farthest place in the results. Since results are ordered by distance, we'll use the place in the array
+        if (i == (_placesArray.count - 1) ) {
+            //calculate the proximity of the mobile device to the establishment
+            float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
+            float placeLng = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"]floatValue];
+            float deviceLatitude = [[NSString stringWithFormat:@"%f", deviceLocation.latitude]floatValue];
+            float deviceLongitude = [[NSString stringWithFormat:@"%f", deviceLocation.longitude]floatValue];
+            NSString *proximity = [NSString stringWithFormat:@"Open restaurants within %.2f miles:",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
+            
+            //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
+            UIFont *font = [UIFont boldSystemFontOfSize:14.0];
+            CGRect frame = CGRectMake(0, 0, [proximity sizeWithFont:font].width, 44);
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.font = font;
+            titleLabel.textColor = [UIColor whiteColor];
+            titleLabel.text = proximity;
+            self.navBar.titleView = titleLabel;
+        }
         
         //make sure opening_hours key and open_now key exist, and then only keep establishments that are currently open
         if ([place objectForKey:@"opening_hours"]) {
@@ -274,6 +324,8 @@
                 BOOL isOpen = [[[place objectForKey:@"opening_hours"] objectForKey:@"open_now"]boolValue];
                 
                 if (isOpen == TRUE) {
+                    
+                    numOpenNow++;
                     
                     //calculate the proximity of the mobile device to the establishment
                     float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
@@ -289,70 +341,22 @@
         }
         
     }//end for loop
-
-    
-    /*
-     
-    placesMutableArray = [[NSMutableArray alloc]initWithArray:_placesArray];
-    
-     for (int i=0; i<placesMutableArray.count; i++) {
-        
-        NSMutableDictionary *place = [[NSMutableDictionary alloc]initWithDictionary:[placesMutableArray objectAtIndex:i]];
-        
-        float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
-        float placeLng = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"]floatValue];
-        float deviceLatitude = [[NSString stringWithFormat:@"%f", deviceLocation.latitude]floatValue];
-        float deviceLongitude = [[NSString stringWithFormat:@"%f", deviceLocation.longitude]floatValue];
-        
-        NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
-        //        NSNumber *proximity = [NSNumber numberWithFloat:[[NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]]floatValue]];
-        
-        [place setValue:proximity forKey:@"proximity"];
-        
-        
-        //make sure opening_hours key and open_now key exist, and then only keep establishments that are currently open
-        if ([place objectForKey:@"opening_hours"]) {
-            if ([[place objectForKey:@"opening_hours"] objectForKey:@"open_now"]) {
-                BOOL isOpen = [[[place objectForKey:@"opening_hours"] objectForKey:@"open_now"]boolValue];
-                
-                if (isOpen == TRUE) {
-                    [place setValue:@"true" forKey:@"open_now"];
-                }
-                //if esablishment is closed, don't show in list
-                else {
-                    [place setValue:@"false" forKey:@"open_now"];
-                }
-                
-                [placesMutableArray removeObjectAtIndex:i];
-                [placesMutableArray insertObject:place atIndex:i];
-            }
-            //if open_now key doesn't exist, don't show establishment in list
-            else {
-                [place setValue:@"false" forKey:@"open_now"];
-                [placesMutableArray removeObjectAtIndex:i];
-                [placesMutableArray insertObject:place atIndex:i];
-            }
-        }
-        //if opening_hours key doesn't exist, don't show establishment in list
-        else {
-            [place setValue:@"false" forKey:@"open_now"];
-            [placesMutableArray removeObjectAtIndex:i];
-            [placesMutableArray insertObject:place atIndex:i];
-        }
-    }
-    
-    
-    NSSortDescriptor *sortDescriptor;
-    sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"proximity" ascending:YES];
-    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-    sortedArray = [placesMutableArray sortedArrayUsingDescriptors:sortDescriptors];
-    
-    //    NSLog(@"all places: %@", sortedArray);
-    
-     */
     
     [spinner stopAnimating];
     [[self placeTableView] reloadData];
+    
+    
+    //if <5 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
+    if ( /*numOpenNow <5 && */ pageNum <3) {
+        
+        [spinner startAnimating];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self queryGooglePlaces:placesArray nextPageToken:nextPageToken];
+        });
+        
+        //increment with each new set of 20 results fetched
+        pageNum++;
+    }
     
 }
 
