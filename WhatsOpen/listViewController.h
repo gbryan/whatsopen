@@ -6,17 +6,22 @@
 //  Copyright (c) 2012 UNC-CH. All rights reserved.
 //
 
+#import <FactualSDK/FactualAPI.h>
+#import <FactualSDK/FactualQuery.h>
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "keys.h"
 
-@interface listViewController : UITableViewController <CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface listViewController : UITableViewController <CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate, FactualAPIDelegate>
 {
+    FactualAPIRequest* _activeRequest;
+    FactualQueryResult* _queryResult;
     CLLocationManager *locationManager;
     CLLocationCoordinate2D deviceLocation;
     NSMutableArray *locationMeasurements;
     CLLocation *bestEffortAtLocation;
 }
+@property (nonatomic,retain)  FactualQueryResult* queryResult;
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
 @property (nonatomic, weak) IBOutlet UITableView *placeTableView;
 @property (nonatomic, retain) NSMutableArray *locationMeasurements;

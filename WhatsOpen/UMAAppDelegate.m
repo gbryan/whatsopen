@@ -7,15 +7,32 @@
 //
 
 #import "UMAAppDelegate.h"
+#import "keys.h"
 
 @implementation UMAAppDelegate
 
+@synthesize apiObject=_apiObject;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
+    
     // Override point for customization after application launch.
     return YES;
 }
-							
+
++(FactualAPI*) getAPIObject {
+    UIApplication* app = [UIApplication sharedApplication];
+    return ((UMAAppDelegate*)app.delegate).apiObject;
+}
+
+//to-do: I added this but don't know if it's necessary
++(UMAAppDelegate*) getDelegate {
+    UIApplication* app = [UIApplication sharedApplication];
+    return ((UMAAppDelegate*)app.delegate);
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

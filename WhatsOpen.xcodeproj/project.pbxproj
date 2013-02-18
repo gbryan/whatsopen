@@ -23,10 +23,8 @@
 		935C375916A60171002DBBAE /* ShoppingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 935C375816A60171002DBBAE /* ShoppingViewController.m */; };
 		93D04F9416A0721B00FD3B43 /* whatsopen.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9316A0721B00FD3B43 /* whatsopen.png */; };
 		93D04F9616A0725400FD3B43 /* whatsopen_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9516A0725400FD3B43 /* whatsopen_retina.png */; };
-		93F24AF916A5EF0B000F4E66 /* bank.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F24AF816A5EF0B000F4E66 /* bank.png */; };
-		93F24AFB16A5EFF6000F4E66 /* shopping.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F24AFA16A5EFF6000F4E66 /* shopping.png */; };
-		93F24AFD16A5F133000F4E66 /* groceries.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F24AFC16A5F133000F4E66 /* groceries.png */; };
-		93F24AFF16A5F14A000F4E66 /* food.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F24AFE16A5F14A000F4E66 /* food.png */; };
+		93DA345D16CCB32700CC6C59 /* FactualSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DA345C16CCB32700CC6C59 /* FactualSDK.framework */; };
+		93DA346316D29AAD00CC6C59 /* google.png in Resources */ = {isa = PBXBuildFile; fileRef = 93DA346216D29AAD00CC6C59 /* google.png */; };
 		93F24B0316A5F53A000F4E66 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F24B0216A5F53A000F4E66 /* MainViewController.m */; };
 		93F24B0716A6009C000F4E66 /* GroceriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F24B0616A6009C000F4E66 /* GroceriesViewController.m */; };
 /* End PBXBuildFile section */
@@ -56,10 +54,8 @@
 		935C375816A60171002DBBAE /* ShoppingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShoppingViewController.m; sourceTree = "<group>"; };
 		93D04F9316A0721B00FD3B43 /* whatsopen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whatsopen.png; sourceTree = "<group>"; };
 		93D04F9516A0725400FD3B43 /* whatsopen_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whatsopen_retina.png; sourceTree = "<group>"; };
-		93F24AF816A5EF0B000F4E66 /* bank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bank.png; sourceTree = "<group>"; };
-		93F24AFA16A5EFF6000F4E66 /* shopping.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopping.png; sourceTree = "<group>"; };
-		93F24AFC16A5F133000F4E66 /* groceries.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = groceries.png; sourceTree = "<group>"; };
-		93F24AFE16A5F14A000F4E66 /* food.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = food.png; sourceTree = "<group>"; };
+		93DA345C16CCB32700CC6C59 /* FactualSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FactualSDK.framework; path = WhatsOpen/FactualSDK.framework; sourceTree = "<group>"; };
+		93DA346216D29AAD00CC6C59 /* google.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = google.png; sourceTree = "<group>"; };
 		93F24B0116A5F53A000F4E66 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		93F24B0216A5F53A000F4E66 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		93F24B0516A6009C000F4E66 /* GroceriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroceriesViewController.h; sourceTree = "<group>"; };
@@ -71,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93DA345D16CCB32700CC6C59 /* FactualSDK.framework in Frameworks */,
 				93408E70168EAA07004124BE /* CoreLocation.framework in Frameworks */,
 				93408E4D168EA828004124BE /* UIKit.framework in Frameworks */,
 				93408E4F168EA828004124BE /* Foundation.framework in Frameworks */,
@@ -84,11 +81,9 @@
 		93408E3D168EA828004124BE = {
 			isa = PBXGroup;
 			children = (
-				93F24AFA16A5EFF6000F4E66 /* shopping.png */,
-				93F24AFE16A5F14A000F4E66 /* food.png */,
-				93F24AF816A5EF0B000F4E66 /* bank.png */,
-				93F24AFC16A5F133000F4E66 /* groceries.png */,
+				93DA345C16CCB32700CC6C59 /* FactualSDK.framework */,
 				93D04F9516A0725400FD3B43 /* whatsopen_retina.png */,
+				93DA346216D29AAD00CC6C59 /* google.png */,
 				93D04F9316A0721B00FD3B43 /* whatsopen.png */,
 				93408E6F168EAA07004124BE /* CoreLocation.framework */,
 				93408E52168EA828004124BE /* WhatsOpen */,
@@ -266,10 +261,7 @@
 				93408E66168EA828004124BE /* MainStoryboard.storyboard in Resources */,
 				93D04F9416A0721B00FD3B43 /* whatsopen.png in Resources */,
 				93D04F9616A0725400FD3B43 /* whatsopen_retina.png in Resources */,
-				93F24AF916A5EF0B000F4E66 /* bank.png in Resources */,
-				93F24AFB16A5EFF6000F4E66 /* shopping.png in Resources */,
-				93F24AFD16A5F133000F4E66 /* groceries.png in Resources */,
-				93F24AFF16A5F14A000F4E66 /* food.png in Resources */,
+				93DA346316D29AAD00CC6C59 /* google.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,9 +357,17 @@
 		93408E6D168EA828004124BE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/WhatsOpen\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WhatsOpen/WhatsOpen-Prefix.pch";
 				INFOPLIST_FILE = "WhatsOpen/WhatsOpen-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -376,9 +376,17 @@
 		93408E6E168EA828004124BE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/WhatsOpen\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WhatsOpen/WhatsOpen-Prefix.pch";
 				INFOPLIST_FILE = "WhatsOpen/WhatsOpen-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

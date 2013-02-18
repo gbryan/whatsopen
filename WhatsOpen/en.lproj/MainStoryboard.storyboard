@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C3012" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="PJl-qc-O21">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C3012" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="PJl-qc-O21">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
         <!--Place Detail View Controller-->
@@ -127,31 +127,14 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="njB-4j-unW">
+                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YXg-ol-v41">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="140" id="9HM-TY-lB2"/>
-                                    <constraint firstAttribute="height" constant="70" id="MDB-SE-VXB"/>
+                                    <constraint firstAttribute="height" constant="102" id="owr-d4-xVq"/>
+                                    <constraint firstAttribute="width" constant="170" id="saB-dM-ZYg"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" image="bank.png">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="banks" id="kmt-Ad-oHT"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YXg-ol-v41">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="103" type="user" id="65R-QU-1g8"/>
-                                    <constraint firstAttribute="width" constant="103" id="heX-Xa-xeb"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" image="food.png">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <state key="normal" title="Restaurants">
+                                    <color key="titleColor" red="0.19607843137254902" green="0.30980392156862746" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <state key="highlighted">
@@ -161,81 +144,11 @@
                                     <segue destination="UqC-eg-RCR" kind="push" identifier="restaurants" id="7Gz-8f-lSA"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Q2-uS-LPE">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="94" id="2sJ-id-Jax"/>
-                                    <constraint firstAttribute="width" constant="94" id="DGZ-Wa-yQB"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" image="shopping.png">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="1tw-DH-7Ey" kind="push" identifier="shopping" id="d2B-K7-K7u"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qRY-Um-Dhx">
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="e4g-rx-5dA"/>
-                                    <constraint firstAttribute="height" constant="120" id="lZN-yj-BeT"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" image="groceries.png">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="cGf-9K-2fX" kind="push" identifier="groceries" id="WhR-M3-xef"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Restaurants" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J2F-dP-XnN">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Shopping" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dSO-Vu-Eya">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Groceries &amp; Goods" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aor-NS-9CX">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Banks" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wQg-ax-a6t">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="aor-NS-9CX" firstAttribute="centerX" secondItem="qRY-Um-Dhx" secondAttribute="centerX" type="default" id="0ug-pD-xdb"/>
-                            <constraint firstItem="J2F-dP-XnN" firstAttribute="top" secondItem="YXg-ol-v41" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="9de-a8-r9F"/>
-                            <constraint firstItem="qRY-Um-Dhx" firstAttribute="top" secondItem="HkU-nf-IAw" secondAttribute="top" constant="227" id="AHa-EB-gWt"/>
-                            <constraint firstItem="wQg-ax-a6t" firstAttribute="centerX" secondItem="8Q2-uS-LPE" secondAttribute="centerX" type="default" id="B37-Kk-7py"/>
-                            <constraint firstItem="wQg-ax-a6t" firstAttribute="top" secondItem="njB-4j-unW" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="EFZ-fe-RtZ"/>
-                            <constraint firstItem="YXg-ol-v41" firstAttribute="baseline" secondItem="njB-4j-unW" secondAttribute="baseline" type="default" id="Ec2-oa-Bly"/>
                             <constraint firstItem="YXg-ol-v41" firstAttribute="top" secondItem="HkU-nf-IAw" secondAttribute="top" constant="60" id="H2N-x1-BD5"/>
-                            <constraint firstItem="qRY-Um-Dhx" firstAttribute="baseline" secondItem="8Q2-uS-LPE" secondAttribute="baseline" type="default" id="KxZ-Cq-lN2"/>
-                            <constraint firstItem="dSO-Vu-Eya" firstAttribute="centerX" secondItem="8Q2-uS-LPE" secondAttribute="centerX" type="default" id="Pws-ho-qnD"/>
-                            <constraint firstItem="dSO-Vu-Eya" firstAttribute="top" secondItem="8Q2-uS-LPE" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="QTa-lb-qvg"/>
-                            <constraint firstAttribute="bottom" secondItem="aor-NS-9CX" secondAttribute="bottom" constant="148" id="bgz-hB-bmX"/>
-                            <constraint firstItem="wQg-ax-a6t" firstAttribute="centerX" secondItem="njB-4j-unW" secondAttribute="centerX" type="default" id="eb3-i2-gl5"/>
                             <constraint firstItem="YXg-ol-v41" firstAttribute="leading" secondItem="HkU-nf-IAw" secondAttribute="leading" constant="41" id="fSR-00-yTz"/>
-                            <constraint firstItem="J2F-dP-XnN" firstAttribute="centerX" secondItem="YXg-ol-v41" secondAttribute="centerX" type="default" id="hvT-bj-sZp"/>
-                            <constraint firstItem="aor-NS-9CX" firstAttribute="leading" secondItem="HkU-nf-IAw" secondAttribute="leading" constant="21" id="qex-hq-Rz6"/>
-                            <constraint firstItem="wQg-ax-a6t" firstAttribute="top" secondItem="HkU-nf-IAw" secondAttribute="top" constant="123" id="vvm-kw-dpo"/>
-                            <constraint firstItem="8Q2-uS-LPE" firstAttribute="top" secondItem="qRY-Um-Dhx" secondAttribute="top" type="default" id="wpd-Ca-zqw"/>
-                            <constraint firstAttribute="trailing" secondItem="njB-4j-unW" secondAttribute="trailing" constant="20" symbolic="YES" type="user" id="yK0-nY-gnU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Home" id="Lc5-8d-CnF"/>
@@ -243,145 +156,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hHY-4m-GWN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-824" y="939"/>
-        </scene>
-        <!--Groceries View Controller - Groceries & Goods-->
-        <scene sceneID="lKu-Xe-OBG">
-            <objects>
-                <viewController id="cGf-9K-2fX" customClass="GroceriesViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="XYr-61-irf">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Groceries &amp; Goods" id="u1G-Jh-OcJ"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="mP8-2a-5wY" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-176" y="1790"/>
-        </scene>
-        <!--Shopping View Controller - Shopping-->
-        <scene sceneID="lML-pi-FIA">
-            <objects>
-                <viewController id="1tw-DH-7Ey" customClass="ShoppingViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="1nJ-Go-iOh">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bSZ-uQ-gmv">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Clothing">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="clothing" id="yQg-ZM-qNR"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jx7-1g-bnP">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Electronics">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="electronics" id="goA-09-n6H"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Hs-r6-1Q7">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Furniture">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="furniture" id="CP8-wy-hdf"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="STO-Ku-DEo">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Hardware">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="hardware" id="Sfw-sZ-BKl"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qca-IE-qbX">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Home Goods">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="home_goods" id="P48-3m-XEA"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iFX-fC-OLH">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Jewelry">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="jewelry" id="ghH-nQ-8iL"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QSE-yV-oCE">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Shoes">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="UqC-eg-RCR" kind="push" identifier="shoes" id="pcy-AP-YCV"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="Jx7-1g-bnP" firstAttribute="centerX" secondItem="iFX-fC-OLH" secondAttribute="centerX" type="user" id="126-lq-UNB"/>
-                            <constraint firstItem="STO-Ku-DEo" firstAttribute="baseline" secondItem="9Hs-r6-1Q7" secondAttribute="baseline" type="default" id="5HM-JA-GvP"/>
-                            <constraint firstItem="bSZ-uQ-gmv" firstAttribute="centerX" secondItem="9Hs-r6-1Q7" secondAttribute="centerX" type="user" id="GqE-hK-Sar"/>
-                            <constraint firstItem="bSZ-uQ-gmv" firstAttribute="centerX" secondItem="QSE-yV-oCE" secondAttribute="centerX" type="user" id="Jwq-CQ-9ZB"/>
-                            <constraint firstItem="iFX-fC-OLH" firstAttribute="baseline" secondItem="qca-IE-qbX" secondAttribute="baseline" type="default" id="KVG-Pb-wG8"/>
-                            <constraint firstItem="Jx7-1g-bnP" firstAttribute="baseline" secondItem="bSZ-uQ-gmv" secondAttribute="baseline" type="default" id="QET-ks-w9v"/>
-                            <constraint firstAttribute="bottom" secondItem="QSE-yV-oCE" secondAttribute="bottom" constant="138" id="RlU-s3-wQw"/>
-                            <constraint firstItem="bSZ-uQ-gmv" firstAttribute="top" secondItem="1nJ-Go-iOh" secondAttribute="top" constant="70" id="SPi-WW-LUv"/>
-                            <constraint firstItem="qca-IE-qbX" firstAttribute="top" secondItem="1nJ-Go-iOh" secondAttribute="top" constant="248" id="WWk-Gm-9lT"/>
-                            <constraint firstAttribute="trailing" secondItem="Jx7-1g-bnP" secondAttribute="trailing" constant="44" id="jbp-Od-Em1"/>
-                            <constraint firstItem="Jx7-1g-bnP" firstAttribute="centerX" secondItem="STO-Ku-DEo" secondAttribute="centerX" type="user" id="jhJ-ey-dNR"/>
-                            <constraint firstItem="9Hs-r6-1Q7" firstAttribute="top" secondItem="1nJ-Go-iOh" secondAttribute="top" constant="166" id="lha-eI-9nx"/>
-                            <constraint firstItem="bSZ-uQ-gmv" firstAttribute="centerX" secondItem="qca-IE-qbX" secondAttribute="centerX" type="user" id="s1d-Wr-ovV"/>
-                            <constraint firstItem="qca-IE-qbX" firstAttribute="leading" secondItem="1nJ-Go-iOh" secondAttribute="leading" constant="28" id="tBO-3J-Ssl"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Shopping" id="xVq-2O-d4T"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="FbI-1r-6Os" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="87" y="949"/>
         </scene>
         <!--List View Controller-->
         <scene sceneID="pFV-ce-S68">
@@ -469,12 +243,6 @@
             <point key="canvasLocation" x="-1426" y="911"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="bank.png" width="178" height="106"/>
-        <image name="food.png" width="256" height="256"/>
-        <image name="groceries.png" width="150" height="157"/>
-        <image name="shopping.png" width="96" height="106"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

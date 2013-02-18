@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "keys.h"
 
 @interface MainViewController : UIViewController
 

@@ -15,18 +15,24 @@
 
 #import "listViewController.h"
 #import "placeDetailViewController.h"
+#import "UMAAppDelegate.h"
 
-@interface listViewController () {
+@interface listViewController ()
+{
     UIActivityIndicatorView *spinner;
     NSMutableArray *_placesArray;
-    NSMutableArray *openPlaces;
+    NSMutableArray *openNowPlaces;
+    NSMutableArray *openLaterPlaces;
     NSString *googleTypesString;
     int pageNum;
+//    FactualAPI *_apiObject;
 }
 
 @end
 
 @implementation listViewController
+
+@synthesize queryResult=_queryResult;
 @synthesize placeTableView;
 @synthesize locationMeasurements;
 @synthesize bestEffortAtLocation;
@@ -51,12 +57,16 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    openPlaces = [[NSMutableArray alloc]init];
+//    _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
+    
+    openNowPlaces = [[NSMutableArray alloc]init];
+    openLaterPlaces = [[NSMutableArray alloc]init];
     
     spinner = [[UIActivityIndicatorView alloc]
-               initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+               initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     spinner.center = CGPointMake(160, 200);
     spinner.hidesWhenStopped = YES;
+    spinner.color = [UIColor blackColor];
     [self.view addSubview:spinner];
     
     //set up device location manager and get current location
@@ -69,9 +79,16 @@
     NSLog(@"location: %f %f", deviceLocation.latitude, deviceLocation.longitude);
     
     pageNum = 1;
+    
+    //add "powered by Google"
+    UIImage *footerImage = [UIImage imageNamed:@"google.png"];
+    UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
+    footerImageView.frame = CGRectMake(10,10,1,30);
+    self.tableView.tableFooterView = footerImageView;
 }
 #pragma mark user authorized/denied location services
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
     
     //user has allowed location services in this app
     if(status == 3) {
@@ -131,16 +148,40 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    // section 0 is "open now," and section 1 is "open later today"
+    return 2;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    switch (section)
+    {
+        case 0:
+            return @"Open Now";
+            break;
+        case 1:
+            return @"Open Later Today";
+            break;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return openPlaces.count;
+    switch (section)
+    {
+        case 0:
+            return openNowPlaces.count;
+            break;
+        case 1:
+            return openLaterPlaces.count;
+            break;
+    }
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row %2 == 0) {
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row %2 == 0)
+    {
         UIColor *lightBlue = [UIColor colorWithRed:0.5 green:0.8 blue:1.0 alpha:0.35];
         cell.backgroundColor = lightBlue;
     }
@@ -149,13 +190,21 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
-    NSDictionary *place = [openPlaces objectAtIndex:indexPath.row];
-    cell.textLabel.text = [place objectForKey:@"name"];
-    cell.detailTextLabel.text = [place objectForKey:@"proximity"];
+    
+    if (indexPath.section == 0)
+    {
+        cell.textLabel.text = [[openNowPlaces objectAtIndex:indexPath.row] objectForKey:@"name"];
+        cell.detailTextLabel.text = [[openNowPlaces objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+    }
+    else {
+        cell.textLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] valueForKey:@"name"];
+        cell.detailTextLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] valueForKey:@"proximity"];
+    }
     return cell;
 }
 
-- (float)calculateDistanceFromDeviceLatitudeInMiles:(float)deviceLatitude deviceLongitude:(float)deviceLongitude toPlaceLatitude:(float)placeLat placeLongitude:(float)placeLng {
+- (float)calculateDistanceFromDeviceLatitudeInMiles:(float)deviceLatitude deviceLongitude:(float)deviceLongitude toPlaceLatitude:(float)placeLat placeLongitude:(float)placeLng
+{
     
     float latDiffFloat = deviceLatitude - placeLat;
     float lngDiffFloat = deviceLongitude - placeLng;
@@ -227,16 +276,19 @@
     googleTypesString = [[NSString alloc]initWithString:[googleTypes objectAtIndex:0]];
     
     //if more than 1 type is supplied
-    if ([googleTypes count]>1) {
+    if ([googleTypes count]>1)
+    {
         
         googleTypesString = [googleTypesString stringByAppendingString:@"%7C"];
         
-        for (int i=1; i<[googleTypes count]; i++) {
+        for (int i=1; i<[googleTypes count]; i++)
+        {
 
             googleTypesString = [googleTypesString stringByAppendingString:[googleTypes objectAtIndex:i]];
             
             //add | character to end of googleTypesString if this is not the last string in the googleTypes array
-            if (i!=[googleTypes count]-1) {
+            if (i!=[googleTypes count]-1)
+            {
                 googleTypesString = [googleTypesString stringByAppendingString:@"%7C"];
             }
         }
@@ -246,10 +298,12 @@
     
     // CH is around here: 35.924270, -79.052075
     
-    if ( [nextPageToken length] == 0) {
+    if ( [nextPageToken length] == 0)
+    {
         url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
     }
-    else {
+    else
+    {
         url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true&pagetoken=%@", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY, nextPageToken];
     }
 
@@ -258,12 +312,12 @@
     // Retrieve the results of the URL.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
-        [self performSelectorOnMainThread:@selector(fetchedData:) withObject:data waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
     });
 }
 
-- (void)fetchedData:(NSData *)responseData {
-    
+- (void)fetchedGoogleData:(NSData *)responseData
+{    
     NSError* error;
     NSDictionary* json = [NSJSONSerialization
                           JSONObjectWithData:responseData
@@ -272,8 +326,8 @@
     NSString *nextPageToken = [json objectForKey:@"next_page_token"];
     
     _placesArray = [json objectForKey:@"results"];
-
-    /*
+    
+    /* to-do
      Fix to make it do all this:
      - check each one to see if it's open
      - if it's open, put it in a mutable array (available to all listViewController.m) and set key openWhen to "now"
@@ -292,63 +346,97 @@
         - load results into array and display in list
      */
     
-    int numOpenNow = 0;
+    //if < 1 open place, set value for "name" key for object 0 of openNowPlaces to @"None open within %@", farthestPlaceString
+    // to-do: if all places are open, there are none "open later today", so check for count of 0
     
-    for (int i=0; i<_placesArray.count; i++) {
-        
+    int numOpenNow = 0;
+    NSString *farthestPlaceString = [[NSString alloc]init];
+    
+    for (int i=0; i<_placesArray.count; i++)
+    {
         NSMutableDictionary *place = [[NSMutableDictionary alloc]initWithDictionary:[_placesArray objectAtIndex:i]];
         
         //Get distance of farthest place in the results. Since results are ordered by distance, we'll use the place in the array
-        if (i == (_placesArray.count - 1) ) {
+        if (i == (_placesArray.count - 1) )
+        {
             //calculate the proximity of the mobile device to the establishment
             float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
             float placeLng = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"]floatValue];
             float deviceLatitude = [[NSString stringWithFormat:@"%f", deviceLocation.latitude]floatValue];
             float deviceLongitude = [[NSString stringWithFormat:@"%f", deviceLocation.longitude]floatValue];
-            NSString *proximity = [NSString stringWithFormat:@"Open restaurants within %.2f miles:",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
+            farthestPlaceString = [NSString stringWithFormat:@"%.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
+            NSString *proximityMessage = [NSString stringWithFormat:@"Open restaurants within %@:",farthestPlaceString];
             
             //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
             UIFont *font = [UIFont boldSystemFontOfSize:14.0];
-            CGRect frame = CGRectMake(0, 0, [proximity sizeWithFont:font].width, 44);
+            CGRect frame = CGRectMake(0, 0, [proximityMessage sizeWithFont:font].width, 44);
             UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.font = font;
             titleLabel.textColor = [UIColor whiteColor];
-            titleLabel.text = proximity;
+            titleLabel.text = proximityMessage;
             self.navBar.titleView = titleLabel;
         }
         
-        //make sure opening_hours key and open_now key exist, and then only keep establishments that are currently open
-        if ([place objectForKey:@"opening_hours"]) {
-            if ([[place objectForKey:@"opening_hours"] objectForKey:@"open_now"]) {
+        //calculate the proximity of the mobile device to the establishment
+        float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
+        float placeLng = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"]floatValue];
+        float deviceLatitude = [[NSString stringWithFormat:@"%f", deviceLocation.latitude]floatValue];
+        float deviceLongitude = [[NSString stringWithFormat:@"%f", deviceLocation.longitude]floatValue];
+        NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
+        [place setValue:proximity forKey:@"proximity"];
+        
+        //make sure opening_hours key and open_now key exist, and then keep only establishments that are currently open
+        if ([place objectForKey:@"opening_hours"])
+        {
+            if ([[place objectForKey:@"opening_hours"] objectForKey:@"open_now"])
+            {
                 BOOL isOpen = [[[place objectForKey:@"opening_hours"] objectForKey:@"open_now"]boolValue];
                 
-                if (isOpen == TRUE) {
-                    
+                if (isOpen == TRUE)
+                {    
                     numOpenNow++;
-                    
-                    //calculate the proximity of the mobile device to the establishment
-                    float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
-                    float placeLng = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"]floatValue];
-                    float deviceLatitude = [[NSString stringWithFormat:@"%f", deviceLocation.latitude]floatValue];
-                    float deviceLongitude = [[NSString stringWithFormat:@"%f", deviceLocation.longitude]floatValue];
-                    NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
-                    [place setValue:proximity forKey:@"proximity"];
-                    
-                    [openPlaces addObject:place];
+                    [openNowPlaces addObject:place];
+//                    NSLog(@"place object example: %@", place);
                 }
+                else if (isOpen == FALSE)
+                {
+                    
+                    [self queryFactual:[place objectForKey:@"name"] searchLatitude:placeLat searchLongitude:placeLng];
+                }
+            } //end if opening_hours and open_now
+            
+            //want to sort these by proximity or soonest one to open later today???? - to-do
+            else //if open_now key doesn't exist
+            {
+                [self queryFactual:[place objectForKey:@"name"] searchLatitude:placeLat searchLongitude:placeLng];
             }
-        }
+            
+        } //end if opening_hours
         
+        //if there's no opening_hours key
+        else
+        {
+            [self queryFactual:[place objectForKey:@"name"] searchLatitude:placeLat searchLongitude:placeLng];
+        }
     }//end for loop
+    
+    //just to have 1 object in array so that it doesn't crash: to-do
+//    [openLaterPlaces addObject:[NSDictionary dictionaryWithObject:@"a name" forKey:@"name"]];
+    
+//    NSLog(@"count of openlater = %i", [openLaterPlaces count]);
+//    NSLog(@"first openLater: %@", [openLaterPlaces objectAtIndex:0]);
+    
     
     [spinner stopAnimating];
     [[self placeTableView] reloadData];
     
-    
+    //to-do: compare results with FourSquare to see if I'm missing lots of restaurants
     //if <5 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
-    if ( /*numOpenNow <5 && */ pageNum <3) {
-        
+    
+    //to-do: change to <9
+    if ( numOpenNow <1 && pageNum <3)
+    {
         [spinner startAnimating];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self queryGooglePlaces:placesArray nextPageToken:nextPageToken];
@@ -358,27 +446,155 @@
         pageNum++;
     }
     
+} //end fetchedGoogleData
+
+- (void)queryFactual:(NSString *)restaurantFullName searchLatitude:(float)lat searchLongitude:(float)lng
+{    
+    FactualQuery* queryObject = [FactualQuery query];
+    
+    //set search radius
+    CLLocationCoordinate2D geoFilterCoords = {
+        lat, lng
+    };
+    
+    //to-do: should this be 1,000?
+    [queryObject setGeoFilter:geoFilterCoords
+               radiusInMeters:60.0];
+
+    NSString *queryString = restaurantFullName;
+    queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+    queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
+    NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
+
+    if (([restaurantNameExploded count] > 0) & !(
+        [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"a"] ||
+        [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"an"] ||
+        [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"the"])) {
+        
+        queryString = [restaurantNameExploded objectAtIndex:0];
+    }
+    else if ([restaurantNameExploded count] > 1) {
+        queryString = [restaurantNameExploded objectAtIndex:1];
+    }
+    else {
+        queryString = @"";
+    }
+    
+    NSLog(@"to get from Factual: %@", restaurantFullName);
+    
+    //search for queryString only in the name of the restaurant
+    [queryObject addRowFilter:[FactualRowFilter fieldName:@"name" search:queryString]];
+    
+    //query Factual
+    _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:queryObject withDelegate:self];
+    
 }
 
-- (void)viewDidUnload {
+-(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj {
+    
+    self.queryResult = queryResultObj;     
+    
+    if ((self.queryResult != nil) & ([self.queryResult.rows objectAtIndex:0] != nil)) {
+        FactualRow *row = [self.queryResult.rows objectAtIndex:0];
+        
+        NSLog(@"from factual: %@", self.queryResult.rows);
+        
+        //to-do: need to check if these are open later today. For now, I'm adding all matches with Factual instead of checking hours first.
+        
+        float lat = [[row valueForName:@"latitude"]floatValue];
+        float lng = [[row valueForName:@"longitude"]floatValue];
+        
+        NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLocation.latitude deviceLongitude:deviceLocation.longitude toPlaceLatitude:lat placeLongitude:lng]];
+        NSString *restaurantName = [row valueForName:@"name"];
+        
+        NSMutableDictionary *openLaterRestaurant = [[NSMutableDictionary alloc]init];
+        [openLaterRestaurant setValue:proximity forKey:@"proximity"];
+        [openLaterRestaurant setValue:restaurantName forKey:@"name"];
+        [openLaterRestaurant setValue:[row rowId] forKey:@"id"];
+    
+        [openLaterPlaces addObject:openLaterRestaurant];
+        
+        //to-do: sort openLaterPlaces array by proximity asc
+        
+        [placeTableView reloadData];
+    }
+}
+
+/* to-do: remove this if unnecessary
+- (void)fetchedFactualData:(NSData *)responseData
+{
+    NSError* error;
+    NSDictionary* json = [NSJSONSerialization
+                          JSONObjectWithData:responseData
+                          options:kNilOptions
+                          error:&error];
+    NSDictionary *response = [json objectForKey:@"response"];
+    NSArray *results = [response objectForKey:@"data"];
+    
+//    NSLog(@"results:     %@",results);
+//    NSString *hoursForFirstOne = [[results objectAtIndex:0] objectForKey:@"hours"];
+    
+//    NSLog(@"hours: %@", hoursForFirstOne);
+    NSLog(@"factual match: %@", [[results objectAtIndex:0]objectForKey:@"name"]);
+ 
+}
+*/
+
+/*
+-(void) requestComplete:(FactualAPIRequest *)request receivedRawResult:(NSDictionary *)result {
+    
+    
+//    _rawResult = result;
+     for (id key in result) {
+     NSLog(@"KEY: %@, VALUE: %@", key, [result objectForKey:key]);
+     }
+}
+*/
+-(void) requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
+    NSLog(@"FAILED with error");
+}
+
+
+- (void)viewDidUnload
+{
     [self setPlaceTableView:nil];
     [super viewDidUnload];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
     if ([[segue identifier] isEqualToString:@"detailSegue"])
     {
         // Get reference to the destination view controller
         placeDetailViewController *destinationVC = [segue destinationViewController];
         
         NSIndexPath *indexPath = [self.placeTableView indexPathForSelectedRow];
-        destinationVC.placeReference = [[openPlaces objectAtIndex:indexPath.row]objectForKey:@"reference"];
-        destinationVC.placeRating = [[openPlaces objectAtIndex:indexPath.row]objectForKey:@"rating"];
-        destinationVC.deviceLat = [NSString stringWithFormat:@"%f",deviceLocation.latitude];
-        destinationVC.deviceLng = [NSString stringWithFormat:@"%f",deviceLocation.longitude];
-        destinationVC.proximity = [[openPlaces objectAtIndex:indexPath.row]objectForKey:@"proximity"];
-        destinationVC.placeLat = [[[[openPlaces objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
-        destinationVC.placeLng = [[[[openPlaces objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
+        NSUInteger section = [indexPath section];
+        
+        switch (section)
+        {
+            //open now
+            case 0:
+                destinationVC.placeReference = [[openNowPlaces objectAtIndex:indexPath.row]objectForKey:@"reference"];
+                destinationVC.placeRating = [[openNowPlaces objectAtIndex:indexPath.row]objectForKey:@"rating"];
+                destinationVC.deviceLat = [NSString stringWithFormat:@"%f",deviceLocation.latitude];
+                destinationVC.deviceLng = [NSString stringWithFormat:@"%f",deviceLocation.longitude];
+                destinationVC.proximity = [[openNowPlaces objectAtIndex:indexPath.row]objectForKey:@"proximity"];
+                destinationVC.placeLat = [[[[openNowPlaces objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
+                destinationVC.placeLng = [[[[openNowPlaces objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
+                break;
+            //open later today
+            case 1:
+//                destinationVC.placeReference = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"reference"];
+                //to-do: should I get rating from Google or Factual? Need to set up openLaterPlace mutable dict for this entire implementation and set value for it within G query if using Google
+                //                destinationVC.placeRating = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"rating"];
+                destinationVC.deviceLat = [NSString stringWithFormat:@"%f",deviceLocation.latitude];
+                destinationVC.deviceLng = [NSString stringWithFormat:@"%f",deviceLocation.longitude];
+                destinationVC.proximity = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"proximity"];
+                destinationVC.placeLat = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"latitude"];
+                destinationVC.placeLng = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"longitude"];
+                break;
+        } //end switch
     }
 }
 @end

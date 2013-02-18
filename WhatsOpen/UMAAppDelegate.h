@@ -7,9 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <FactualSDK/FactualAPI.h>
 
 @interface UMAAppDelegate : UIResponder <UIApplicationDelegate>
-
+{
+    FactualAPI* _apiObject;
+}
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, readonly) FactualAPI* apiObject;
+
++(FactualAPI*) getAPIObject;
++(UMAAppDelegate*) getDelegate;
 
 @end
