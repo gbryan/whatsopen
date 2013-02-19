@@ -7,12 +7,14 @@
 //
 
 
-
-
-
-
-// when user refreshes this list by pulling down, need to re-run [locationManager startUpdatingLocation], which will update location and then call queryGooglePlaces.  Will the placesArray still be set, though???
-
+/*
+//to-do: will queries fail gracefully if there's no location found?
+//to-do: what happens if there are none open now in 3 pages?
+//to-do: what if there are none open later today?
+//to-do: what if Google returns null result? Will it crash?
+//to-do: what if factual returns null result? will it crash?
+*/
+ 
 #import "listViewController.h"
 #import "placeDetailViewController.h"
 #import "UMAAppDelegate.h"
@@ -25,7 +27,14 @@
     NSMutableArray *openLaterPlaces;
     NSString *googleTypesString;
     int pageNum;
-//    FactualAPI *_apiObject;
+    /*Each time restaurant data are loaded into the UITableView, the app may initiate 
+     multiple queries to Google Places and/or Factual. isFirstQueryInSet is TRUE if the
+     app is requesting the data for a full refresh of all data in the table (initial app load
+     or if user pulls down to refresh the data).  The value is FALSE if the first query for 
+     a data refresh has been initiated and subsequent queries are running.
+     */
+    bool isFirstQueryInSet;
+    bool isFirstTimeLocationServicesEnabled;
 }
 
 @end
@@ -36,7 +45,7 @@
 @synthesize placeTableView;
 @synthesize locationMeasurements;
 @synthesize bestEffortAtLocation;
-@synthesize placesArray;
+@synthesize queryCategories;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -51,17 +60,16 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-//    _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
-    
+    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     openNowPlaces = [[NSMutableArray alloc]init];
     openLaterPlaces = [[NSMutableArray alloc]init];
     
+    //set up pull to refresh
+    UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
+    [pullToRefresh addTarget:self action:@selector(refreshResults) forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = pullToRefresh;
+    
+    //display spinner to indicate to the user that the query is still running
     spinner = [[UIActivityIndicatorView alloc]
                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     spinner.center = CGPointMake(160, 200);
@@ -72,69 +80,73 @@
     //set up device location manager and get current location
     locationManager = [[CLLocationManager alloc] init];
     [locationManager setDelegate:self];
-    [locationManager setDistanceFilter:kCLDistanceFilterNone];
-    [locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
+    //Restaurant list will update only if user pulls down to refresh. I'm setting the
+    //distance filter to an arbitrarily high number to ensure that didUpdateToLocation is
+    //called only once each time I want to get an updated location. When it was set to none,
+    //I wasn't always able to stopUpdatingLocation before the location was detected more than
+    //once, triggering multiple calls to queryGooglePlaces.
+    [locationManager setDistanceFilter:500.0f];
     [locationManager startUpdatingLocation];
-    deviceLocation = CLLocationCoordinate2DMake(locationManager.location.coordinate.latitude, locationManager.location.coordinate.longitude);
-    NSLog(@"location: %f %f", deviceLocation.latitude, deviceLocation.longitude);
     
+    //set pg to 1 since initial Google Places query will pull the 1st page of results
     pageNum = 1;
     
     //add "powered by Google"
+    //to-do: make this float or at least format right dimensions
     UIImage *footerImage = [UIImage imageNamed:@"google.png"];
     UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
-    footerImageView.frame = CGRectMake(10,10,1,30);
+//    footerImageView.frame = CGRectMake(10,10,1,30);
     self.tableView.tableFooterView = footerImageView;
 }
 #pragma mark user authorized/denied location services
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
+    UIAlertView *locationDisabled = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled" message:@"You have chosen to disable location services for WhatsUp, but the app cannot run without knowing your current location. Please enable location services for WhatsUp in the Settings menu, force the app to quit, and reopen it." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
     
-    //user has allowed location services in this app
-    if(status == 3) {
-//        [self queryGooglePlaces:placesArray];
-    }
-    else if(status == 2){
-        UIAlertView *locationDisabled = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled" message:@"You have chosen to disable location services for WhatsUp, but the app cannot run without knowing your current location. Please enable location services for WhatsUp in the Settings menu, force the app to quit, and reopen it." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
-        [locationDisabled show];
+    switch (status)
+    {
+        case kCLAuthorizationStatusNotDetermined:
+            isFirstTimeLocationServicesEnabled = TRUE;
+            break;
+        case kCLAuthorizationStatusDenied:
+            [locationDisabled show];
+            break;
+        case kCLAuthorizationStatusRestricted:
+            [locationDisabled show];
+            break;
+        case kCLAuthorizationStatusAuthorized:
+            if (isFirstTimeLocationServicesEnabled == TRUE)
+            {
+                [self queryGooglePlaces:queryCategories nextPageToken:nil];
+            }
+            break;
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    // store all of the measurements, just so we can see what kind of data we might receive
+//this is deprecated in iOS 6, but I want to also support 5, so I'm using it for now
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{    
+    NSLog(@"got a location");
+
+    //ensure that this measurement isn't cached (> 5 seconds old)
     [locationMeasurements addObject:newLocation];
-    // test the age of the location measurement to determine if the measurement is cached
-    // in most cases you will not want to rely on cached measurements
     NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
     if (locationAge > 5.0) return;
+
     // test that the horizontal accuracy does not indicate an invalid measurement
     if (newLocation.horizontalAccuracy < 0) return;
+    
     // test the measurement to see if it is more accurate than the previous measurement
-    if (bestEffortAtLocation == nil || bestEffortAtLocation.horizontalAccuracy > newLocation.horizontalAccuracy) {
-        // store the location as the "best effort"
+    if (bestEffortAtLocation == nil || (bestEffortAtLocation.horizontalAccuracy > newLocation.horizontalAccuracy))
+    {
         self.bestEffortAtLocation = newLocation;
-        
-        [self queryGooglePlaces:placesArray nextPageToken:nil];
+        deviceLocation = bestEffortAtLocation.coordinate;
         [locationManager stopUpdatingLocation];
         
-        // test the measurement to see if it meets the desired accuracy
-        //
-        // IMPORTANT!!! kCLLocationAccuracyBest should not be used for comparison with location coordinate or altitidue
-        // accuracy because it is a negative value. Instead, compare against some predetermined "real" measure of
-        // acceptable accuracy, or depend on the timeout to stop updating. This sample depends on the timeout.
-        //
-        if (newLocation.horizontalAccuracy <= locationManager.desiredAccuracy) {
-            
-            NSLog(@"here");
-            
-            // we have a measurement that meets our requirements, so we can stop updating the location
-            //
-            // IMPORTANT!!! Minimize power usage by stopping the location manager as soon as possible.
-            //
-            
-            // we can also cancel our previous performSelector:withObject:afterDelay: - it's no longer necessary
-            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stopUpdatingLocation:) object:nil];
-        }
+        NSLog(@"location: %f,%f", deviceLocation.latitude, deviceLocation.longitude);
+        
+        //find restaurants based on the new location
+        [self queryGooglePlaces:queryCategories nextPageToken:nil];
     }
 }
 
@@ -144,8 +156,28 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
+- (void)refreshResults
+{    
+    [locationManager startUpdatingLocation];
+    
+    //delete old list of restaurants
+    //it's showing duplicates for openLaterPlaces. Can I call this safely from elsewhere?
+    if ([openNowPlaces count] > 0)
+    {
+        [openNowPlaces removeAllObjects];
+    }
+    if ([openLaterPlaces count] > 0)
+    {
+        [openLaterPlaces removeAllObjects];
+    }
+    
+    //find restaurants near the updated location
+    [self queryGooglePlaces:queryCategories nextPageToken:nil];
+    
+    [self.refreshControl endRefreshing];
+}
 
+#pragma mark - Table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // section 0 is "open now," and section 1 is "open later today"
@@ -270,20 +302,35 @@
 }
 
 -(void)queryGooglePlaces:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
-{
-    NSLog(@"query executing");
+{    
+    /* queryGooglePlaces is potentially called multiple times with different
+     pageTokens for a full refresh of the restaurant data in the table. Here, I test whether
+     this is the initial query in a full refresh of the data or part way through a refresh.
+     */
+    if (nextPageToken == nil)
+    {
+        isFirstQueryInSet = TRUE;
+        
+        if ([openNowPlaces count] > 0)
+        {
+            [openNowPlaces removeAllObjects];
+        }
+    }
     
+    
+    NSLog(@"query executing");
+        
+    //Google Places API allows searching by "types," which we specify in the queryCategories array in this app.
+    //Here, we build a string of all categories ("types") we want to search with Google Places API.
     googleTypesString = [[NSString alloc]initWithString:[googleTypes objectAtIndex:0]];
     
     //if more than 1 type is supplied
-    if ([googleTypes count]>1)
+    if ([googleTypes count] >1 )
     {
-        
         googleTypesString = [googleTypesString stringByAppendingString:@"%7C"];
         
         for (int i=1; i<[googleTypes count]; i++)
         {
-
             googleTypesString = [googleTypesString stringByAppendingString:[googleTypes objectAtIndex:i]];
             
             //add | character to end of googleTypesString if this is not the last string in the googleTypes array
@@ -298,6 +345,7 @@
     
     // CH is around here: 35.924270, -79.052075
     
+    //Google Places will return up to 3 pages of results.
     if ( [nextPageToken length] == 0)
     {
         url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
@@ -309,15 +357,20 @@
 
     NSURL *googleRequestURL=[NSURL URLWithString:url];
     
-    // Retrieve the results of the URL.
+
+/*
+    // Retrieve the results of the query
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
         [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
     });
+*/
+    NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
+    [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
 }
 
 - (void)fetchedGoogleData:(NSData *)responseData
-{    
+{   
     NSError* error;
     NSDictionary* json = [NSJSONSerialization
                           JSONObjectWithData:responseData
@@ -327,26 +380,8 @@
     
     _placesArray = [json objectForKey:@"results"];
     
-    /* to-do
-     Fix to make it do all this:
-     - check each one to see if it's open
-     - if it's open, put it in a mutable array (available to all listViewController.m) and set key openWhen to "now"
-     - if not open, check if it's open at all today
-     - if it's open later today, put it in mutable array and set key openWhen to "today"
-     - if not open later today, don't put in array at all
-     - group open ones under "Open Now" heading in list view
-     - group "today" ones under "Open Later Today" heading in list view
-     
-     get initial results and call fetchedData.
-     - load results into array and display in list
-     - if <5 with openWhen=="now", then do the following:
-        - get next_page token and run a query to Google with that, calling fetchedPageTwo
-        - load results into array and display in list
-        - get next_page and run query with that, calling fetchedPageThree
-        - load results into array and display in list
-     */
-    
-    //if < 1 open place, set value for "name" key for object 0 of openNowPlaces to @"None open within %@", farthestPlaceString
+    NSLog(@"all places: %@", _placesArray);
+    //to-do: if < 1 open place, set value for "name" key for object 0 of openNowPlaces to @"None open within %@", farthestPlaceString
     // to-do: if all places are open, there are none "open later today", so check for count of 0
     
     int numOpenNow = 0;
@@ -421,25 +456,20 @@
         }
     }//end for loop
     
-    //just to have 1 object in array so that it doesn't crash: to-do
-//    [openLaterPlaces addObject:[NSDictionary dictionaryWithObject:@"a name" forKey:@"name"]];
-    
-//    NSLog(@"count of openlater = %i", [openLaterPlaces count]);
-//    NSLog(@"first openLater: %@", [openLaterPlaces objectAtIndex:0]);
-    
-    
     [spinner stopAnimating];
     [[self placeTableView] reloadData];
     
-    //to-do: compare results with FourSquare to see if I'm missing lots of restaurants
+    //to-do: compare results with Factual to see if I'm missing lots of restaurants
     //if <5 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     
     //to-do: change to <9
     if ( numOpenNow <1 && pageNum <3)
     {
         [spinner startAnimating];
+        
+        //the pageToken doesn't become valid for some unspecified period of time after requesting the first page, so we have to delay the next request
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self queryGooglePlaces:placesArray nextPageToken:nextPageToken];
+            [self queryGooglePlaces:queryCategories nextPageToken:nextPageToken];
         });
         
         //increment with each new set of 20 results fetched
@@ -449,7 +479,10 @@
 } //end fetchedGoogleData
 
 - (void)queryFactual:(NSString *)restaurantFullName searchLatitude:(float)lat searchLongitude:(float)lng
-{    
+{
+    
+    //to-do: if Factual finds a restaurant with hours that Google didn't have hours for, see if it's open now because we need to add it to openNowPlaces array if so!
+    
     FactualQuery* queryObject = [FactualQuery query];
     
     //set search radius
@@ -459,9 +492,10 @@
     
     //to-do: should this be 1,000?
     [queryObject setGeoFilter:geoFilterCoords
-               radiusInMeters:60.0];
+               radiusInMeters:110.0];
 
     NSString *queryString = restaurantFullName;
+    queryString = [queryString lowercaseString];
     queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
     queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
     NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
@@ -492,14 +526,24 @@
 
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj {
     
-    self.queryResult = queryResultObj;     
+    self.queryResult = queryResultObj;
     
     if ((self.queryResult != nil) & ([self.queryResult.rows objectAtIndex:0] != nil)) {
         FactualRow *row = [self.queryResult.rows objectAtIndex:0];
         
-        NSLog(@"from factual: %@", self.queryResult.rows);
+//        NSLog(@"from factual: %@", self.queryResult.rows);
         
         //to-do: need to check if these are open later today. For now, I'm adding all matches with Factual instead of checking hours first.
+        
+        //to-do: this is wrong. Need to see if this is the first query in a table refresh (user refreshed table) or a query that's just one in a set of queries that must be run together to gather all required data.  Pass param from Google query to this one that has one value if it's the first query or another value if it's a subsequent query.  Need to removeAllObjects if it's the first query in a set & there are existing objects in openLaterPlaces.
+        
+        //maybe do this: bool value isFirstQueryInSet set to TRUE within queryGooglePlaces if it's the first query in the set (nil param for nextPage).  Once Factual gets first result, it checks the value. If TRUE, it removesALlObjects from openLaterPlaces and sets the value back to FALSE. Subsequent Factual queries addObject to the array but don't clear the contents first.  Then, when another full refresh is conducted, it clears out the contents of the array to start over.
+        
+        if ((isFirstQueryInSet == TRUE) & ([openLaterPlaces count] > 0))
+        {
+            [openLaterPlaces removeAllObjects];
+            isFirstQueryInSet = FALSE;
+        }
         
         float lat = [[row valueForName:@"latitude"]floatValue];
         float lng = [[row valueForName:@"longitude"]floatValue];
@@ -554,7 +598,6 @@
     NSLog(@"FAILED with error");
 }
 
-
 - (void)viewDidUnload
 {
     [self setPlaceTableView:nil];
@@ -586,6 +629,7 @@
             //open later today
             case 1:
 //                destinationVC.placeReference = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"reference"];
+                //to-do: make sure tapping a place takes you to the right details page!
                 //to-do: should I get rating from Google or Factual? Need to set up openLaterPlace mutable dict for this entire implementation and set value for it within G query if using Google
                 //                destinationVC.placeRating = [[openLaterPlaces objectAtIndex:indexPath.row]objectForKey:@"rating"];
                 destinationVC.deviceLat = [NSString stringWithFormat:@"%f",deviceLocation.latitude];

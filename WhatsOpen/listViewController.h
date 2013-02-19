@@ -26,5 +26,5 @@
 @property (nonatomic, weak) IBOutlet UITableView *placeTableView;
 @property (nonatomic, retain) NSMutableArray *locationMeasurements;
 @property (nonatomic, retain) CLLocation *bestEffortAtLocation;
-@property (nonatomic, strong) NSArray *placesArray;
+@property (nonatomic, strong) NSArray *queryCategories;
 @end
