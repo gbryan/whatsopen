@@ -13,6 +13,7 @@
 //to-do: what if there are none open later today?
 //to-do: what if Google returns null result? Will it crash?
 //to-do: what if factual returns null result? will it crash?
+ to-do: comment out test location code
 */
  
 #import "listViewController.h"
@@ -141,6 +142,10 @@
     {
         self.bestEffortAtLocation = newLocation;
         deviceLocation = bestEffortAtLocation.coordinate;
+        
+//        UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
+        deviceLocation = CLLocationCoordinate2DMake(35.913164, -79.055765);
+        
         [locationManager stopUpdatingLocation];
         
         NSLog(@"location: %f,%f", deviceLocation.latitude, deviceLocation.longitude);
@@ -157,23 +162,10 @@
 }
 
 - (void)refreshResults
-{    
+{
+    // find updated device lat/long and queryGooglePlaces upon finding updated location
     [locationManager startUpdatingLocation];
-    
-    //delete old list of restaurants
-    //it's showing duplicates for openLaterPlaces. Can I call this safely from elsewhere?
-    if ([openNowPlaces count] > 0)
-    {
-        [openNowPlaces removeAllObjects];
-    }
-    if ([openLaterPlaces count] > 0)
-    {
-        [openLaterPlaces removeAllObjects];
-    }
-    
-    //find restaurants near the updated location
-    [self queryGooglePlaces:queryCategories nextPageToken:nil];
-    
+      
     [self.refreshControl endRefreshing];
 }
 
@@ -343,8 +335,6 @@
     
     NSString *url = [[NSString alloc]init];
     
-    // CH is around here: 35.924270, -79.052075
-    
     //Google Places will return up to 3 pages of results.
     if ( [nextPageToken length] == 0)
     {
@@ -462,7 +452,7 @@
     //to-do: compare results with Factual to see if I'm missing lots of restaurants
     //if <5 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     
-    //to-do: change to <9
+    //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
     if ( numOpenNow <1 && pageNum <3)
     {
         [spinner startAnimating];
