@@ -15,7 +15,6 @@
 @interface listViewController : UITableViewController <CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate, FactualAPIDelegate>
 {
     FactualAPIRequest* _activeRequest;
-    FactualQueryResult* _queryResult;
     CLLocationManager *locationManager;
     CLLocationCoordinate2D deviceLocation;
     NSMutableArray *locationMeasurements;

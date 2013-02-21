@@ -8,6 +8,7 @@
 
 
 /*
+ to-do: set navigation bar to very dark grey or black
 to-do: move querying into different file and set up as a singleton
  //to-do: will queries fail gracefully if there's no location found?
 //to-do: what happens if there are none open now in 3 pages?
@@ -37,7 +38,6 @@ to-do: move querying into different file and set up as a singleton
 
 @implementation listViewController
 
-@synthesize queryResult=_queryResult;
 @synthesize placeTableView;
 @synthesize locationMeasurements;
 @synthesize bestEffortAtLocation;
@@ -59,6 +59,9 @@ to-do: move querying into different file and set up as a singleton
     queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     openNowPlaces = [[NSMutableArray alloc]init];
     openLaterPlaces = [[NSMutableArray alloc]init];
+    
+    //set tint color of section headers
+    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
@@ -94,7 +97,7 @@ to-do: move querying into different file and set up as a singleton
 //    footerImageView.frame = CGRectMake(10,10,1,30);
     self.tableView.tableFooterView = footerImageView;
 }
-#pragma mark user authorized/denied location services
+#pragma mark - user authorized/denied location services
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     UIAlertView *locationDisabled = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled" message:@"You have chosen to disable location services for WhatsUp, but the app cannot run without knowing your current location. Please enable location services for WhatsUp in the Settings menu, force the app to quit, and reopen it." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
@@ -119,7 +122,7 @@ to-do: move querying into different file and set up as a singleton
     }
 }
 
-//this is deprecated in iOS 6, but I want to also support 5, so I'm using it for now
+//to-do: update to non-deprecated method (only 12.4% of iPhone users have iOS < 6 as of Feb 2013)
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {    
 //    NSLog(@"got a location: %f,%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
@@ -183,6 +186,9 @@ to-do: move querying into different file and set up as a singleton
         case 1:
             return @"Open Later Today";
             break;
+        default:
+            return nil;
+            break;
     }
 }
 
@@ -196,6 +202,9 @@ to-do: move querying into different file and set up as a singleton
         case 1:
             return openLaterPlaces.count;
             break;
+        default:
+            return nil;
+            break;
     }
 }
 
@@ -203,7 +212,8 @@ to-do: move querying into different file and set up as a singleton
 {
     if (indexPath.row %2 == 0)
     {
-        UIColor *lightBlue = [UIColor colorWithRed:0.5 green:0.8 blue:1.0 alpha:0.35];
+//        UIColor *lightBlue = [UIColor colorWithRed:0.5 green:0.8 blue:1.0 alpha:0.35];
+        UIColor *lightBlue = [UIColor colorWithRed:0.05 green:0.1 blue:0.15 alpha:0.15];
         cell.backgroundColor = lightBlue;
     }
 }
@@ -221,6 +231,11 @@ to-do: move querying into different file and set up as a singleton
         cell.textLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] valueForKey:@"name"];
         cell.detailTextLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] valueForKey:@"proximity"];
     }
+    
+    //remove halo effect in background color
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+    
     return cell;
 }
 
@@ -427,6 +442,7 @@ to-do: move querying into different file and set up as a singleton
                 if (isOpen == TRUE)
                 {    
                     numOpenNow++;
+                    [place setObject:@"google" forKey:@"provider"];
                     [openNowPlaces addObject:place];
                 }
                 else if (isOpen == FALSE)
@@ -571,7 +587,7 @@ to-do: move querying into different file and set up as a singleton
         
 //        NSLog(@"factual hours for %@: %@", [openLaterRestaurant valueForKey:@"name"], [openLaterRestaurant valueForKey:@"hours"]);
         
-        
+        [openLaterRestaurant setObject:@"factual" forKey:@"provider"];
         [openLaterPlaces addObject:openLaterRestaurant];
         
         //to-do: sort openLaterPlaces array by proximity asc
@@ -608,6 +624,7 @@ to-do: move querying into different file and set up as a singleton
         {
                 
             //to-do: some items in openNowPlaces may have been added from Factual. Do we want to pull the info from Google or Factual for the details page? If pulling from Google, we need to somehow get the "reference" value from Google into the NSMutableDictionary containing the restaurant that we added to openNowPlaces from Factual.  We would then query Google with the reference to get the details.
+            //to-do: I've set a value for key "provider" that is either "google" or "factual". Check this one to see which db to query and whether to use key "reference" (google) or key "factual_id" (factual).
                 
             //open now
             case 0:
