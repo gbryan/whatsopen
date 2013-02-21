@@ -8,12 +8,14 @@
 
 
 /*
-//to-do: will queries fail gracefully if there's no location found?
+to-do: move querying into different file and set up as a singleton
+ //to-do: will queries fail gracefully if there's no location found?
 //to-do: what happens if there are none open now in 3 pages?
 //to-do: what if there are none open later today?
 //to-do: what if Google returns null result? Will it crash?
 //to-do: what if factual returns null result? will it crash?
  to-do: comment out test location code
+ to-do: I occasionally get a data is nil exception. Be sure to implement success and failure blocks for the API calls.
 */
  
 #import "listViewController.h"
@@ -28,13 +30,6 @@
     NSMutableArray *openLaterPlaces;
     NSString *googleTypesString;
     int pageNum;
-    /*Each time restaurant data are loaded into the UITableView, the app may initiate 
-     multiple queries to Google Places and/or Factual. isFirstQueryInSet is TRUE if the
-     app is requesting the data for a full refresh of all data in the table (initial app load
-     or if user pulls down to refresh the data).  The value is FALSE if the first query for 
-     a data refresh has been initiated and subsequent queries are running.
-     */
-    bool isFirstQueryInSet;
     bool isFirstTimeLocationServicesEnabled;
 }
 
@@ -127,24 +122,26 @@
 //this is deprecated in iOS 6, but I want to also support 5, so I'm using it for now
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {    
-    NSLog(@"got a location");
+//    NSLog(@"got a location: %f,%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
 
-    //ensure that this measurement isn't cached (> 5 seconds old)
+    //to-do: is the location accurate? How to make it more accurate? If I set desiredAccuracy, how do I get the app to wait to perform the query until after obtaining sufficient accuracy?
+    
+    //ensure that this measurement isn't cached (> 2 seconds old)
     [locationMeasurements addObject:newLocation];
     NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
-    if (locationAge > 5.0) return;
+    if (locationAge > 2.0) return;
 
     // test that the horizontal accuracy does not indicate an invalid measurement
     if (newLocation.horizontalAccuracy < 0) return;
     
-    // test the measurement to see if it is more accurate than the previous measurement
-    if (bestEffortAtLocation == nil || (bestEffortAtLocation.horizontalAccuracy > newLocation.horizontalAccuracy))
+    // ensure measurement is at least as accurate as previous measurement
+    if (bestEffortAtLocation == nil || (bestEffortAtLocation.horizontalAccuracy >= newLocation.horizontalAccuracy))
     {
         self.bestEffortAtLocation = newLocation;
         deviceLocation = bestEffortAtLocation.coordinate;
         
 //        UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
-        deviceLocation = CLLocationCoordinate2DMake(35.913164, -79.055765);
+        deviceLocation = CLLocationCoordinate2DMake(35.913164,-79.055765);
         
         [locationManager stopUpdatingLocation];
         
@@ -214,7 +211,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
-    
+        
     if (indexPath.section == 0)
     {
         cell.textLabel.text = [[openNowPlaces objectAtIndex:indexPath.row] objectForKey:@"name"];
@@ -293,24 +290,26 @@
      */
 }
 
+#pragma mark - Google Places Query
 -(void)queryGooglePlaces:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
 {    
     /* queryGooglePlaces is potentially called multiple times with different
      pageTokens for a full refresh of the restaurant data in the table. Here, I test whether
      this is the initial query in a full refresh of the data or part way through a refresh.
      */
-    if (nextPageToken == nil)
+    if (nextPageToken.length < 1)
     {
-        isFirstQueryInSet = TRUE;
-        
         if ([openNowPlaces count] > 0)
         {
             [openNowPlaces removeAllObjects];
         }
+        if ([openLaterPlaces count] > 0)
+        {
+            [openLaterPlaces removeAllObjects];
+        }
     }
     
-    
-    NSLog(@"query executing");
+//    NSLog(@"query executing");
         
     //Google Places API allows searching by "types," which we specify in the queryCategories array in this app.
     //Here, we build a string of all categories ("types") we want to search with Google Places API.
@@ -348,7 +347,7 @@
     NSURL *googleRequestURL=[NSURL URLWithString:url];
     
 
-/*
+/* to-do: remove this
     // Retrieve the results of the query
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
@@ -357,6 +356,7 @@
 */
     NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
     [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
+    
 }
 
 - (void)fetchedGoogleData:(NSData *)responseData
@@ -370,19 +370,25 @@
     
     _placesArray = [json objectForKey:@"results"];
     
-    NSLog(@"all places: %@", _placesArray);
+//    NSLog(@"all Google results: %@", _placesArray);
+    
     //to-do: if < 1 open place, set value for "name" key for object 0 of openNowPlaces to @"None open within %@", farthestPlaceString
     // to-do: if all places are open, there are none "open later today", so check for count of 0
     
     int numOpenNow = 0;
     NSString *farthestPlaceString = [[NSString alloc]init];
     
+    /*Look at each restaurant from Google to see if it's open. If open, add to openNowPlaces, which displays in the table
+     under the section "Open Now".  If not currently open (or if Google doesn't make it clear whether or not it's open), 
+     find the restaurant in Factual's database to see if it's open (or open later today, in which case we'll add it to
+     the openLaterPlaces array to display under the section "Open Later Today.")     
+     */
     for (int i=0; i<_placesArray.count; i++)
     {
         NSMutableDictionary *place = [[NSMutableDictionary alloc]initWithDictionary:[_placesArray objectAtIndex:i]];
         
-        //Get distance of farthest place in the results. Since results are ordered by distance, we'll use the place in the array
-        if (i == (_placesArray.count - 1) )
+        //Get distance of farthest place in the results. Since results are ordered by distance, we'll look at the last result.
+        if (i == (_placesArray.count - 1))
         {
             //calculate the proximity of the mobile device to the establishment
             float placeLat = [[[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"]floatValue];
@@ -411,7 +417,7 @@
         NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude deviceLongitude:deviceLongitude toPlaceLatitude:placeLat placeLongitude:placeLng]];
         [place setValue:proximity forKey:@"proximity"];
         
-        //make sure opening_hours key and open_now key exist, and then keep only establishments that are currently open
+        //make sure opening_hours key and open_now key exist for this restaurant, and then put currently open restaurants into openNowPlaces array
         if ([place objectForKey:@"opening_hours"])
         {
             if ([[place objectForKey:@"opening_hours"] objectForKey:@"open_now"])
@@ -422,170 +428,164 @@
                 {    
                     numOpenNow++;
                     [openNowPlaces addObject:place];
-//                    NSLog(@"place object example: %@", place);
                 }
                 else if (isOpen == FALSE)
                 {
-                    
-                    [self queryFactual:[place objectForKey:@"name"] searchLatitude:placeLat searchLongitude:placeLng];
+                    /*
+                     If Google claims this restaurant is not open, find the restaurant in Factual's database to get the opening hours.
+                     Although Google has a key for opening_hours, it is almost always empty, so we have to query Factual to get the full
+                     hours for the restaurant. We'll then determine if the restaurant is open currently (Google was wrong), open later 
+                     today, or not open at all today.
+                     */
+                    [self queryFactualWithRestaurantName:[place objectForKey:@"name"] streetAddress:[place objectForKey:@"vicinity"] latitude:placeLat longitude:placeLng];
                 }
-            } //end if opening_hours and open_now
-            
-            //want to sort these by proximity or soonest one to open later today???? - to-do
-            else //if open_now key doesn't exist
-            {
-                [self queryFactual:[place objectForKey:@"name"] searchLatitude:placeLat searchLongitude:placeLng];
             }
             
-        } //end if opening_hours
-        
-        //if there's no opening_hours key
+            //want to sort these by proximity or soonest one to open later today???? - to-do
+            
+            else 
+            {
+                /*
+                 If there's no open_now key in Google results for this restaurant, find the restaurant in Factual's database to see if it's
+                 open now or later today (or not open at all today).
+                 */
+                [self queryFactualWithRestaurantName:[place objectForKey:@"name"] streetAddress:[place objectForKey:@"vicinity"] latitude:placeLat longitude:placeLng];
+            }
+        }
         else
         {
-            [self queryFactual:[place objectForKey:@"name"] searchLatitude:placeLat searchLongitude:placeLng];
+            /* 
+             If there's no opening_hours key in Google results for this restaurant, find the restaurant in Factual's database to see if it's
+             open now or later today (or not open at all today). 
+             */
+            [self queryFactualWithRestaurantName:[place objectForKey:@"name"] streetAddress:[place objectForKey:@"vicinity"] latitude:placeLat longitude:placeLng];
         }
     }//end for loop
     
+    //to-do: spinner not actually visible for some reason
     [spinner stopAnimating];
     [[self placeTableView] reloadData];
     
-    //to-do: compare results with Factual to see if I'm missing lots of restaurants
-    //if <5 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
-    
+    //if <9 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
     if ( numOpenNow <1 && pageNum <3)
     {
+        //to-do: spinner not working properly 
         [spinner startAnimating];
         
-        //the pageToken doesn't become valid for some unspecified period of time after requesting the first page, so we have to delay the next request
+        //the Google pageToken doesn't become valid for some unspecified period of time after requesting the first page, so we have to delay the next request
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self queryGooglePlaces:queryCategories nextPageToken:nextPageToken];
         });
         
-        //increment with each new set of 20 results fetched
+        //increment with each new set of 20 results fetched from Google
         pageNum++;
     }
-    
 } //end fetchedGoogleData
 
-- (void)queryFactual:(NSString *)restaurantFullName searchLatitude:(float)lat searchLongitude:(float)lng
-{
-    
-    //to-do: if Factual finds a restaurant with hours that Google didn't have hours for, see if it's open now because we need to add it to openNowPlaces array if so!
-    
-    FactualQuery* queryObject = [FactualQuery query];
-    
-    //set search radius
-    CLLocationCoordinate2D geoFilterCoords = {
-        lat, lng
-    };
-    
-    //to-do: should this be 1,000?
-    [queryObject setGeoFilter:geoFilterCoords
-               radiusInMeters:110.0];
-
-    NSString *queryString = restaurantFullName;
-    queryString = [queryString lowercaseString];
-    queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
-    queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
-    NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
-
-    if (([restaurantNameExploded count] > 0) & !(
-        [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"a"] ||
-        [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"an"] ||
-        [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"the"])) {
+#pragma mark - Factual Query
+- (void)queryFactualWithRestaurantName:(NSString *)restaurantFullName streetAddress:(NSString *)address latitude:(float)lat longitude:(float)lng
+{    
+    //make sure valid values were passed in
+    if ((restaurantFullName.length > 0) &
+        (address.length > 0) &
+        (fabsf(lat) > 0) &
+        (fabsf(lng) > 0))
+    {
+        NSLog(@"to get from Factual: %@", restaurantFullName);
         
-        queryString = [restaurantNameExploded objectAtIndex:0];
+        //to-do: if Factual finds a restaurant with hours that Google didn't have hours for, see if it's open now because we need to add it to openNowPlaces array if so!
+        
+        FactualQuery* queryObject = [FactualQuery query];
+
+        //clean restaurant name from Google before using the name to search Factual
+        NSString *queryString = restaurantFullName;
+        queryString = [queryString lowercaseString];
+        queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+        queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
+        NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
+        
+        //use the first non "a", "an", or "the" word of the restaurant full name (from Google) to search Factual
+        if (!([[restaurantNameExploded objectAtIndex:0] isEqualToString:@"a"] ||
+              [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"an"] ||
+              [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"the"]))
+        {
+            queryString = [restaurantNameExploded objectAtIndex:0];
+        }
+        else
+        {
+            queryString = [restaurantNameExploded objectAtIndex:1];
+        }
+        [queryObject addRowFilter:[FactualRowFilter fieldName:@"name" search:queryString]];
+        
+        //filter Factual results by the street number of the Google-supplied address
+        NSArray *addressParts = [address componentsSeparatedByString:@" "];
+        NSString *streetNumber = [addressParts objectAtIndex:0];
+        [queryObject addRowFilter:[FactualRowFilter fieldName:@"address" beginsWith:streetNumber]];
+        
+        //filter by restaurants within 110 meters of Google's claimed restaurant location
+        CLLocationCoordinate2D geoFilterCoords = {
+            lat, lng
+        };
+        [queryObject setGeoFilter:geoFilterCoords radiusInMeters:110.0];
+        
+        //execute the Factual request
+        _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:queryObject withDelegate:self];
     }
-    else if ([restaurantNameExploded count] > 1) {
-        queryString = [restaurantNameExploded objectAtIndex:1];
+    else
+    {
+        NSLog(@"invalid data passed into queryFactualWithRestaurantName");
     }
-    else {
-        queryString = @"";
-    }
-    
-    NSLog(@"to get from Factual: %@", restaurantFullName);
-    
-    //search for queryString only in the name of the restaurant
-    [queryObject addRowFilter:[FactualRowFilter fieldName:@"name" search:queryString]];
-    
-    //query Factual
-    _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:queryObject withDelegate:self];
-    
 }
 
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj {
     
     self.queryResult = queryResultObj;
     
-    if ((self.queryResult != nil) & ([self.queryResult.rows objectAtIndex:0] != nil)) {
+//    NSLog(@"queryresult object 0: %@", [self.queryResult.rows objectAtIndex:0]);
+    
+    if ((self.queryResult != nil) & ([self.queryResult.rows objectAtIndex:0] != nil))
+    {
+        //use the first restaurant that matches the query
         FactualRow *row = [self.queryResult.rows objectAtIndex:0];
         
 //        NSLog(@"from factual: %@", self.queryResult.rows);
         
         //to-do: need to check if these are open later today. For now, I'm adding all matches with Factual instead of checking hours first.
         
-        //to-do: this is wrong. Need to see if this is the first query in a table refresh (user refreshed table) or a query that's just one in a set of queries that must be run together to gather all required data.  Pass param from Google query to this one that has one value if it's the first query or another value if it's a subsequent query.  Need to removeAllObjects if it's the first query in a set & there are existing objects in openLaterPlaces.
-        
-        //maybe do this: bool value isFirstQueryInSet set to TRUE within queryGooglePlaces if it's the first query in the set (nil param for nextPage).  Once Factual gets first result, it checks the value. If TRUE, it removesALlObjects from openLaterPlaces and sets the value back to FALSE. Subsequent Factual queries addObject to the array but don't clear the contents first.  Then, when another full refresh is conducted, it clears out the contents of the array to start over.
-        
-        if ((isFirstQueryInSet == TRUE) & ([openLaterPlaces count] > 0))
-        {
-            [openLaterPlaces removeAllObjects];
-            isFirstQueryInSet = FALSE;
-        }
-        
-        float lat = [[row valueForName:@"latitude"]floatValue];
-        float lng = [[row valueForName:@"longitude"]floatValue];
-        
-        NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLocation.latitude deviceLongitude:deviceLocation.longitude toPlaceLatitude:lat placeLongitude:lng]];
+        //set values for restaurant object
+        NSMutableDictionary *openLaterRestaurant = [[NSMutableDictionary alloc]init];
         NSString *restaurantName = [row valueForName:@"name"];
         
-        NSMutableDictionary *openLaterRestaurant = [[NSMutableDictionary alloc]init];
+        //calculate proximity of mobile device to the restaurant
+        float lat = [[row valueForName:@"latitude"]floatValue];
+        float lng = [[row valueForName:@"longitude"]floatValue];
+        NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",[self calculateDistanceFromDeviceLatitudeInMiles:deviceLocation.latitude deviceLongitude:deviceLocation.longitude toPlaceLatitude:lat placeLongitude:lng]];
         [openLaterRestaurant setValue:proximity forKey:@"proximity"];
         [openLaterRestaurant setValue:restaurantName forKey:@"name"];
-        [openLaterRestaurant setValue:[row rowId] forKey:@"id"];
-    
+        [openLaterRestaurant setValue:[row rowId] forKey:@"factual_id"];
+        [openLaterRestaurant setValue:[row valueForName:@"hours"] forKey:@"hours"];
+        
+        //run query to factual with row filter "factual_id" and value [openLaterRestaurant valueForKey:@"factual_id"] to get the restaurant details
+//        NSLog(@"factual id for %@: %@", [openLaterRestaurant valueForKey:@"name"], [openLaterRestaurant valueForKey:@"factual_id"]);
+        
+//        NSLog(@"factual hours for %@: %@", [openLaterRestaurant valueForKey:@"name"], [openLaterRestaurant valueForKey:@"hours"]);
+        
+        
         [openLaterPlaces addObject:openLaterRestaurant];
         
         //to-do: sort openLaterPlaces array by proximity asc
-        
+        //to-do: sort openNowPlaces array by proximity asc (the Google results are sorted that way since I queried based on proximity. However, I may be adding some Factual results in to openNowPlaces because the restaurant didn't have an opening_hours key in Google but is known to be open now based on Factual's data).
+
         [placeTableView reloadData];
     }
+    
+//    NSLog(@"openLaterPlaces: %d", [openLaterPlaces count]);
 }
 
-/* to-do: remove this if unnecessary
-- (void)fetchedFactualData:(NSData *)responseData
-{
-    NSError* error;
-    NSDictionary* json = [NSJSONSerialization
-                          JSONObjectWithData:responseData
-                          options:kNilOptions
-                          error:&error];
-    NSDictionary *response = [json objectForKey:@"response"];
-    NSArray *results = [response objectForKey:@"data"];
-    
-//    NSLog(@"results:     %@",results);
-//    NSString *hoursForFirstOne = [[results objectAtIndex:0] objectForKey:@"hours"];
-    
-//    NSLog(@"hours: %@", hoursForFirstOne);
-    NSLog(@"factual match: %@", [[results objectAtIndex:0]objectForKey:@"name"]);
- 
-}
-*/
-
-/*
--(void) requestComplete:(FactualAPIRequest *)request receivedRawResult:(NSDictionary *)result {
-    
-    
-//    _rawResult = result;
-     for (id key in result) {
-     NSLog(@"KEY: %@, VALUE: %@", key, [result objectForKey:key]);
-     }
-}
-*/
 -(void) requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
-    NSLog(@"FAILED with error");
+    NSLog(@"Factual request FAILED with error: ");
+    NSLog(@"%@", error);
 }
 
 - (void)viewDidUnload
@@ -606,6 +606,9 @@
         
         switch (section)
         {
+                
+            //to-do: some items in openNowPlaces may have been added from Factual. Do we want to pull the info from Google or Factual for the details page? If pulling from Google, we need to somehow get the "reference" value from Google into the NSMutableDictionary containing the restaurant that we added to openNowPlaces from Factual.  We would then query Google with the reference to get the details.
+                
             //open now
             case 0:
                 destinationVC.placeReference = [[openNowPlaces objectAtIndex:indexPath.row]objectForKey:@"reference"];

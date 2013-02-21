@@ -107,6 +107,8 @@
 		93408E52168EA828004124BE /* WhatsOpen */ = {
 			isa = PBXGroup;
 			children = (
+				93DA346516D5B77100CC6C59 /* Location Services */,
+				93DA346416D5AE6100CC6C59 /* Querying */,
 				93F24B0016A5F380000F4E66 /* Main Screen */,
 				93408E76168EAA76004124BE /* Storyboard */,
 				93408E75168EAA5E004124BE /* List View */,
@@ -165,6 +167,20 @@
 				93408E72168EAA35004124BE /* placeDetailViewController.m */,
 			);
 			name = "Detail View";
+			sourceTree = "<group>";
+		};
+		93DA346416D5AE6100CC6C59 /* Querying */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Querying;
+			sourceTree = "<group>";
+		};
+		93DA346516D5B77100CC6C59 /* Location Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Location Services";
 			sourceTree = "<group>";
 		};
 		93F24B0016A5F380000F4E66 /* Main Screen */ = {
