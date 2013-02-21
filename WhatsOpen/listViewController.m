@@ -8,7 +8,7 @@
 
 
 /*
- to-do: set navigation bar to very dark grey or black
+ to-do: set color when selecting row (needs to match dark blue color scheme)
 to-do: move querying into different file and set up as a singleton
  //to-do: will queries fail gracefully if there's no location found?
 //to-do: what happens if there are none open now in 3 pages?
@@ -212,7 +212,6 @@ to-do: move querying into different file and set up as a singleton
 {
     if (indexPath.row %2 == 0)
     {
-//        UIColor *lightBlue = [UIColor colorWithRed:0.5 green:0.8 blue:1.0 alpha:0.35];
         UIColor *lightBlue = [UIColor colorWithRed:0.05 green:0.1 blue:0.15 alpha:0.15];
         cell.backgroundColor = lightBlue;
     }
@@ -241,56 +240,15 @@ to-do: move querying into different file and set up as a singleton
 
 - (float)calculateDistanceFromDeviceLatitudeInMiles:(float)deviceLatitude deviceLongitude:(float)deviceLongitude toPlaceLatitude:(float)placeLat placeLongitude:(float)placeLng
 {
-    
-    float latDiffFloat = deviceLatitude - placeLat;
-    float lngDiffFloat = deviceLongitude - placeLng;
-    float latSquaredFloat = powf(latDiffFloat, 2);
-    float lngSquaredFlaot = powf(lngDiffFloat, 2);
-    
-    float distanceInMilesFloat = sqrtf(latSquaredFloat + lngSquaredFlaot) * (10000/90) * .621371;
-    float distance = [[NSString stringWithFormat:@"%.2f", distanceInMilesFloat] floatValue];
+    float latDiff = deviceLatitude - placeLat;
+    float lngDiff = deviceLongitude - placeLng;
+    float latSquared = powf(latDiff, 2);
+    float lngSquared = powf(lngDiff, 2);
+    float distanceInMiles = sqrtf(latSquared + lngSquared) * (10000/90) * .621371;
+    float distance = [[NSString stringWithFormat:@"%.2f", distanceInMiles] floatValue];
     
     return distance;
 }
-
-/*
- // Override to support conditional editing of the table view.
- - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the specified item to be editable.
- return YES;
- }
- */
-
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
- {
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
- }
- else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }
- }
- */
-
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
- {
- }
- */
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
 
 #pragma mark - Table view delegate
 
@@ -402,6 +360,8 @@ to-do: move querying into different file and set up as a singleton
     {
         NSMutableDictionary *place = [[NSMutableDictionary alloc]initWithDictionary:[_placesArray objectAtIndex:i]];
         
+        
+        //to-do: ensure that distance on detail view for the Factual results matches the distance shown in the main table view
         //Get distance of farthest place in the results. Since results are ordered by distance, we'll look at the last result.
         if (i == (_placesArray.count - 1))
         {
@@ -484,6 +444,7 @@ to-do: move querying into different file and set up as a singleton
     
     //if <9 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
+    //to-do: make sure there aren't strange duplicate cell issues after changing it to <9
     if ( numOpenNow <1 && pageNum <3)
     {
         //to-do: spinner not working properly 
@@ -592,6 +553,27 @@ to-do: move querying into different file and set up as a singleton
         
         //to-do: sort openLaterPlaces array by proximity asc
         //to-do: sort openNowPlaces array by proximity asc (the Google results are sorted that way since I queried based on proximity. However, I may be adding some Factual results in to openNowPlaces because the restaurant didn't have an opening_hours key in Google but is known to be open now based on Factual's data).
+        
+        //if there is a value for the hours key
+        if ([[openLaterRestaurant valueForKey:@"hours"] length] > 0)
+        {
+            //hours are in string format, so we convert them to JSON for key-value compliance
+            NSData *hoursData = [[openLaterRestaurant objectForKey:@"hours"] dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *hours = [NSJSONSerialization JSONObjectWithData:hoursData
+                                                                 options:NSJSONReadingMutableContainers
+                                                                   error:nil];
+            
+            if (!hours)
+            {
+                NSLog(@"Error parsing JSON");
+            }
+            else
+            {
+                NSLog(@"monday: %@", [hours objectForKey:@"monday"]);
+            }
+            
+        }
+        
 
         [placeTableView reloadData];
     }
