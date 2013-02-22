@@ -697,8 +697,21 @@ to-do: move querying into different file and set up as a singleton
                      
                      NSLog(@"yesterday last close time: %@", yesterdayLastCloseTime);
                      
+                     //is it still open now?
+                     if (([dateTimeInSystemLocalTimezone compare:yesterdayLastCloseTime] == NSOrderedAscending) &
+                         ([dateTimeInSystemLocalTimezone compare:yesterdayLastOpenTime] == NSOrderedDescending))
+                     {
+                         NSLog(@"%@ IS OPEN from last night. Hours:%@", [restaurant valueForKey:@"name"], [yesterdayHours lastObject]);
+                         
+                         [openNowPlaces addObject:restaurant];
+                         //to-do: re-sort openNowPlaces based on proximity
+                         
+                         //to-do: should I move this?
+                         [placeTableView reloadData];
+                     }
+                     
                  } //end if open yesterday
-/*
+
                 //Is restaurant open today at all?
                 if (todayHours.count > 0)
                 {
@@ -829,7 +842,6 @@ to-do: move querying into different file and set up as a singleton
                         }
                     } //end for loop of all opening hour ranges today
                 } //if open at all today
- */
             }
         } //end if it has a value for the hours key
     } //end if !empty query result
