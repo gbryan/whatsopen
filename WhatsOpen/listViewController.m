@@ -585,11 +585,39 @@ to-do: move querying into different file and set up as a singleton
                 [dayOfWeekFormatter setDateFormat:@"EEEE"];
                 NSString *dayToday = [[dayOfWeekFormatter stringFromDate:dateTimeInSystemLocalTimezone]lowercaseString];
                 
+                //get previous day (if hours are listed as [11:00,2:00] yesterday, that means it's open 0:00-2:00 today)
+                NSDateComponents *previousDayOffset = [[NSDateComponents alloc] init];
+                [previousDayOffset setDay:-1];
+                NSDate *previousDayDate = [[NSCalendar currentCalendar] dateByAddingComponents:previousDayOffset toDate:dateTimeInSystemLocalTimezone options:0];
+                NSString *dayYesterday = [[dayOfWeekFormatter stringFromDate:previousDayDate]lowercaseString];
+                
                 //array of arrays containing the opening hours for the restaurant today
                 //example: [["7:00","10:00"], ["12:00", "14:00"], ["17:30", "22:00"]]
                 NSArray *todayHours = [hours objectForKey:dayToday];
+                NSArray *yesterdayHours = [hours objectForKey:dayYesterday];
                 
-                //check if restaurant is open today at all
+                //to-do: PROBLEM: What if the Sunday hours are [[12:00, 14:00],[17:00,21:00]] but Saturday hours were [12:00,2:00] and it's currently Sunday at 1:00? It is open.
+                
+                 //Is restaurant still open within last night's hour range?
+                 if (yesterdayHours.count > 0)
+                 {
+                 
+                /*
+                 - was restaurant open yesterday?
+                    - if so, get last object in yesterdayHours
+                    - get the opening and closing times for yesterday (in yesterday's date)
+                    - see if closing time is < opening time (example: [11:00, 4:00]. 4:00 < 11:00)
+                        - if closing < opening
+                            - get closing time in today's date (if [11:00, 4:00] was for date 2013-2-22, get 2013-2-23 04:00:00)
+                            - if now < that closing time, then it's still open ( [openNowPlaces addObject:restaurant]; and then re-sort openNowPlaces by proximity
+                 */
+                     
+                     NSArray *lastHourRangeFromYesterday = [yesterdayHours lastObject];
+                     
+                     
+                 }
+                
+                //Is restaurant open today at all?
                 if (todayHours.count > 0)
                 {
                     //check each set of opening hours today for the restaurant
@@ -658,6 +686,7 @@ to-do: move querying into different file and set up as a singleton
                         if (closeHour < openHour)
                         {
                             //to-do: This is still not right.
+                            //now:2013-02-22 01:13:27 +0000    open:2013-02-22 11:00:00 +0000    close:2013-02-23 04:00:00 +0000
                             //example: it's currently 1:00 and the restaurant closes at 4:00 but opens again at 11:00. It should be open right now.
                             NSDateComponents *nextDayOffset = [[NSDateComponents alloc] init];
                             [nextDayOffset setDay:1];
@@ -673,6 +702,8 @@ to-do: move querying into different file and set up as a singleton
                         //http://developer.factual.com/display/docs/Places+API+-+Restaurants#PlacesAPI-Restaurants-OpeningHoursJSON.1
                         if ([[todayHours objectAtIndex:i] count] > 2)
                         {
+                            //to-do: display this somehow to users - maybe highlight the cell some color if there's a comment to indicate that there's a qualifier (the comment might say that it's only open at this time on special occasions, for example)
+                            
                             //this is an optional value that may not exist for most restaurants
                             NSString *optionalTimeComment = [[todayHours objectAtIndex:i]objectAtIndex:2];
                             NSLog(@"time comment: %@", optionalTimeComment);
@@ -689,15 +720,11 @@ to-do: move querying into different file and set up as a singleton
                             
                             //to-do: should I move this?
                             [placeTableView reloadData];
-                            
-                            /*
-                             now:2013-02-21 21:12:03 +0000    open:2013-02-21 11:00:00 +0000    close:2013-02-22 04:00:00 +0000
-                             */
                         }
                         //if not open right now
                         else
                         {
-                            //to-do: in tableview cellForRowAtIndexPath, set detailText to [NSString stringWithFormat:@"Opening at %@", [restaurant objectForKey:@"openNext"]] (except, I need to convert to 12 hr format first).
+                            //to-do: in tableview cellForRowAtIndexPath, set detailText to [NSString stringWithFormat:@"Opening at %@", [restaurant objectForKey:@"openNext"]] (except, I need to convert to 12 hr format first and show only the time, not other date stuff).
                             NSLog(@"%@ is CLOSED. Hours:%@", [restaurant valueForKey:@"name"], todayHours);
                             NSLog(@"now:%@    open:%@    close:%@", dateTimeInSystemLocalTimezone, openTime, closeTime);
                             
@@ -717,9 +744,7 @@ to-do: move querying into different file and set up as a singleton
                                 //break out of the loop to test the next restaurant (do not test other times for this restaurant)
                                 break;
                             }
-
-                            
-                        } //end else
+                        }
                     } //end for loop of all opening hour ranges today
                 } //if open at all today
             }
