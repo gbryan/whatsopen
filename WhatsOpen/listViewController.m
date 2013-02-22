@@ -547,13 +547,13 @@ to-do: move querying into different file and set up as a singleton
             [restaurant setObject:@"factual" forKey:@"provider"];
             
             //get current date/time of the mobile device
+            
+            //to-do: change to NSUIntegerMax
             NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:[NSDate date]];
             NSInteger day = [dateComponents weekday];
             NSInteger hour = [dateComponents hour];
             NSInteger minute = [dateComponents minute];
             NSString *nowTimeString = [NSString stringWithFormat:@"%d:%d", hour, minute];
-            
-            NSLog(@"day: %d, hour:%d, minute:%d", day, hour, minute);
             
             //hours from Factual are in string format, so we convert them to JSON for key-value compliance
             NSData *hoursData = [[restaurant objectForKey:@"hours"] dataUsingEncoding:NSUTF8StringEncoding];
@@ -583,13 +583,19 @@ to-do: move querying into different file and set up as a singleton
                 //get current day (needs to be lowercase to match Factual's db
                 NSDateFormatter *dayOfWeekFormatter = [[NSDateFormatter alloc]init];
                 [dayOfWeekFormatter setDateFormat:@"EEEE"];
+                [dayOfWeekFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
                 NSString *dayToday = [[dayOfWeekFormatter stringFromDate:dateTimeInSystemLocalTimezone]lowercaseString];
                 
                 //get previous day (if hours are listed as [11:00,2:00] yesterday, that means it's open 0:00-2:00 today)
                 NSDateComponents *previousDayOffset = [[NSDateComponents alloc] init];
                 [previousDayOffset setDay:-1];
-                NSDate *previousDayDate = [[NSCalendar currentCalendar] dateByAddingComponents:previousDayOffset toDate:dateTimeInSystemLocalTimezone options:0];
-                NSString *dayYesterday = [[dayOfWeekFormatter stringFromDate:previousDayDate]lowercaseString];
+                NSDate *previousDayDate = [[NSDate alloc]init];
+                previousDayDate = [[NSCalendar currentCalendar] dateByAddingComponents:previousDayOffset toDate:dateTimeInSystemLocalTimezone options:0];
+                
+                NSDateFormatter *yesterdayFormatter = [[NSDateFormatter alloc]init];
+                [yesterdayFormatter setDateFormat:@"EEEE"];
+                [yesterdayFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+                NSString *dayYesterday = [[yesterdayFormatter stringFromDate:previousDayDate]lowercaseString];
                 
                 //array of arrays containing the opening hours for the restaurant today
                 //example: [["7:00","10:00"], ["12:00", "14:00"], ["17:30", "22:00"]]
@@ -610,13 +616,89 @@ to-do: move querying into different file and set up as a singleton
                         - if closing < opening
                             - get closing time in today's date (if [11:00, 4:00] was for date 2013-2-22, get 2013-2-23 04:00:00)
                             - if now < that closing time, then it's still open ( [openNowPlaces addObject:restaurant]; and then re-sort openNowPlaces by proximity
+                 
+                 TODAY IS THURSDAY (since it's yesterday)!!!!
                  */
                      
                      NSArray *lastHourRangeFromYesterday = [yesterdayHours lastObject];
+                     NSLog(@"last hours from %@: %@", dayYesterday, lastHourRangeFromYesterday);
+                     NSString *lastOpeningTimeYesterdayString = [lastHourRangeFromYesterday objectAtIndex:0];
+                     NSString *lastClosingTimeYesterdayString = [lastHourRangeFromYesterday objectAtIndex:1];
                      
+                     //Get integer values for the opening and closing hour/minute of the restaurant (from yesterday's last opening hours range)
+                     NSInteger openHour;
+                     NSInteger openMinute;
+                     NSInteger closeHour;
+                     NSInteger closeMinute;
                      
-                 }
-                
+                     if ([lastOpeningTimeYesterdayString length] > 4)
+                     {
+                         //it's after 9:59, so it's HH:mm instead of H:mm
+                         openHour = [[lastOpeningTimeYesterdayString substringToIndex:2]integerValue];
+                         openMinute = [[lastOpeningTimeYesterdayString substringWithRange:NSMakeRange(3, 2)]integerValue];
+                     }
+                     else
+                     {
+                         //it's before 10:00, so it's H:mm
+                         openHour = [[lastOpeningTimeYesterdayString substringToIndex:1]integerValue];
+                         openMinute = [[lastOpeningTimeYesterdayString substringWithRange:NSMakeRange(2, 2)]integerValue];
+                     }
+                     if ([lastClosingTimeYesterdayString length] > 4)
+                     {
+                         //it's after 9:59, so it's HH:mm instead of H:mm
+                         closeHour = [[lastClosingTimeYesterdayString substringToIndex:2]integerValue];
+                         closeMinute = [[lastClosingTimeYesterdayString substringWithRange:NSMakeRange(3, 2)]integerValue];
+                     }
+                     else
+                     {
+                         //it's before 10:00, so it's H:mm
+                         closeHour = [[lastClosingTimeYesterdayString substringToIndex:1]integerValue];
+                         closeMinute = [[lastClosingTimeYesterdayString substringWithRange:NSMakeRange(2, 2)]integerValue];
+                         
+                     }
+                     
+                     //to-do: there's a lot of previousDay calculations above that I need to remove (if unnecessary) when I've gotten some sleep
+                     
+                     //Create a date object representing the opening time of the restaurant yeseterday in the device's timezone
+                     //previousDayDate is yesterday at exactly this time (Thursday)
+                     NSDate *yesterday = [NSDate dateWithTimeInterval:-86400 sinceDate:[NSDate date]];
+                     NSDateComponents *openTimeComponents = [[NSCalendar currentCalendar] components:NSUIntegerMax fromDate:yesterday];
+                     [openTimeComponents setHour:openHour];
+                     [openTimeComponents setMinute:openMinute];
+                     [openTimeComponents setSecond:0];
+//                     NSLog(@"the components:%@", openTimeComponents);
+                     NSDate *yesterdayLastOpenTime = [[NSCalendar currentCalendar] dateFromComponents:openTimeComponents];
+                     yesterdayLastOpenTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:yesterdayLastOpenTime];
+                     NSLog(@"yesterday last open time: %@", yesterdayLastOpenTime);
+                     
+                     //Create a date object representing the closing time of the restaurant yesterday in the device's timezone
+                     NSDateComponents *closeTimeComponents = [[NSCalendar currentCalendar] components:NSUIntegerMax fromDate:yesterday];
+                     [closeTimeComponents setHour:closeHour];
+                     [closeTimeComponents setMinute: closeMinute];
+                     [closeTimeComponents setSecond:0];
+                     NSDate *yesterdayLastCloseTime = [[NSCalendar currentCalendar] dateFromComponents:closeTimeComponents];
+                     
+                     //If the restaurant closes after midnight, set the close date to the close hour on the NEXT day
+                     //example: ["11:00","2:00"] opens at 11am, closes at 2am the next day
+                     if (closeHour < openHour)
+                     {
+                         //to-do: This is still not right.
+                         //now:2013-02-22 01:13:27 +0000    open:2013-02-22 11:00:00 +0000    close:2013-02-23 04:00:00 +0000
+                         //example: it's currently 1:00 and the restaurant closes at 4:00 but opens again at 11:00. It should be open right now.
+                         NSDateComponents *nextDayOffset = [[NSDateComponents alloc] init];
+                         [nextDayOffset setDay:1];
+                         yesterdayLastCloseTime = [[NSCalendar currentCalendar] dateByAddingComponents:nextDayOffset toDate:yesterdayLastCloseTime options:0];
+                         yesterdayLastCloseTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:yesterdayLastCloseTime];
+                     }
+                     else
+                     {
+                         yesterdayLastCloseTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:yesterdayLastCloseTime];
+                     }
+                     
+                     NSLog(@"yesterday last close time: %@", yesterdayLastCloseTime);
+                     
+                 } //end if open yesterday
+/*
                 //Is restaurant open today at all?
                 if (todayHours.count > 0)
                 {
@@ -626,12 +708,12 @@ to-do: move querying into different file and set up as a singleton
                         NSString *openTimeString = [[todayHours objectAtIndex:i]objectAtIndex:0];
                         NSString *closeTimeString = [[todayHours objectAtIndex:i]objectAtIndex:1];
 
-    /*
-                        //Get hour and minute of current time in system timezone
-                        NSDateComponents *currentTimeComponents = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:[NSDate date]];
-                        NSInteger hourNow = [currentTimeComponents hour];
-                        NSInteger minuteNow = [currentTimeComponents minute];
-    */                    
+//
+//                        //Get hour and minute of current time in system timezone
+//                        NSDateComponents *currentTimeComponents = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:[NSDate date]];
+//                        NSInteger hourNow = [currentTimeComponents hour];
+//                        NSInteger minuteNow = [currentTimeComponents minute];
+ 
                         //Get integer values for the opening and closing hour/minute of the restaurant
                         NSInteger openHour;
                         NSInteger openMinute;
@@ -747,6 +829,7 @@ to-do: move querying into different file and set up as a singleton
                         }
                     } //end for loop of all opening hour ranges today
                 } //if open at all today
+ */
             }
         } //end if it has a value for the hours key
     } //end if !empty query result
