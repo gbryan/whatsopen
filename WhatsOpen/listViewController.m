@@ -227,8 +227,9 @@ to-do: move querying into different file and set up as a singleton
         cell.detailTextLabel.text = [[openNowPlaces objectAtIndex:indexPath.row] objectForKey:@"proximity"];
     }
     else {
-        cell.textLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] valueForKey:@"name"];
-        cell.detailTextLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] valueForKey:@"proximity"];
+        cell.textLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"name"];
+//        cell.detailTextLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"Opening at %@", [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"openNext"]];
     }
     
     //remove halo effect in background color
@@ -591,137 +592,139 @@ to-do: move querying into different file and set up as a singleton
                 //check if restaurant is open today at all
                 if (todayHours.count > 0)
                 {
-                    //this gets the open time for only the first set of times the restaurant is open today (i.e. breakfast time or lunch time)
-                    //need to run a loop to check each array of opening times for the day
-                    NSString *openTimeString = [[todayHours objectAtIndex:0]objectAtIndex:0];
-                    NSString *closeTimeString = [[todayHours objectAtIndex:0]objectAtIndex:1];
-                    
-                    //1 get date components for current date
-                    //2 get int of hour and minute from openTime
-                    //3 date components set hour and set minute based on int hour and int minute from openTime
-                    //4 get an NSDate full date based on the time the restaurant opens and closes today - NSDate *openTime = [systemCalendar dateFromComponents: components];
-                    //5 compare nsdate of restaurant open and close time with nsdate of current time (dateTimeInSystemLocalTimezone)
-                    
-                    //Get hour and minute of current time in system timezone
-                    NSDateComponents *currentTimeComponents = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:[NSDate date]];
-                    NSInteger hourNow = [currentTimeComponents hour];
-                    NSInteger minuteNow = [currentTimeComponents minute];
-                    
-                    //Get integer values for the opening and closing hour/minute of the restaurant
-                    NSInteger openHour;
-                    NSInteger openMinute;
-                    NSInteger closeHour;
-                    NSInteger closeMinute;
-                    
-                    if ([openTimeString length] > 4)
-                    {
-                        //it's after 9:59, so it's HH:mm instead of H:mm
-                        openHour = [[openTimeString substringToIndex:2]integerValue];
-                        openMinute = [[openTimeString substringWithRange:NSMakeRange(3, 2)]integerValue];
-                    }
-                    else
-                    {
-                        //it's before 10:00, so it's H:mm
-                        openHour = [[openTimeString substringToIndex:1]integerValue];
-                        openMinute = [[openTimeString substringWithRange:NSMakeRange(2, 2)]integerValue];
-                    }
-                    if ([closeTimeString length] > 4)
-                    {
-                        //it's after 9:59, so it's HH:mm instead of H:mm
-                        closeHour = [[closeTimeString substringToIndex:2]integerValue];
-                        closeMinute = [[closeTimeString substringWithRange:NSMakeRange(3, 2)]integerValue];
-                    }
-                    else
-                    {
-                        //it's before 10:00, so it's H:mm
-                        closeHour = [[closeTimeString substringToIndex:1]integerValue];
-                        closeMinute = [[closeTimeString substringWithRange:NSMakeRange(2, 2)]integerValue];
+                    //check each set of opening hours today for the restaurant
+                    for (int i=0; i < todayHours.count; i++)
+                    {    
+                        NSString *openTimeString = [[todayHours objectAtIndex:i]objectAtIndex:0];
+                        NSString *closeTimeString = [[todayHours objectAtIndex:i]objectAtIndex:1];
 
-                    }
-                    
-                    //Create a date object representing the opening time of the restaurant today in the device's timezone
-                    NSCalendar *systemCalendar = [NSCalendar currentCalendar];
-                    NSDateComponents *openTimeComponents = [systemCalendar components:NSUIntegerMax fromDate:[NSDate date]];
-                    [openTimeComponents setHour:openHour];
-                    [openTimeComponents setMinute: openMinute];
-                    [openTimeComponents setSecond:0];
-                    NSDate *openTime = [systemCalendar dateFromComponents:openTimeComponents];
-                    openTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:openTime];
-                    
-                    //Create a date object representing the closing time of the restaurant today in the device's timezone
-                    NSDate *closeTime = [[NSDate alloc]init];
-                    NSDateComponents *closeTimeComponents = [systemCalendar components:NSUIntegerMax fromDate:[NSDate date]];
-                    [closeTimeComponents setHour:closeHour];
-                    [closeTimeComponents setMinute: closeMinute];
-                    [closeTimeComponents setSecond:0];
-                    closeTime = [systemCalendar dateFromComponents:closeTimeComponents];
-                    
-                    //If the restaurant closes after midnight, set the close date to the close hour on the NEXT day
-                    //example: ["11:00","2:00"] opens at 11am, closes at 2am the next day
-                    if (closeHour < openHour)
-                    {
-                        NSDateComponents *nextDayOffset = [[NSDateComponents alloc] init];
-                        [nextDayOffset setDay:1];
-                        closeTime = [systemCalendar dateByAddingComponents:nextDayOffset toDate:closeTime options:0];
-                        closeTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:closeTime];
-                    }
-                    else
-                    {
-                        closeTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:closeTime];
-                    }
-                    
-//                    NSLog(@"open time: %@", openTime);
-//                    NSLog(@"close time: %@", closeTime);
+    /*
+                        //Get hour and minute of current time in system timezone
+                        NSDateComponents *currentTimeComponents = [[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:[NSDate date]];
+                        NSInteger hourNow = [currentTimeComponents hour];
+                        NSInteger minuteNow = [currentTimeComponents minute];
+    */                    
+                        //Get integer values for the opening and closing hour/minute of the restaurant
+                        NSInteger openHour;
+                        NSInteger openMinute;
+                        NSInteger closeHour;
+                        NSInteger closeMinute;
+                        
+                        if ([openTimeString length] > 4)
+                        {
+                            //it's after 9:59, so it's HH:mm instead of H:mm
+                            openHour = [[openTimeString substringToIndex:2]integerValue];
+                            openMinute = [[openTimeString substringWithRange:NSMakeRange(3, 2)]integerValue];
+                        }
+                        else
+                        {
+                            //it's before 10:00, so it's H:mm
+                            openHour = [[openTimeString substringToIndex:1]integerValue];
+                            openMinute = [[openTimeString substringWithRange:NSMakeRange(2, 2)]integerValue];
+                        }
+                        if ([closeTimeString length] > 4)
+                        {
+                            //it's after 9:59, so it's HH:mm instead of H:mm
+                            closeHour = [[closeTimeString substringToIndex:2]integerValue];
+                            closeMinute = [[closeTimeString substringWithRange:NSMakeRange(3, 2)]integerValue];
+                        }
+                        else
+                        {
+                            //it's before 10:00, so it's H:mm
+                            closeHour = [[closeTimeString substringToIndex:1]integerValue];
+                            closeMinute = [[closeTimeString substringWithRange:NSMakeRange(2, 2)]integerValue];
 
-                    //Get the time comment (if any) for this range of hours for this restaurant
-                    //http://developer.factual.com/display/docs/Places+API+-+Restaurants#PlacesAPI-Restaurants-OpeningHoursJSON.1
-                    if ([[todayHours objectAtIndex:0] count] > 2)
-                    {
-                        //this is an optional value that may not exist for most restaurants
-                        NSString *optionalTimeComment = [[todayHours objectAtIndex:0]objectAtIndex:2];
-                        NSLog(@"time comment: %@", optionalTimeComment);
-                    }
-                    
-                    //if the restaurant is open right now
-                    if (([dateTimeInSystemLocalTimezone compare:closeTime] == NSOrderedAscending) &
-                        ([dateTimeInSystemLocalTimezone compare:openTime] == NSOrderedDescending))
-                    {
-                        NSLog(@"%@ IS OPEN. Hours:%@", [restaurant valueForKey:@"name"], todayHours);
-//                        [openNowPlaces addObject:restaurant];
-                        //re-sort openNowPlaces based on proximity
-                        //reload table data
-                        /*
-                         now:2013-02-21 21:12:03 +0000    open:2013-02-21 11:00:00 +0000    close:2013-02-22 04:00:00 +0000
-                         */
-                    }
-                    
-                    //loop will end here
-                    
-                    //to-do: make sure I'm not adding it to openNow and openLater!
-                    
-                    else
-                    {
+                        }
                         
-                        NSLog(@"%@ is not open now. Hours:%@", [restaurant valueForKey:@"name"], todayHours);
-                        NSLog(@"now:%@    open:%@    close:%@", dateTimeInSystemLocalTimezone, openTime, closeTime);
+                        //Create a date object representing the opening time of the restaurant today in the device's timezone
+                        NSCalendar *systemCalendar = [NSCalendar currentCalendar];
+                        NSDateComponents *openTimeComponents = [systemCalendar components:NSUIntegerMax fromDate:[NSDate date]];
+                        [openTimeComponents setHour:openHour];
+                        [openTimeComponents setMinute: openMinute];
+                        [openTimeComponents setSecond:0];
+                        NSDate *openTime = [systemCalendar dateFromComponents:openTimeComponents];
+                        openTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:openTime];
                         
-                        //we already know it's open later today sometime, so add it to openLaterPlaces
-                        //figure out when's the next time it opens later today and add that as a key/value to restaurant
-//                        [openLaterPlaces addObject:restaurant];
-                        //re-sort openLaterPlaces based on proximity
-                        //reload table data
-                    }
-                    
+                        //Create a date object representing the closing time of the restaurant today in the device's timezone
+                        NSDate *closeTime = [[NSDate alloc]init];
+                        NSDateComponents *closeTimeComponents = [systemCalendar components:NSUIntegerMax fromDate:[NSDate date]];
+                        [closeTimeComponents setHour:closeHour];
+                        [closeTimeComponents setMinute: closeMinute];
+                        [closeTimeComponents setSecond:0];
+                        closeTime = [systemCalendar dateFromComponents:closeTimeComponents];
+                        
+                        //If the restaurant closes after midnight, set the close date to the close hour on the NEXT day
+                        //example: ["11:00","2:00"] opens at 11am, closes at 2am the next day
+                        if (closeHour < openHour)
+                        {
+                            //to-do: This is still not right.
+                            //example: it's currently 1:00 and the restaurant closes at 4:00 but opens again at 11:00. It should be open right now.
+                            NSDateComponents *nextDayOffset = [[NSDateComponents alloc] init];
+                            [nextDayOffset setDay:1];
+                            closeTime = [systemCalendar dateByAddingComponents:nextDayOffset toDate:closeTime options:0];
+                            closeTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:closeTime];
+                        }
+                        else
+                        {
+                            closeTime = [NSDate dateWithTimeInterval:deviceGMTOffset sinceDate:closeTime];
+                        }
+
+                        //Get the time comment (if any) for this range of hours for this restaurant
+                        //http://developer.factual.com/display/docs/Places+API+-+Restaurants#PlacesAPI-Restaurants-OpeningHoursJSON.1
+                        if ([[todayHours objectAtIndex:i] count] > 2)
+                        {
+                            //this is an optional value that may not exist for most restaurants
+                            NSString *optionalTimeComment = [[todayHours objectAtIndex:i]objectAtIndex:2];
+                            NSLog(@"time comment: %@", optionalTimeComment);
+                        }
+                        
+                        //if the restaurant is open right now
+                        if (([dateTimeInSystemLocalTimezone compare:closeTime] == NSOrderedAscending) &
+                            ([dateTimeInSystemLocalTimezone compare:openTime] == NSOrderedDescending))
+                        {
+                            NSLog(@"%@ IS OPEN. Hours:%@", [restaurant valueForKey:@"name"], todayHours);
+                            
+                            [openNowPlaces addObject:restaurant];
+                            //to-do: re-sort openNowPlaces based on proximity
+                            
+                            //to-do: should I move this?
+                            [placeTableView reloadData];
+                            
+                            /*
+                             now:2013-02-21 21:12:03 +0000    open:2013-02-21 11:00:00 +0000    close:2013-02-22 04:00:00 +0000
+                             */
+                        }
+                        //if not open right now
+                        else
+                        {
+                            //to-do: in tableview cellForRowAtIndexPath, set detailText to [NSString stringWithFormat:@"Opening at %@", [restaurant objectForKey:@"openNext"]] (except, I need to convert to 12 hr format first).
+                            NSLog(@"%@ is CLOSED. Hours:%@", [restaurant valueForKey:@"name"], todayHours);
+                            NSLog(@"now:%@    open:%@    close:%@", dateTimeInSystemLocalTimezone, openTime, closeTime);
+                            
+                            //see if it's open later today
+                            if ([dateTimeInSystemLocalTimezone compare:openTime] == NSOrderedAscending)
+                            {
+                                NSLog(@"%@ is open LATER today.", [restaurant objectForKey:@"name"]);
+                                [restaurant setValue:[NSString stringWithFormat:@"%@", openTime] forKey:@"openNext"];
+                                [openLaterPlaces addObject:restaurant];
+                                
+                                //re-sort by opening soonest
+                                NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNext" ascending:YES];
+                                [openLaterPlaces sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
+                                //to-do: should I move this?
+                                [placeTableView reloadData];
+                                
+                                //break out of the loop to test the next restaurant (do not test other times for this restaurant)
+                                break;
+                            }
+
+                            
+                        } //end else
+                    } //end for loop of all opening hour ranges today
                 } //if open at all today
             }
-            
         } //end if it has a value for the hours key
-        
-        [placeTableView reloadData];
-        
     } //end if !empty query result
-    
-//    NSLog(@"openLaterPlaces: %d", [openLaterPlaces count]);
 }
 
 -(void) requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
