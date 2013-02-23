@@ -30,7 +30,7 @@ to-do: move querying into different file and set up as a singleton
     NSMutableArray *openNowPlaces;
     NSMutableArray *openLaterPlaces;
     NSString *googleTypesString;
-    int pageNum;
+    NSInteger pageNum;
     bool isFirstTimeLocationServicesEnabled;
 }
 
@@ -273,6 +273,8 @@ to-do: move querying into different file and set up as a singleton
      */
     if (nextPageToken.length < 1)
     {
+        pageNum = 1;
+        
         if ([openNowPlaces count] > 0)
         {
             [openNowPlaces removeAllObjects];
@@ -446,8 +448,9 @@ to-do: move querying into different file and set up as a singleton
     //if <9 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
     //to-do: make sure there aren't strange duplicate cell issues after changing it to <9
-    if ( numOpenNow <1 && pageNum <3)
+    if ((numOpenNow <1) & (pageNum <3))
     {
+        NSLog(@"getting more results");
         //to-do: spinner not working properly 
         [spinner startAnimating];
         
