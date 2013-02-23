@@ -10,16 +10,15 @@
 #import "UMAAppDelegate.h"
 #import "queryController.h"
 
-@class queryController;
 @interface listViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
-{
-    queryController *queryControl;
-}
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
 @property (nonatomic, strong) IBOutlet UITableView *restaurantTableView;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView *spinner;
-//to-do: should these really be retain?
-@property (nonatomic, retain) NSMutableArray *openNow;
-@property (nonatomic, retain) NSMutableArray *openLater;
+@property (nonatomic, strong) NSMutableArray *openNow;
+@property (nonatomic, strong) NSMutableArray *openLater;
 
+-(void)reloadOpenNow;
+-(void)reloadOpenLater;
+//-(void)refreshTable;
+-(void)stopSpinner;
 @end

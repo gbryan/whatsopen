@@ -13,15 +13,18 @@
     //to-do: for naming convention, should these have underscores?
     NSInteger pageNum;
     CLLocationCoordinate2D deviceLocation;
-    NSMutableArray *openNow;
-    NSMutableArray *openLater;
+    listViewController *listView;
 }
 @synthesize queryCategories;
+//@synthesize listView;
+@synthesize openNow;
+@synthesize openLater;
+
 
 -(id)init
 {
     _locationService = [[locationServices alloc]init];
-    _listView = [UMAAppDelegate getListController];
+    listView = [[listViewController alloc]init];
     
     queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     openNow = [[NSMutableArray alloc]init];
@@ -44,11 +47,90 @@
         - reload the table
         - stop the spinner at some point
         - if user set this off by refreshing, figure out when to stop showing that it's refreshing
+ 
+ 
+ 
+ What if I have openNow and openLater both stored in queryController.
+ - when addObject to an array, call method from listVC telling it to get openNow (or openLater) from queryController and reload table
  */
 
     [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
 }
 
+#pragma mark - Table view data source
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // section 0 is "open now," and section 1 is "open later today"
+    return 2;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    switch (section)
+    {
+        case 0:
+            return @"Open Now";
+            break;
+        case 1:
+            return @"Open Later Today";
+            break;
+        default:
+            return nil;
+            break;
+    }
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    switch (section)
+    {
+        case 0:
+            return openNow.count;
+            break;
+        case 1:
+            return openLater.count;
+            break;
+        default:
+            return nil;
+            break;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row %2 == 0)
+    {
+        UIColor *lightBlue = [UIColor colorWithRed:0.05 green:0.1 blue:0.15 alpha:0.15];
+        cell.backgroundColor = lightBlue;
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
+    
+    if (indexPath.section == 0)
+    {
+        cell.textLabel.text = [[openNow objectAtIndex:indexPath.row] objectForKey:@"name"];
+        cell.detailTextLabel.text = [[openNow objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+    }
+    else {
+        cell.textLabel.text = [[openLater objectAtIndex:indexPath.row] objectForKey:@"name"];
+        //        cell.detailTextLabel.text = [[openLater objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+        NSDate *openNext = [[openLater objectAtIndex:indexPath.row] objectForKey:@"openNext"];
+        NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
+        [openNextFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+        [openNextFormatter setDateFormat:@"h:mm a"];
+        NSString *openNextString = [openNextFormatter stringFromDate:openNext];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"Opening at %@", openNextString];
+    }
+    
+    //remove halo effect in background color
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+    
+    return cell;
+}
 #pragma mark - Google Places Query
 -(void)queryGooglePlacesWithTypes:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
 {
@@ -61,7 +143,7 @@
     if (nextPageToken.length < 1)
     {
         pageNum = 1;
-        //to-do: change to [_listview openNow] and openLater
+        //to-do: change to [listView openNow] and openLater
         
         if ([openNow count] > 0)
         {
@@ -174,7 +256,7 @@
             titleLabel.text = proximityMessage;
             
             //to-do: is it bad practice to use the built-in setter (as a property) instead of using a homemade method?
-            _listView.navBar.titleView = titleLabel;
+            listView.navBar.titleView = titleLabel;
         }
         
         //calculate the proximity of the mobile device to the establishment
@@ -196,8 +278,8 @@
                 {
                     numOpenNow++;
                     [place setObject:@"google" forKey:@"provider"];
-//                    [openNow addObject:place];
-                    [[_listView openNow]addObject:place];
+                    [openNow addObject:place];
+                    [listView reloadOpenNow];
                 }
                 else if (isOpen == FALSE)
                 {
@@ -233,8 +315,8 @@
     }//end for loop
     
     //to-do: spinner not actually visible on screen for some reason
-    [[_listView spinner] stopAnimating];
-    [[_listView restaurantTableView] reloadData];
+//    [[listView spinner] stopAnimating];
+//    [[listView restaurantTableView] reloadData];
     
     //if <9 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
@@ -243,7 +325,7 @@
     {
         NSLog(@"getting more results");
         //to-do: spinner not working properly
-        [[_listView spinner] startAnimating];
+        [[listView spinner] startAnimating];
         
         //the Google pageToken doesn't become valid for some unspecified period of time after requesting the first page, so we have to delay the next request
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -540,14 +622,13 @@
                             NSLog(@"time comment: %@", optionalTimeComment);
                         }
                         
-//                        [openNow addObject:restaurant];
-                        [[_listView openNow]addObject:restaurant];
+                        [openNow addObject:restaurant];
                         addedAlready = TRUE;
                         
                         //Re-sort by proximity and refresh table
                         NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
-                        [[_listView openNow] sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
-                        [[_listView restaurantTableView] reloadData];
+                        [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
+                        [listView reloadOpenNow];
                     }
                 } //end if open yesterday
                 
@@ -581,13 +662,12 @@
                         {
                             NSLog(@"%@ IS OPEN. Hours:%@", [restaurant valueForKey:@"name"], todayHours);
                             
-//                            [openNow addObject:restaurant];
-                            [[_listView openNow]addObject:restaurant];
+                            [openNow addObject:restaurant];
                             
                             //Re-sort by proximity
                             NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
-                            [[_listView openNow] sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
-                            [[_listView restaurantTableView] reloadData];
+                            [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
+                            [listView reloadOpenNow];
                         }
                         else
                         {
@@ -616,14 +696,13 @@
                                 //                                [restaurant setValue:[NSString stringWithFormat:@"%@", openTimeDate] forKey:@"openNext"];
                                 //to-do: make sure openLater sorts properly when using the date OBJECT instead of date string
                                 [restaurant setObject:openTimeDate forKey:@"openNext"];
-//                                [openLater addObject:restaurant];
-                                [[_listView openLater]addObject:restaurant];
+                                [openLater addObject:restaurant];
                                 
                                 //re-sort by opening soonest
                                 NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNext" ascending:YES];
-                                [[_listView openLater] sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
+                                [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
                                 //to-do: should I move this?
-                                [[_listView restaurantTableView] reloadData];
+                                [listView reloadOpenLater];
                                 
                                 // Check the next restaurant (do not test other times for this restaurant since we already know it's open later)
                                 break;
@@ -634,10 +713,6 @@
             } //end else (hours key successfully converted to JSON)
         } //end if it has a value for the hours key
     } //end if !empty query result
-    
-    
-    NSLog(@"openNow array contents:%@", [_listView openNow]);
-    
 }
 
 -(void) requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
@@ -655,5 +730,17 @@
     float distance = [[NSString stringWithFormat:@"%.2f", distanceInMiles] floatValue];
     
     return distance;
+}
+
+-(NSMutableArray *)getOpenNow
+{
+    NSLog(@"got openNow from queryController");
+    return openNow;
+}
+
+-(NSMutableArray *)getOpenLater
+{
+    NSLog(@"got openLater from queryController");
+    return openLater;
 }
 @end

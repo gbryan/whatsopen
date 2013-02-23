@@ -45,10 +45,14 @@ to-do: move querying into different file and set up as a singleton
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
+    openNow = [[NSMutableArray alloc]init];
+    openLater = [[NSMutableArray alloc]init];
+    [restaurantTableView setDelegate:self];
+    [restaurantTableView setDataSource:self];
+    
     //Begin query to Google and Factual to retrieve restaurants that are open today
-    queryControl = [UMAAppDelegate getQueryController];
-    [queryControl getRestaurants];
+    [[UMAAppDelegate getQueryController] getRestaurants];
     
     //set tint color of section headers
     [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
@@ -65,6 +69,7 @@ to-do: move querying into different file and set up as a singleton
     spinner.hidesWhenStopped = YES;
     spinner.color = [UIColor blackColor];
     [self.view addSubview:spinner];
+
     
 /*
     //set up device location manager and get current location
@@ -83,7 +88,7 @@ to-do: move querying into different file and set up as a singleton
     UIImage *footerImage = [UIImage imageNamed:@"google.png"];
     UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
 //    footerImageView.frame = CGRectMake(10,10,1,30);
-    restaurantTableView.tableFooterView = footerImageView;
+    [restaurantTableView setTableFooterView:footerImageView];
 }
 
 
@@ -129,7 +134,7 @@ to-do: move querying into different file and set up as a singleton
 
 - (void)refreshResults
 {
-    [queryControl getRestaurants];
+    [[UMAAppDelegate getQueryController] getRestaurants];
     
     //to-do: would it look better to wait 2-3 seconds before stopping the animation?
     [self.refreshControl endRefreshing];
@@ -185,12 +190,17 @@ to-do: move querying into different file and set up as a singleton
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"open now count from tableview:%d", [openNow count]);
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
         
     if (indexPath.section == 0)
     {
+        /*
         cell.textLabel.text = [[openNow objectAtIndex:indexPath.row] objectForKey:@"name"];
         cell.detailTextLabel.text = [[openNow objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+         */
+        cell.textLabel.text = [[openNow objectAtIndex:0]objectForKey:@"test"];
     }
     else {
         cell.textLabel.text = [[openLater objectAtIndex:indexPath.row] objectForKey:@"name"];
@@ -276,16 +286,37 @@ to-do: move querying into different file and set up as a singleton
         } //end switch
     }
 }
-
+/*
 //to-do: is it better to call this method from queryController or to directly call [[listView tableView]reloadData]; ?
 -(void)refreshTable
 {
     [[self tableView]reloadData];
 }
+*/
 
 //to-do: is it better to call this method from queryController or to set spinner as a property to directly call [[listView spinner]stopAnimating]; ?
 -(void)stopSpinner
 {
     [spinner stopAnimating];
+}
+
+-(void)reloadOpenNow
+{
+    openNow = [[UMAAppDelegate getQueryController]getOpenNow];
+    NSLog(@"count of openNow: %i", [openNow count]);
+    [restaurantTableView reloadData];
+//    [self.tableView reloadData];
+}
+
+-(void)reloadOpenLater
+{
+    openLater = [[UMAAppDelegate getQueryController]getOpenLater];
+    NSLog(@"count of openLater: %i", [openLater count]);
+    [restaurantTableView reloadData];
+}
+
+-(void)reloadTable
+{
+    [restaurantTableView reloadData];
 }
 @end

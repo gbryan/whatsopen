@@ -13,20 +13,19 @@
 #import "listViewController.h"
 
 @class queryController;
-@class listViewController;
 @interface UMAAppDelegate : UIResponder <UIApplicationDelegate>
 {
     FactualAPI *_apiObject;
     queryController *_queryControl;
-    listViewController *_listView;
+//    listViewController *_listView;
 }
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic, readonly) FactualAPI *apiObject;
-@property (nonatomic, readonly) queryController *queryControl;
-@property (nonatomic, readonly) listViewController *listView;
+@property (nonatomic, strong) queryController *queryControl;
+//@property (nonatomic, strong) listViewController *listView;
 
 +(FactualAPI *) getAPIObject;
 +(UMAAppDelegate *) getDelegate;
 +(queryController *) getQueryController;
-+(listViewController *) getListController;
+//+(listViewController *) getListController;
 @end
