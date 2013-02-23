@@ -20,6 +20,9 @@
 		93408E69168EA828004124BE /* listViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93408E68168EA828004124BE /* listViewController.m */; };
 		93408E70168EAA07004124BE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E6F168EAA07004124BE /* CoreLocation.framework */; };
 		93408E73168EAA35004124BE /* placeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93408E72168EAA35004124BE /* placeDetailViewController.m */; };
+		93973D2016D84FF1006C2B94 /* queryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D1F16D84FF1006C2B94 /* queryController.m */; };
+		93973D2316D86862006C2B94 /* locationServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2216D86862006C2B94 /* locationServices.m */; };
+		93973D2716D87385006C2B94 /* restaurant.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2616D87385006C2B94 /* restaurant.m */; };
 		93D04F9416A0721B00FD3B43 /* whatsopen.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9316A0721B00FD3B43 /* whatsopen.png */; };
 		93D04F9616A0725400FD3B43 /* whatsopen_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9516A0725400FD3B43 /* whatsopen_retina.png */; };
 		93DA345D16CCB32700CC6C59 /* FactualSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DA345C16CCB32700CC6C59 /* FactualSDK.framework */; };
@@ -48,6 +51,12 @@
 		93408E71168EAA35004124BE /* placeDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = placeDetailViewController.h; sourceTree = "<group>"; };
 		93408E72168EAA35004124BE /* placeDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = placeDetailViewController.m; sourceTree = "<group>"; };
 		9343DD4E16B340720095F9BD /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keys.h; sourceTree = "<group>"; };
+		93973D1E16D84FF1006C2B94 /* queryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queryController.h; sourceTree = "<group>"; };
+		93973D1F16D84FF1006C2B94 /* queryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = queryController.m; sourceTree = "<group>"; };
+		93973D2116D86862006C2B94 /* locationServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locationServices.h; sourceTree = "<group>"; };
+		93973D2216D86862006C2B94 /* locationServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationServices.m; sourceTree = "<group>"; };
+		93973D2516D87385006C2B94 /* restaurant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = restaurant.h; sourceTree = "<group>"; };
+		93973D2616D87385006C2B94 /* restaurant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = restaurant.m; sourceTree = "<group>"; };
 		93D04F9316A0721B00FD3B43 /* whatsopen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whatsopen.png; sourceTree = "<group>"; };
 		93D04F9516A0725400FD3B43 /* whatsopen_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whatsopen_retina.png; sourceTree = "<group>"; };
 		93DA345C16CCB32700CC6C59 /* FactualSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FactualSDK.framework; path = WhatsOpen/FactualSDK.framework; sourceTree = "<group>"; };
@@ -107,8 +116,9 @@
 		93408E52168EA828004124BE /* WhatsOpen */ = {
 			isa = PBXGroup;
 			children = (
+				93973D2416D87364006C2B94 /* Restaurants */,
 				93DA346516D5B77100CC6C59 /* Location Services */,
-				93DA346416D5AE6100CC6C59 /* Querying */,
+				93DA346416D5AE6100CC6C59 /* Query Controller */,
 				93F24B0016A5F380000F4E66 /* Main Screen */,
 				93408E76168EAA76004124BE /* Storyboard */,
 				93408E75168EAA5E004124BE /* List View */,
@@ -169,16 +179,29 @@
 			name = "Detail View";
 			sourceTree = "<group>";
 		};
-		93DA346416D5AE6100CC6C59 /* Querying */ = {
+		93973D2416D87364006C2B94 /* Restaurants */ = {
 			isa = PBXGroup;
 			children = (
+				93973D2516D87385006C2B94 /* restaurant.h */,
+				93973D2616D87385006C2B94 /* restaurant.m */,
 			);
-			name = Querying;
+			name = Restaurants;
+			sourceTree = "<group>";
+		};
+		93DA346416D5AE6100CC6C59 /* Query Controller */ = {
+			isa = PBXGroup;
+			children = (
+				93973D1E16D84FF1006C2B94 /* queryController.h */,
+				93973D1F16D84FF1006C2B94 /* queryController.m */,
+			);
+			name = "Query Controller";
 			sourceTree = "<group>";
 		};
 		93DA346516D5B77100CC6C59 /* Location Services */ = {
 			isa = PBXGroup;
 			children = (
+				93973D2116D86862006C2B94 /* locationServices.h */,
+				93973D2216D86862006C2B94 /* locationServices.m */,
 			);
 			name = "Location Services";
 			sourceTree = "<group>";
@@ -267,6 +290,9 @@
 				93408E69168EA828004124BE /* listViewController.m in Sources */,
 				93408E73168EAA35004124BE /* placeDetailViewController.m in Sources */,
 				93F24B0316A5F53A000F4E66 /* MainViewController.m in Sources */,
+				93973D2016D84FF1006C2B94 /* queryController.m in Sources */,
+				93973D2316D86862006C2B94 /* locationServices.m in Sources */,
+				93973D2716D87385006C2B94 /* restaurant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

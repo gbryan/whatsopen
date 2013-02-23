@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString *deviceLng;
 @property (nonatomic, strong) NSString *proximity;
 @property (nonatomic, strong) NSString *placeReference;
+@property (nonatomic, strong) NSString *provider;
 @property (nonatomic, strong) NSNumber *placeRating;
 @property (nonatomic, strong) NSString *placeLat;
 @property (nonatomic, strong) NSString *placeLng;

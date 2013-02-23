@@ -6,24 +6,20 @@
 //  Copyright (c) 2012 UNC-CH. All rights reserved.
 //
 
-#import <FactualSDK/FactualAPI.h>
-#import <FactualSDK/FactualQuery.h>
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import "keys.h"
+#import "UMAAppDelegate.h"
+#import "queryController.h"
 
-@interface listViewController : UITableViewController <CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate, FactualAPIDelegate>
+@class queryController;
+@interface listViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 {
-    FactualAPIRequest* _activeRequest;
-    CLLocationManager *locationManager;
-    CLLocationCoordinate2D deviceLocation;
-    NSMutableArray *locationMeasurements;
-    CLLocation *bestEffortAtLocation;
+    queryController *queryControl;
 }
-@property (nonatomic,retain)  FactualQueryResult* queryResult;
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
-@property (nonatomic, weak) IBOutlet UITableView *placeTableView;
-@property (nonatomic, retain) NSMutableArray *locationMeasurements;
-@property (nonatomic, retain) CLLocation *bestEffortAtLocation;
-@property (nonatomic, strong) NSArray *queryCategories;
+@property (nonatomic, strong) IBOutlet UITableView *restaurantTableView;
+@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *spinner;
+//to-do: should these really be retain?
+@property (nonatomic, retain) NSMutableArray *openNow;
+@property (nonatomic, retain) NSMutableArray *openLater;
+
 @end

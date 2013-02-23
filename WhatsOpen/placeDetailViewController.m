@@ -17,6 +17,7 @@
 
 @implementation placeDetailViewController
 @synthesize placeReference;
+@synthesize provider;
 @synthesize placeRating;
 @synthesize priceLabel;
 @synthesize ratingLabel;
@@ -52,8 +53,18 @@
     distanceLabel.hidden = TRUE;
     viewDirections.hidden = TRUE;
     [loadingIndicator startAnimating];
-    [self queryGooglePlaces:placeReference];
-    [self loadGoogleMap:placeLat lng:placeLng];
+    
+    if ([provider isEqualToString:@"google"])
+    {
+        [self queryGooglePlaces:placeReference];
+        [self loadGoogleMap:placeLat lng:placeLng];
+    }
+    else
+    {
+        //query Factual
+    }
+    
+
 }
 
 - (void)loadGoogleMap:(NSString *)lat lng:(NSString *)lng {
