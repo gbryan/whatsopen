@@ -229,7 +229,12 @@ to-do: move querying into different file and set up as a singleton
     else {
         cell.textLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"name"];
 //        cell.detailTextLabel.text = [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"proximity"];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"Opening at %@", [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"openNext"]];
+        NSDate *openNext = [[openLaterPlaces objectAtIndex:indexPath.row] objectForKey:@"openNext"];
+        NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
+        [openNextFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+        [openNextFormatter setDateFormat:@"h:mm a"];
+        NSString *openNextString = [openNextFormatter stringFromDate:openNext];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"Opening at %@", openNextString];
     }
     
     //remove halo effect in background color
@@ -346,7 +351,7 @@ to-do: move querying into different file and set up as a singleton
     
     _placesArray = [json objectForKey:@"results"];
     
-//    NSLog(@"all Google results: %@", _placesArray);
+    NSLog(@"all Google results: %@", _placesArray);
     
     //to-do: if < 1 open place, set value for "name" key for object 0 of openNowPlaces to @"None open within %@", farthestPlaceString
     // to-do: if all places are open, there are none "open later today", so check for count of 0
@@ -820,7 +825,9 @@ to-do: move querying into different file and set up as a singleton
                             if ([dateTimeInSystemLocalTimezone compare:openTimeDate] == NSOrderedAscending)
                             {
                                 NSLog(@"%@ is open LATER today.", [restaurant objectForKey:@"name"]);
-                                [restaurant setValue:[NSString stringWithFormat:@"%@", openTimeDate] forKey:@"openNext"];
+//                                [restaurant setValue:[NSString stringWithFormat:@"%@", openTimeDate] forKey:@"openNext"];
+                                //to-do: make sure openLaterPlaces sorts properly when using the date OBJECT instead of date string
+                                [restaurant setObject:openTimeDate forKey:@"openNext"];
                                 [openLaterPlaces addObject:restaurant];
                                 
                                 //re-sort by opening soonest
