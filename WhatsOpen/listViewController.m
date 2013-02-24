@@ -101,6 +101,7 @@ to-do: move querying into different file and set up as a singleton
 {
     _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
     _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
+    NSLog(@"open later: %@", _openLater);
     
     [_restaurantTableView reloadData];
     [_spinner stopAnimating];

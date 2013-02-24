@@ -208,7 +208,9 @@
             //to-do: is it bad practice to use the built-in setter (as a property) instead of using a homemade method?
             listView.navBar.titleView = titleLabel;
         }
-                
+        
+        restaurantObject.isOpenNow = FALSE;
+        
         //make sure opening_hours key and open_now key exist for this restaurant, and then put currently open restaurants into openNow array
         if ([place objectForKey:@"opening_hours"])
         {
@@ -443,10 +445,7 @@
 
 # pragma mark - Factual request complete
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
-{
-    NSLog(@"the response id: %@", request.requestId);
-    NSLog(@"factual response:%@", [queryResultObj rows]);
-    
+{   
     restaurant *restaurantObject = [[restaurant alloc]init];
     
     for (restaurant *restaurantToCheck in _restaurants) {
@@ -554,7 +553,7 @@ how do we know if user wants details about a restaurant or just wants to know wh
             else
             {
                 
-                restaurantObject.openHours = hours;                
+//                restaurantObject.openHours = hours;
                 
                 //to-do: get hours in pretty format and save to restaurantObject.openHours
                 
@@ -563,6 +562,9 @@ how do we know if user wants details about a restaurant or just wants to know wh
                 //to-do: how should I display to users the optional string after the pair of hours? Example: ["11:00","16:00","Lunch"]. Factual says that these are just a guess if they say "lunch," "dinner," "breakfast," etc.  In their documentation, they also say that some say things like "only after Labor Day." How to display that to user? Show that it's open now (or later today), but if it has a message, display that message prominently on the details page?
                 
                 NSLog(@"----------------------------------");
+                NSLog(@"the response id: %@", request.requestId);
+                NSLog(@"factual response:%@", [queryResultObj rows]);
+                NSLog(@"hours for %@:%@", restaurantObject.name, hours);
                 
                 NSInteger deviceGMTOffset = [self getDeviceGMTOffset];
                 NSDate* dateTimeInSystemLocalTimezone = [[NSDate alloc]
@@ -586,9 +588,16 @@ how do we know if user wants details about a restaurant or just wants to know wh
                                          options:0];
                 NSString *dayYesterday = [[dayOfWeekFormatter stringFromDate:yesterdayDate]lowercaseString];
                 
-                //if Google doesn't already know it's open, see if it's open right now
-                if (restaurantObject.isOpenNow != TRUE)
+
+                if (restaurantObject.isOpenNow == TRUE)
                 {
+                    NSLog(@"%@ added to openNow bc Google said it was open. Moving on to next restaurant!", restaurantObject.name);
+                    [openNow addObject:restaurantObject];
+                }
+                //if Google doesn't already know it's open, see if it's open right now                
+                else
+                {
+                    NSLog(@"google doesn't know if %@ is open", restaurantObject.name);
                     //Is restaurant still open within last night's hour range?
                     NSArray *yesterdayHours = [hours objectForKey:dayYesterday];
                     
@@ -667,9 +676,7 @@ how do we know if user wants details about a restaurant or just wants to know wh
                                 [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
                             }
                             else
-                            {
-                                //to-do: in tableview cellForRowAtIndexPath, set detailText to [NSString stringWithFormat:@"Opening at %@", [restaurant objectForKey:@"openNext"]] (except, I need to convert to 12 hr format first and show only the time, not other date stuff).
-                                
+                            {                                
                                 NSLog(@"%@ is CLOSED. Hours:%@", restaurantObject.name, todayHours);
                                 
                                 //get date objects for when restaurant is open and closed
@@ -702,10 +709,13 @@ how do we know if user wants details about a restaurant or just wants to know wh
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
                                     
+                                    NSLog(@"open later count:%i", [openLater count]);
+                                    
                                     //to-do: does sorting work now with custom object?
                                     //re-sort by opening soonest
                                     NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNextSort" ascending:YES];
                                     [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
+                                    NSLog(@"open later count after re-sort:%i", [openLater count]);                                    
 
                                     // Do not test other times for this restaurant since we already know it's open later.
                                     break;
@@ -716,6 +726,15 @@ how do we know if user wants details about a restaurant or just wants to know wh
                 } //end if Google doesn't already know it's open
             } //end else (hours key successfully converted to JSON)
         } //end if it has a value for the hours key
+        else
+        {
+            //even if there's no key for hours key, we need to add it to openNow if Google says it's open.
+            if (restaurantObject.isOpenNow == TRUE)
+            {
+                //to-do: notify user that there are no known hours (instead of leaving null)
+                [openNow addObject:restaurantObject];
+            }
+        }
     } //end if !empty query result
     
     numberOfResultsToCheck--;
@@ -724,7 +743,6 @@ how do we know if user wants details about a restaurant or just wants to know wh
     
     if (numberOfResultsToCheck == 0)
     {
-        NSLog(@"FINISHED!!!!!");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
                                                             object:nil];
     }
@@ -756,13 +774,11 @@ how do we know if user wants details about a restaurant or just wants to know wh
 
 -(NSMutableArray *)getOpenNow
 {
-    NSLog(@"got openNow from queryController");
     return openNow;
 }
 
 -(NSMutableArray *)getOpenLater
 {
-    NSLog(@"got openLater from queryController");
     return openLater;
 }
 
