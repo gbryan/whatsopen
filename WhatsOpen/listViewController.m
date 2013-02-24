@@ -21,17 +21,20 @@ to-do: move querying into different file and set up as a singleton
  
 #import "listViewController.h"
 #import "placeDetailViewController.h"
+#import "UMAAppDelegate.h"
 
 @interface listViewController ()
+{
+    NSMutableArray *_openNow;
+    NSMutableArray *_openLater;
+}
 
 @end
 
 @implementation listViewController
 
-@synthesize restaurantTableView;
-@synthesize spinner;
-@synthesize openNow;
-@synthesize openLater;
+@synthesize restaurantTableView=_restaurantTableView;
+@synthesize spinner=_spinner;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -46,14 +49,14 @@ to-do: move querying into different file and set up as a singleton
 {
     [super viewDidLoad];
     
-    openNow = [[NSMutableArray alloc]init];
-    openLater = [[NSMutableArray alloc]init];
-    [restaurantTableView setDelegate:self];
-    [restaurantTableView setDataSource:self];
-    
-    //Begin query to Google and Factual to retrieve restaurants that are open today
-    [[UMAAppDelegate getQueryController] getRestaurants];
-    
+    //display spinner to indicate to the user that the query is still running
+    _spinner = [[UIActivityIndicatorView alloc]
+               initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _spinner.center = CGPointMake(160, 200);
+    _spinner.hidesWhenStopped = YES;
+    _spinner.color = [UIColor blackColor];
+    [self.view addSubview:_spinner];
+        
     //set tint color of section headers
     [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
@@ -62,13 +65,16 @@ to-do: move querying into different file and set up as a singleton
     [pullToRefresh addTarget:self action:@selector(refreshResults) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
-    //display spinner to indicate to the user that the query is still running
-    spinner = [[UIActivityIndicatorView alloc]
-               initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    spinner.center = CGPointMake(160, 200);
-    spinner.hidesWhenStopped = YES;
-    spinner.color = [UIColor blackColor];
-    [self.view addSubview:spinner];
+    //listViewController will listen for queryController to give notification that it has finished the query
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadTable:)
+                                                 name:@"restaurantsAcquired"
+                                               object:nil];
+    
+    //Begin query to Google and Factual to retrieve restaurants that are open today]
+    [[UMAAppDelegate getQueryController] getRestaurants];
+    [_spinner startAnimating];
+
 
     
 /*
@@ -88,9 +94,17 @@ to-do: move querying into different file and set up as a singleton
     UIImage *footerImage = [UIImage imageNamed:@"google.png"];
     UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
 //    footerImageView.frame = CGRectMake(10,10,1,30);
-    [restaurantTableView setTableFooterView:footerImageView];
+    [_restaurantTableView setTableFooterView:footerImageView];
 }
 
+- (void)reloadTable:(NSNotification *)notification
+{
+    _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
+    _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
+    
+    [_restaurantTableView reloadData];
+    [_spinner stopAnimating];
+}
 
 /*
 //to-do: update to non-deprecated method (only 12.4% of iPhone users have iOS < 6 as of Feb 2013)
@@ -134,8 +148,20 @@ to-do: move querying into different file and set up as a singleton
 
 - (void)refreshResults
 {
-    [[UMAAppDelegate getQueryController] getRestaurants];
+    //to-do: turn this back on
+//    [[UMAAppDelegate getQueryController] getRestaurants];
     
+    
+    //This test is working. Why aren't restaurants showing up? array count is 8!
+    NSMutableDictionary *test = [[NSMutableDictionary alloc]init];
+    [test setValue:@"hi" forKey:@"test"];
+//    [openNow addObject:test];
+    
+    _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
+    _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
+    
+    [_restaurantTableView reloadData];
+    NSLog(@"refreshing");
     //to-do: would it look better to wait 2-3 seconds before stopping the animation?
     [self.refreshControl endRefreshing];
 }
@@ -168,10 +194,10 @@ to-do: move querying into different file and set up as a singleton
     switch (section)
     {
         case 0:
-            return openNow.count;
+            return _openNow.count;
             break;
         case 1:
-            return openLater.count;
+            return _openLater.count;
             break;
         default:
             return nil;
@@ -190,22 +216,19 @@ to-do: move querying into different file and set up as a singleton
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"open now count from tableview:%d", [openNow count]);
+    NSLog(@"open now count from tableview:%d", [_openNow count]);
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
         
     if (indexPath.section == 0)
     {
-        /*
-        cell.textLabel.text = [[openNow objectAtIndex:indexPath.row] objectForKey:@"name"];
-        cell.detailTextLabel.text = [[openNow objectAtIndex:indexPath.row] objectForKey:@"proximity"];
-         */
-        cell.textLabel.text = [[openNow objectAtIndex:0]objectForKey:@"test"];
+        cell.textLabel.text = [[_openNow objectAtIndex:indexPath.row] objectForKey:@"name"];
+        cell.detailTextLabel.text = [[_openNow objectAtIndex:indexPath.row] objectForKey:@"proximity"];
     }
     else {
-        cell.textLabel.text = [[openLater objectAtIndex:indexPath.row] objectForKey:@"name"];
-//        cell.detailTextLabel.text = [[openLater objectAtIndex:indexPath.row] objectForKey:@"proximity"];
-        NSDate *openNext = [[openLater objectAtIndex:indexPath.row] objectForKey:@"openNext"];
+        cell.textLabel.text = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"name"];
+//        cell.detailTextLabel.text = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+        NSDate *openNext = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"openNext"];
         NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
         [openNextFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
         [openNextFormatter setDateFormat:@"h:mm a"];
@@ -237,6 +260,7 @@ to-do: move querying into different file and set up as a singleton
 
 - (void)viewDidUnload
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self setTableView:nil];
     [super viewDidUnload];
 }
@@ -248,7 +272,7 @@ to-do: move querying into different file and set up as a singleton
         // Get reference to the destination view controller
         placeDetailViewController *destinationVC = [segue destinationViewController];
         
-        NSIndexPath *indexPath = [restaurantTableView indexPathForSelectedRow];
+        NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
         NSUInteger section = [indexPath section];
         
         
@@ -263,12 +287,12 @@ to-do: move querying into different file and set up as a singleton
                 
             //open now
             case 0:
-                destinationVC.placeReference = [[openNow objectAtIndex:indexPath.row]objectForKey:@"reference"];
-                destinationVC.provider = [[openNow objectAtIndex:indexPath.row]objectForKey:@"provider"];
-                destinationVC.placeRating = [[openNow objectAtIndex:indexPath.row]objectForKey:@"rating"];
-                destinationVC.proximity = [[openNow objectAtIndex:indexPath.row]objectForKey:@"proximity"];
-                destinationVC.placeLat = [[[[openNow objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
-                destinationVC.placeLng = [[[[openNow objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
+                destinationVC.placeReference = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"reference"];
+                destinationVC.provider = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"provider"];
+                destinationVC.placeRating = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"rating"];
+                destinationVC.proximity = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"proximity"];
+                destinationVC.placeLat = [[[[_openNow objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
+                destinationVC.placeLng = [[[[_openNow objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
                 break;
             //open later today
             case 1:
@@ -276,47 +300,31 @@ to-do: move querying into different file and set up as a singleton
                 //to-do: make sure tapping a place takes you to the right details page!
                 //to-do: should I get rating from Google or Factual? Need to set up openLaterPlace mutable dict for this entire implementation and set value for it within G query if using Google
                 //                destinationVC.placeRating = [[openLater objectAtIndex:indexPath.row]objectForKey:@"rating"];
-                destinationVC.placeReference = [[openLater objectAtIndex:indexPath.row]objectForKey:@"reference"];
-                destinationVC.provider = [[openLater objectAtIndex:indexPath.row]objectForKey:@"provider"];
-                destinationVC.placeRating = [[openLater objectAtIndex:indexPath.row]objectForKey:@"rating"];
-                destinationVC.proximity = [[openLater objectAtIndex:indexPath.row]objectForKey:@"proximity"];
-                destinationVC.placeLat = [[openLater objectAtIndex:indexPath.row]objectForKey:@"latitude"];
-                destinationVC.placeLng = [[openLater objectAtIndex:indexPath.row]objectForKey:@"longitude"];
+                destinationVC.placeReference = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"reference"];
+                destinationVC.provider = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"provider"];
+                destinationVC.placeRating = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"rating"];
+                destinationVC.proximity = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"proximity"];
+                destinationVC.placeLat = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"latitude"];
+                destinationVC.placeLng = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"longitude"];
                 break;
         } //end switch
     }
 }
+
 /*
-//to-do: is it better to call this method from queryController or to directly call [[listView tableView]reloadData]; ?
--(void)refreshTable
+-(void)reloadRestaurantArrays
 {
-    [[self tableView]reloadData];
+    _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
+    _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
+    NSLog(@"count of openNow: %i", [_openNow count]);
+    NSLog(@"count of openLater: %i", [_openLater count]);
+    
+
+    
+//    [_restaurantTableView reloadData];
+//    [_spinner stopAnimating];
+//    [self.spinner stopAnimating];
+//        [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
 }
 */
-
-//to-do: is it better to call this method from queryController or to set spinner as a property to directly call [[listView spinner]stopAnimating]; ?
--(void)stopSpinner
-{
-    [spinner stopAnimating];
-}
-
--(void)reloadOpenNow
-{
-    openNow = [[UMAAppDelegate getQueryController]getOpenNow];
-    NSLog(@"count of openNow: %i", [openNow count]);
-    [restaurantTableView reloadData];
-//    [self.tableView reloadData];
-}
-
--(void)reloadOpenLater
-{
-    openLater = [[UMAAppDelegate getQueryController]getOpenLater];
-    NSLog(@"count of openLater: %i", [openLater count]);
-    [restaurantTableView reloadData];
-}
-
--(void)reloadTable
-{
-    [restaurantTableView reloadData];
-}
 @end

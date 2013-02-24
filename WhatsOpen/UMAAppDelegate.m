@@ -12,7 +12,7 @@
 
 @synthesize apiObject=_apiObject;
 @synthesize queryControl = _queryControl;
-//@synthesize listView = _listView;
+//@synthesize listView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -21,7 +21,7 @@
     
     _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
     _queryControl = [[queryController alloc]init];
-//    _listView = [[listViewController alloc]init];
+//    listView = [[listViewController alloc]init];
     
     // Override point for customization after application launch.
     return YES;
@@ -32,6 +32,7 @@
     return ((UMAAppDelegate*)app.delegate).apiObject;
 }
 
+//to-do: do I use this in my code elsewhere?
 +(UMAAppDelegate*) getDelegate {
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate*)app.delegate);

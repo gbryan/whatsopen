@@ -13,10 +13,10 @@
 #import "listViewController.h"
 
 @class queryController;
+@class listViewController;
 @interface UMAAppDelegate : UIResponder <UIApplicationDelegate>
 {
     FactualAPI *_apiObject;
-    queryController *_queryControl;
 //    listViewController *_listView;
 }
 @property (strong, nonatomic) UIWindow *window;

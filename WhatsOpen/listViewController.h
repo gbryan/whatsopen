@@ -12,13 +12,8 @@
 
 @interface listViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
-@property (nonatomic, strong) IBOutlet UITableView *restaurantTableView;
-@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *spinner;
-@property (nonatomic, strong) NSMutableArray *openNow;
-@property (nonatomic, strong) NSMutableArray *openLater;
+@property (nonatomic, readonly) IBOutlet UITableView *restaurantTableView;
+@property (nonatomic, readonly) IBOutlet UIActivityIndicatorView *spinner;
 
--(void)reloadOpenNow;
--(void)reloadOpenLater;
-//-(void)refreshTable;
--(void)stopSpinner;
+//-(void)reloadRestaurantArrays;
 @end

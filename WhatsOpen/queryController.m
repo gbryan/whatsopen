@@ -14,6 +14,7 @@
     NSInteger pageNum;
     CLLocationCoordinate2D deviceLocation;
     listViewController *listView;
+    NSInteger numberOfResultsToCheck;
 }
 @synthesize queryCategories;
 //@synthesize listView;
@@ -143,7 +144,6 @@
     if (nextPageToken.length < 1)
     {
         pageNum = 1;
-        //to-do: change to [listView openNow] and openLater
         
         if ([openNow count] > 0)
         {
@@ -218,6 +218,9 @@
     
     NSLog(@"all Google results: %@", placesArray);
     
+    //get the number of results so that we can check whether we've looked at the hours for all of them
+    numberOfResultsToCheck = placesArray.count;
+    
     //to-do: if < 1 open place, set value for "name" key for object 0 of openNow to @"None open within %@", farthestPlaceString
     // to-do: if all places are open, there are none "open later today", so check for count of 0
     
@@ -279,7 +282,7 @@
                     numOpenNow++;
                     [place setObject:@"google" forKey:@"provider"];
                     [openNow addObject:place];
-                    [listView reloadOpenNow];
+                    numberOfResultsToCheck--;
                 }
                 else if (isOpen == FALSE)
                 {
@@ -325,7 +328,7 @@
     {
         NSLog(@"getting more results");
         //to-do: spinner not working properly
-        [[listView spinner] startAnimating];
+//        [[listView spinner] startAnimating];
         
         //the Google pageToken doesn't become valid for some unspecified period of time after requesting the first page, so we have to delay the next request
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -527,6 +530,7 @@
 
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
+    
     self.queryResult = queryResultObj;
     
     BOOL addedAlready = FALSE;
@@ -628,7 +632,6 @@
                         //Re-sort by proximity and refresh table
                         NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
                         [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
-                        [listView reloadOpenNow];
                     }
                 } //end if open yesterday
                 
@@ -667,7 +670,6 @@
                             //Re-sort by proximity
                             NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
                             [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
-                            [listView reloadOpenNow];
                         }
                         else
                         {
@@ -702,7 +704,6 @@
                                 NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNext" ascending:YES];
                                 [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
                                 //to-do: should I move this?
-                                [listView reloadOpenLater];
                                 
                                 // Check the next restaurant (do not test other times for this restaurant since we already know it's open later)
                                 break;
@@ -713,6 +714,17 @@
             } //end else (hours key successfully converted to JSON)
         } //end if it has a value for the hours key
     } //end if !empty query result
+    
+    numberOfResultsToCheck--;
+    
+    NSLog(@"number of Google results to check:%d", numberOfResultsToCheck);
+    
+    if (numberOfResultsToCheck == 0)
+    {
+        NSLog(@"FINISHED!!!!!");
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
+                                                            object:nil];
+    }
 }
 
 -(void) requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
@@ -743,4 +755,5 @@
     NSLog(@"got openLater from queryController");
     return openLater;
 }
+
 @end
