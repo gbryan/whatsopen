@@ -216,24 +216,20 @@ to-do: move querying into different file and set up as a singleton
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"open now count from tableview:%d", [_openNow count]);
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
         
     if (indexPath.section == 0)
     {
-        cell.textLabel.text = [[_openNow objectAtIndex:indexPath.row] objectForKey:@"name"];
-        cell.detailTextLabel.text = [[_openNow objectAtIndex:indexPath.row] objectForKey:@"proximity"];
+        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        cell.textLabel.text = restaurantObject.name;
+        cell.detailTextLabel.text = restaurantObject.proximity;
     }
     else {
-        cell.textLabel.text = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"name"];
+        restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        cell.textLabel.text = restaurantObject.name;
 //        cell.detailTextLabel.text = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"proximity"];
-        NSDate *openNext = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"openNext"];
-        NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
-        [openNextFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
-        [openNextFormatter setDateFormat:@"h:mm a"];
-        NSString *openNextString = [openNextFormatter stringFromDate:openNext];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"Opening at %@", openNextString];
+        cell.detailTextLabel.text = restaurantObject.openNextDisplay;
     }
     
     //remove halo effect in background color
@@ -310,21 +306,4 @@ to-do: move querying into different file and set up as a singleton
         } //end switch
     }
 }
-
-/*
--(void)reloadRestaurantArrays
-{
-    _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
-    _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
-    NSLog(@"count of openNow: %i", [_openNow count]);
-    NSLog(@"count of openLater: %i", [_openLater count]);
-    
-
-    
-//    [_restaurantTableView reloadData];
-//    [_spinner stopAnimating];
-//    [self.spinner stopAnimating];
-//        [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
-}
-*/
 @end

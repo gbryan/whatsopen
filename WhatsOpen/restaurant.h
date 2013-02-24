@@ -17,9 +17,26 @@
 @property (strong, nonatomic) NSString *latitude;
 @property (strong, nonatomic) NSString *longitude;
 @property (strong, nonatomic) NSString *proximity;
-@property (strong, nonatomic) NSArray *openHours;
+@property (strong, nonatomic) NSDictionary *openHours;
 @property (strong, nonatomic) NSString *rating;
 @property (strong, nonatomic) NSString *priceLevel;
-@property (strong, nonatomic) NSString *phoneNumber;
+@property (strong, nonatomic) NSString *phone;
+@property (strong, nonatomic) NSString *parking;
+@property (strong, nonatomic) NSString *attire;
+@property (strong, nonatomic) NSString *cashOnly;
+@property (strong, nonatomic) NSString *website;
+@property (strong, nonatomic) NSArray *cuisine;
+@property (strong, nonatomic) NSString *hasFullBar;
+@property (strong, nonatomic) NSString *reservations;
+@property (strong, nonatomic) NSString *outdoorSeating;
+@property (strong, nonatomic) NSString *address;
+@property (strong, nonatomic) NSString *open24Hours;
+@property (strong, nonatomic) NSString *servesAlcohol;
+@property (strong, nonatomic) NSString *wheelchair;
+@property (strong, nonatomic) NSString *takeout;
+@property (strong, nonatomic) NSDate *openNextSort;
+@property (strong, nonatomic) NSString *openNextDisplay;
+@property (assign, nonatomic) BOOL isOpenNow;
+@property (strong, nonatomic) NSString *requestId;
 
 @end

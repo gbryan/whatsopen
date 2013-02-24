@@ -16,7 +16,6 @@
 #import "UMAAppDelegate.h"
 
 @class locationServices;
-//@class listViewController;
 @interface queryController : NSObject <FactualAPIDelegate>
 {
     FactualAPIRequest *_activeRequest;
@@ -26,7 +25,6 @@
 //to-do: should these really be "retain"?
 @property (nonatomic, retain) FactualQueryResult *queryResult;
 @property (nonatomic, strong) NSArray *queryCategories;
-//@property (nonatomic, strong) listViewController *listView;
 @property (nonatomic, strong) NSMutableArray *openNow;
 @property (nonatomic, strong) NSMutableArray *openLater;
 
