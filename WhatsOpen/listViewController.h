@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "UMAAppDelegate.h"
 #import "queryController.h"
+#import "placeDetailViewController.h"
 
 @interface listViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;

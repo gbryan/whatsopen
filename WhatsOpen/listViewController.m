@@ -9,7 +9,6 @@
 
 /*
  to-do: set color when selecting row (needs to match dark blue color scheme)
-to-do: move querying into different file and set up as a singleton
  //to-do: will queries fail gracefully if there's no location found?
 //to-do: what happens if there are none open now in 3 pages?
 //to-do: what if there are none open later today?
@@ -20,13 +19,12 @@ to-do: move querying into different file and set up as a singleton
 */
  
 #import "listViewController.h"
-#import "placeDetailViewController.h"
-#import "UMAAppDelegate.h"
 
 @interface listViewController ()
 {
     NSMutableArray *_openNow;
     NSMutableArray *_openLater;
+    queryController *_queryController;
 }
 
 @end
@@ -48,6 +46,8 @@ to-do: move querying into different file and set up as a singleton
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _queryController = [[queryController alloc]init];
     
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
@@ -98,21 +98,21 @@ to-do: move querying into different file and set up as a singleton
 - (void)loadRestaurantList
 {
     //Begin query to Google and Factual to retrieve restaurants that are open today
-    [[UMAAppDelegate getQueryController] getRestaurants];
+    [_queryController getRestaurants];
     [_spinner startAnimating];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
 {
     _openNow = [[NSMutableArray alloc]
-                initWithArray:[[UMAAppDelegate getQueryController]openNow]];
+                initWithArray:_queryController.openNow];
     _openLater = [[NSMutableArray alloc]
-                initWithArray:[[UMAAppDelegate getQueryController]openLater]];
+                  initWithArray:_queryController.openLater];
     
     //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
     //to-do: is this the right size for iPhone 5 screen also?
-    NSString *farthestPlaceString = [[UMAAppDelegate getQueryController]farthestPlaceString];
-    UIFont *font = [UIFont boldSystemFontOfSize:14.0];
+    NSString *farthestPlaceString = _queryController.farthestPlaceString;
+    UIFont *font = [UIFont boldSystemFontOfSize:18.0];
     CGRect frame = CGRectMake(0, 0, [farthestPlaceString sizeWithFont:font].width, 44);
     UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
     titleLabel.backgroundColor = [UIColor clearColor];
@@ -120,7 +120,7 @@ to-do: move querying into different file and set up as a singleton
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text = farthestPlaceString;
     
-    //to-do: is this working?
+    //to-do: make this bigger?
     _navBar.titleView = titleLabel;
     
     [_restaurantTableView reloadData];

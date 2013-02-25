@@ -17,10 +17,6 @@
 
 @class locationServices;
 @interface queryController : NSObject <FactualAPIDelegate>
-{
-    FactualAPIRequest *_activeRequest;
-    locationServices *_locationService;
-}
 
 //to-do: should these really be "retain"?
 @property (nonatomic, retain) FactualQueryResult *queryResult;

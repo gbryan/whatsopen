@@ -10,6 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "restaurant.h"
 #import "keys.h"
+#import "locationServices.h"
 
 @interface placeDetailViewController : UIViewController <UIWebViewDelegate>
 @property (nonatomic, strong) NSString *deviceLat;
@@ -23,6 +24,7 @@
 @property (nonatomic, strong) NSString *placeLat;
 @property (nonatomic, strong) NSString *placeLng;
  */
+@property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
 @property (weak, nonatomic) IBOutlet UILabel *placeNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *distanceLabel;
 @property (weak, nonatomic) IBOutlet UILabel *ratingLabel;

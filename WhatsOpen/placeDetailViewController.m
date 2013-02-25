@@ -9,8 +9,7 @@
 #import "placeDetailViewController.h"
 
 @interface placeDetailViewController () {
-//    NSMutableDictionary *placeDetailsDictionary;
-//    BOOL didLoad;
+    locationServices *_locationService;
 }
 
 @end
@@ -48,16 +47,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
     
+    _locationService = [[locationServices alloc]init];
+    self.navBar.title = restaurantObject.name;
 //    placeNameLabel.hidden = TRUE;
 //    ratingLabel.hidden = TRUE;
 //    priceLabel.hidden = TRUE;
 //    phoneLabel.hidden = TRUE;
 //    distanceLabel.hidden = TRUE;
 //    viewDirections.hidden = TRUE;
-    [loadingIndicator startAnimating];
-    [loadingIndicator setHidesWhenStopped:TRUE];
+    [self.loadingIndicator startAnimating];
+    [self.loadingIndicator setHidesWhenStopped:TRUE];
     
     placeNameLabel.text = restaurantObject.name;
     distanceLabel.text = restaurantObject.proximity;
@@ -67,7 +67,7 @@
     addressLabel.text = restaurantObject.address;
 
     //to-do: stop animating loading indicator when Google map finishes loading
-    [loadingIndicator stopAnimating];
+    [self.loadingIndicator stopAnimating];
 }
 
 /*

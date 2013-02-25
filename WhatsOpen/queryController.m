@@ -10,11 +10,12 @@
 
 @implementation queryController
 {
-    //to-do: for naming convention, should these have underscores?
-    NSInteger pageNum;
-    CLLocationCoordinate2D deviceLocation;
-    listViewController *listView;
-    NSInteger numberOfResultsToCheck;
+    locationServices *_locationService;
+    listViewController *_listView;
+    FactualAPIRequest *_activeRequest;    
+    NSInteger _pageNum;
+    CLLocationCoordinate2D _deviceLocation;
+    NSInteger _numberOfResultsToCheck;
     NSMutableArray *_restaurants;
 }
 @synthesize queryCategories;
@@ -25,16 +26,16 @@
 -(id)init
 {
     _locationService = [[locationServices alloc]init];
-    listView = [[listViewController alloc]init];
+    _listView = [[listViewController alloc]init];
+    _restaurants = [[NSMutableArray alloc]init];
     
     queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
 //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
-    _restaurants = [[NSMutableArray alloc]init];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
     
     //set pg to 1 since initial Google Places query will pull the 1st page of results
-    pageNum = 1;
+    _pageNum = 1;
     
     return self;
 }
@@ -47,7 +48,7 @@
 #pragma mark - Google Places Query
 -(void)queryGooglePlacesWithTypes:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
 {
-    deviceLocation = [_locationService getCurrentLocation];
+    _deviceLocation = [_locationService getCurrentLocation];
     
     /* queryGooglePlaces is potentially called multiple times with different
      pageTokens for a full refresh of the restaurant data in the table. Here, I test whether
@@ -55,7 +56,7 @@
      */
     if (nextPageToken.length < 1)
     {
-        pageNum = 1;
+        _pageNum = 1;
         
         if ([openNow count] > 0)
         {
@@ -95,11 +96,11 @@
     //Google Places will return up to 3 pages of results.
     if ( [nextPageToken length] == 0)
     {
-        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
+        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true", _deviceLocation.latitude, _deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
     }
     else
     {
-        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true&pagetoken=%@", deviceLocation.latitude, deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY, nextPageToken];
+        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true&pagetoken=%@", _deviceLocation.latitude, _deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY, nextPageToken];
     }
     
     NSURL *googleRequestURL=[NSURL URLWithString:url];
@@ -113,7 +114,22 @@
      });
      */
     NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
-    [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
+    
+    if (!data)
+    {
+        UIAlertView *googleDataNil = [[UIAlertView alloc]
+                                      initWithTitle:@"Google Data Param Nil"
+                                      message:@"read the title"
+                                      delegate:self
+                                      cancelButtonTitle:@"Ok"
+                                      otherButtonTitles: nil];
+        [googleDataNil show];
+        [self getRestaurants];
+    }
+    else
+    {
+        [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
+    }
     
 }
 
@@ -131,7 +147,7 @@
     NSLog(@"all Google results: %@", placesArray);
     
     //get the number of results so that we can check whether we've looked at the hours for all of them
-    numberOfResultsToCheck = placesArray.count;
+    _numberOfResultsToCheck = placesArray.count;
     
     //to-do: if < 1 open place, set value for "name" key for object 0 of openNow to @"None open within %@", farthestPlaceString
     // to-do: if all places are open, there are none "open later today", so check for count of 0
@@ -145,7 +161,6 @@
      */
     for (int i=0; i<placesArray.count; i++)
     {
-//        NSMutableDictionary *place = [[NSMutableDictionary alloc]initWithDictionary:[placesArray objectAtIndex:i]];
         NSDictionary *place = [[NSDictionary alloc]initWithDictionary:[placesArray objectAtIndex:i]];
         
         restaurant *restaurantObject = [[restaurant alloc]init];
@@ -160,8 +175,8 @@
         //calculate the proximity of the mobile device to the establishment
         float placeLat = [restaurantObject.latitude floatValue];
         float placeLng = [restaurantObject.longitude floatValue];
-        float deviceLatitude = [[NSString stringWithFormat:@"%f", deviceLocation.latitude]floatValue];
-        float deviceLongitude = [[NSString stringWithFormat:@"%f", deviceLocation.longitude]floatValue];
+        float deviceLatitude = [[NSString stringWithFormat:@"%f", _deviceLocation.latitude]floatValue];
+        float deviceLongitude = [[NSString stringWithFormat:@"%f", _deviceLocation.longitude]floatValue];
         NSString *distanceString = [NSString stringWithFormat:@"%.2f miles",
                                [self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude
                                                                 deviceLongitude:deviceLongitude
@@ -176,7 +191,7 @@
         //Get distance of farthest place in the results. Since results are ordered by distance, we'll look at the last result.
         if (i == (placesArray.count - 1))
         {
-            farthestPlaceString = [NSString stringWithFormat:@"Open restaurants within %@:",distanceString];
+            farthestPlaceString = [NSString stringWithFormat:@"Restaurants within %@:",distanceString];
         }
         
         restaurantObject.isOpenNow = FALSE;
@@ -208,7 +223,7 @@
     //if <9 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
     //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
     //to-do: make sure there aren't strange duplicate cell issues after changing it to <9
-    if ((numOpenNow <1) & (pageNum <3))
+    if ((numOpenNow <1) & (_pageNum <3))
     {
         NSLog(@"getting more results");
         //to-do: spinner not working properly
@@ -220,7 +235,7 @@
         });
         
         //increment with each new set of 20 results fetched from Google
-        pageNum++;
+        _pageNum++;
     }
 } //end fetchedGoogleData
 
@@ -429,8 +444,8 @@
         float lat = [[row valueForName:@"latitude"]floatValue];
         float lng = [[row valueForName:@"longitude"]floatValue];
         NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",
-                               [self calculateDistanceFromDeviceLatitudeInMiles:deviceLocation.latitude
-                                                                deviceLongitude:deviceLocation.longitude
+                               [self calculateDistanceFromDeviceLatitudeInMiles:_deviceLocation.latitude
+                                                                deviceLongitude:_deviceLocation.longitude
                                                                 toPlaceLatitude:lat placeLongitude:lng]];
         
         restaurantObject.factualID = [row rowId];
@@ -698,11 +713,11 @@
         }
     } //end if !empty query result
     
-    numberOfResultsToCheck--;
+    _numberOfResultsToCheck--;
     
-    NSLog(@"number of Google results to check:%d", numberOfResultsToCheck);
+    NSLog(@"number of Google results to check:%d", _numberOfResultsToCheck);
     
-    if (numberOfResultsToCheck == 0)
+    if (_numberOfResultsToCheck == 0)
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
                                                             object:nil];
