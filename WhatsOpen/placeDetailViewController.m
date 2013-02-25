@@ -34,6 +34,7 @@
 @synthesize deviceLng;
 @synthesize loadingIndicator;
 @synthesize viewDirections;
+@synthesize addressLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -63,6 +64,7 @@
     ratingLabel.text = restaurantObject.rating;
     priceLabel.text = restaurantObject.priceLevel;
     phoneLabel.text = restaurantObject.phone;
+    addressLabel.text = restaurantObject.address;
 
     //to-do: stop animating loading indicator when Google map finishes loading
     [loadingIndicator stopAnimating];

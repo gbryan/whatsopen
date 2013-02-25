@@ -31,6 +31,4 @@
 
 //to-do: am I still manipulating these such that they need to be mutable arrays?
 -(void)getRestaurants;
--(NSMutableArray *)getOpenNow;
--(NSMutableArray *)getOpenLater;
 @end

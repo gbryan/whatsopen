@@ -104,9 +104,6 @@ to-do: move querying into different file and set up as a singleton
 
 - (void)restaurantsAcquired:(NSNotification *)notification
 {
-    
-    //to-do: remove getOpenNow and getOpenLater in queryController
-    //change this to just openNow and openLater
     _openNow = [[NSMutableArray alloc]
                 initWithArray:[[UMAAppDelegate getQueryController]openNow]];
     _openLater = [[NSMutableArray alloc]
@@ -177,9 +174,9 @@ to-do: move querying into different file and set up as a singleton
     //Don't display "open later" if there are no nearby restaurants open later.
     //Always display "open now" since it'll crash if there is not > 0 sections.
     int numSections=1;
-    
+
     if ([_openLater count] > 0) numSections=2;
-    
+
     return numSections;
 }
 

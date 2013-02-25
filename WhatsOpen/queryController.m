@@ -44,11 +44,6 @@
     [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
 }
 
--(void)restaurantDetails
-{
-    //to-do: finish this
-}
-
 #pragma mark - Google Places Query
 -(void)queryGooglePlacesWithTypes:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
 {
@@ -238,7 +233,7 @@
         (fabsf(lat) > 0) &
         (fabsf(lng) > 0))
     {
-        NSLog(@"to get from Factual: %@", restaurantFullName);
+//        NSLog(@"to get from Factual: %@", restaurantFullName);
         
         FactualQuery* queryObject = [FactualQuery query];
         
@@ -276,8 +271,6 @@
         //execute the Factual request
         _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:queryObject withDelegate:self];
         [[_restaurants lastObject] setRequestId:[NSString stringWithFormat:@"%@", _activeRequest.requestId]];
-
-        NSLog(@"the request ID: %@", _activeRequest.requestId);
     }
     else
     {
@@ -285,28 +278,29 @@
     }
 }
 
--(NSDate *) getDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second onDate:(NSDate *)date withGMTOffset:(NSInteger)GMTOffset withDayOffset:(NSInteger)dayOffset
+-(NSDate *) getDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second onDate:(NSDate *)date withDayOffset:(NSInteger)dayOffset
 {
-    NSDateComponents *timeComponents = [[NSCalendar currentCalendar] components:NSUIntegerMax fromDate:date];
+//    NSLog(@"date passed in %@", date);
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    [calendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    NSDateComponents *timeComponents = [calendar components:NSUIntegerMax fromDate:date];
     [timeComponents setHour:hour];
     [timeComponents setMinute:minute];
     [timeComponents setSecond:second];
-    NSDate *timeDate = [[NSCalendar currentCalendar] dateFromComponents:timeComponents];
+    NSDate *timeDate = [calendar dateFromComponents:timeComponents];
     
     if (dayOffset != 0)
     {
         NSDateComponents *dayOffsetComponent = [[NSDateComponents alloc]init];
         [dayOffsetComponent setDay:dayOffset];
-        timeDate = [[NSCalendar currentCalendar] dateByAddingComponents:dayOffsetComponent toDate:timeDate options:0];
+        timeDate = [calendar dateByAddingComponents:dayOffsetComponent toDate:timeDate options:0];
     }
-    
-    timeDate = [NSDate dateWithTimeInterval:GMTOffset sinceDate:timeDate];
     
     return timeDate;
 }
 
 //Returns an array with two elements: open time date object and a close time date object
--(NSArray *) getHoursWithOpenTime:(NSString *)openTimeString closeTime:(NSString *)closeTimeString onDate:(NSDate *)date withGMTOffset:(NSInteger)GMTOffset
+-(NSArray *) getHoursWithOpenTime:(NSString *)openTimeString closeTime:(NSString *)closeTimeString onDate:(NSDate *)date
 {
     //Get integer values for the opening and closing hour/minute of the restaurant
     NSInteger openHour;
@@ -344,16 +338,13 @@
                                           minute:openMinute
                                           second:0
                                           onDate:date
-                                   withGMTOffset:GMTOffset
                                    withDayOffset:0];
-    NSLog(@"open time date: %@", openTimeDate);
     
     //Create a date object representing the closing time of the restaurant
     NSDate *closeTimeDate = [self getDateWithHour:closeHour
                                            minute:closeMinute
                                            second:0
                                            onDate:date
-                                    withGMTOffset:GMTOffset
                                     withDayOffset:0];
     
     //If the restaurant closes after midnight, set the close date to the close hour on the NEXT day
@@ -364,7 +355,6 @@
                                        minute:closeMinute
                                        second:0
                                        onDate:date
-                                withGMTOffset:GMTOffset
                                 withDayOffset:1];
     }
     
@@ -378,11 +368,6 @@
 {
     BOOL isOpen;
     
-    //Get timezone of the mobile device
-    NSDate* GMTDate = [NSDate date];
-    NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
-    NSInteger deviceGMTOffset = [systemTimeZone secondsFromGMTForDate:GMTDate];
-    
     //Get opening hours of restaurant
     //Example open time: "10:00"     Example close time: "2:00"
     NSString *openTimeString = [hours objectAtIndex:0];
@@ -391,27 +376,21 @@
     //Get date objects for open and close times
     NSDate *openTimeDate = [[self getHoursWithOpenTime:openTimeString
                                              closeTime:closeTimeString
-                                                onDate:dateOfSpecifiedHours
-                                         withGMTOffset:deviceGMTOffset]
+                                                onDate:dateOfSpecifiedHours]
                             objectAtIndex:0];
     NSDate *closeTimeDate = [[self getHoursWithOpenTime:openTimeString
                                               closeTime:closeTimeString
-                                                 onDate:dateOfSpecifiedHours
-                                          withGMTOffset:deviceGMTOffset]
+                                                 onDate:dateOfSpecifiedHours]
                              objectAtIndex:1];
-    
-    NSLog(@"close time date: %@", closeTimeDate);
     
     //Is the restaurant still open now (hasn't closed since it opened yesterday)?
     if (([dateToCheck compare:closeTimeDate] == NSOrderedAscending) &
         ([dateToCheck compare:openTimeDate] == NSOrderedDescending))
     {
-        NSLog(@"It is open.");
         isOpen = TRUE;
     }
     else
     {
-        NSLog(@"It is not open");
         isOpen = FALSE;
     }
     
@@ -424,6 +403,8 @@
     
 //to-do: even if facutal doesn't find a restaurant match for this restaurant, we should add it to openNow if G knows it's open
 //to-do: need to then explain to user why we don't have any hours for it
+//to-do: fill out all available info from Google in case there is no factal match found and we have to pass the object to detailsVC with only Google-supplied data
+//to-do: should I overwrite G data with F data or not?
     
     restaurant *restaurantObject = [[restaurant alloc]init];
     
@@ -433,18 +414,6 @@
             restaurantObject = restaurantToCheck;
         }
     }
-
-/*
- 
-how do we know if user wants details about a restaurant or just wants to know when it's open?
- - doesn't matter. we already found the restaurants to display in tableview in listVC, and they have all the info filled in that we need from factual. They also have a G reference ID.
- - when user taps restaurant, we call queryGoogleForDetails from queryController and pass it restaurantObject.googleReference
- - that method queries G for the restaurant
- - the acquiredRestaurantDetailsFromGoogle method then checks to see which properties are already filled in by Factual and fills in anything that's missing (being careful not to make info inconsistent from tableview display to the details page).
- 
- - what if G knows one is open but it's not found at all in Factual? User taps it to see details. Need details from Google. WOn't ahve any factual details.
-
-*/
     
     _queryResult = queryResultObj;
     
@@ -471,11 +440,33 @@ how do we know if user wants details about a restaurant or just wants to know wh
         restaurantObject.proximity = proximity;
         if ([row valueForName:@"rating"])
         {
-            restaurantObject.rating = [NSString stringWithFormat:@"%i/5",[[row valueForName:@"rating"]integerValue]];
+            restaurantObject.rating = [NSString stringWithFormat:@"%.1f/5",[[row valueForName:@"rating"]floatValue]];
         }
         if ([row valueForName:@"price"])
         {
-            restaurantObject.priceLevel = [NSString stringWithFormat:@"%@/5",[row valueForName:@"price"]];
+            int price = [[row valueForName:@"price"]integerValue];
+            NSString *dollarSymbols = [[NSString alloc]init];
+            
+            switch (price) {
+                case 1:
+                    dollarSymbols = @"$";
+                    break;
+                case 2:
+                    dollarSymbols = @"$$";
+                    break;
+                case 3:
+                    dollarSymbols = @"$$$";
+                    break;
+                case 4:
+                    dollarSymbols = @"$$$$";
+                    break;
+                case 5:
+                    dollarSymbols = @"$$$$$";
+                    break;                    
+                default:
+                    break;
+            }
+            restaurantObject.priceLevel = [NSString stringWithFormat:@"Price Level: %@", dollarSymbols];
         }
         if ([row valueForName:@"tel"]) restaurantObject.phone = [row valueForName:@"tel"];
         if ([row valueForName:@"accessible_wheelchair"]) restaurantObject.wheelchair = [row valueForName:@"accessible_wheelchair"];
@@ -522,20 +513,21 @@ how do we know if user wants details about a restaurant or just wants to know wh
             else
             {
                 
-//                restaurantObject.openHours = hours;
-                
+              
                 //to-do: get hours in pretty format and save to restaurantObject.openHours
                 
                 
                 
                 //to-do: how should I display to users the optional string after the pair of hours? Example: ["11:00","16:00","Lunch"]. Factual says that these are just a guess if they say "lunch," "dinner," "breakfast," etc.  In their documentation, they also say that some say things like "only after Labor Day." How to display that to user? Show that it's open now (or later today), but if it has a message, display that message prominently on the details page?
                 
-                NSLog(@"----------------------------------");
-                NSLog(@"the response id: %@", request.requestId);
-                NSLog(@"factual response:%@", [queryResultObj rows]);
-                NSLog(@"hours for %@:%@", restaurantObject.name, hours);
+//                NSLog(@"----------------------------------");
+//                NSLog(@"the response id: %@", request.requestId);
+//                NSLog(@"factual response:%@", [queryResultObj rows]);
+//                NSLog(@"hours for %@:%@", restaurantObject.name, hours);
                 
-                NSInteger deviceGMTOffset = [self getDeviceGMTOffset];
+                NSDate* GMTDate = [NSDate date];
+                NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
+                NSInteger deviceGMTOffset = [systemTimeZone secondsFromGMTForDate:GMTDate];
                 NSDate* dateTimeInSystemLocalTimezone = [[NSDate alloc]
                                                          initWithTimeInterval:deviceGMTOffset
                                                          sinceDate:[NSDate date]];
@@ -543,8 +535,7 @@ how do we know if user wants details about a restaurant or just wants to know wh
                 //get current day of week
                 NSDateFormatter *dayOfWeekFormatter = [[NSDateFormatter alloc]init];
                 [dayOfWeekFormatter setDateFormat:@"EEEE"];
-                [dayOfWeekFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
-                NSString *dayToday = [[dayOfWeekFormatter stringFromDate:dateTimeInSystemLocalTimezone]lowercaseString];
+                NSString *dayToday = [[dayOfWeekFormatter stringFromDate:[NSDate date]]lowercaseString];
                 
                 //to-do: will this work with [self getDate....]?
                 //get previous day
@@ -560,13 +551,18 @@ how do we know if user wants details about a restaurant or just wants to know wh
 
                 if (restaurantObject.isOpenNow == TRUE)
                 {
-                    NSLog(@"%@ added to openNow bc Google said it was open. Moving on to next restaurant!", restaurantObject.name);
+//                    NSLog(@"%@ added to openNow bc Google said it was open. Moving on to next restaurant!", restaurantObject.name);
                     [openNow addObject:restaurantObject];
+                    
+                    //Re-sort by proximity
+                    NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
+                    [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
+                    
                 }
-                //if Google doesn't already know it's open, see if it's open right now                
+                //if Google doesn't already know it's open, see if it's open right now
                 else
                 {
-                    NSLog(@"google doesn't know if %@ is open", restaurantObject.name);
+//                    NSLog(@"google doesn't know if %@ is open", restaurantObject.name);
                     //Is restaurant still open within last night's hour range?
                     NSArray *yesterdayHours = [hours objectForKey:dayYesterday];
                     
@@ -574,17 +570,21 @@ how do we know if user wants details about a restaurant or just wants to know wh
                     {
                         NSArray *lastHourRangeFromYesterday = [yesterdayHours lastObject];
                         
-                        NSLog(@"last yesterday hours: %@", lastHourRangeFromYesterday);
-                        NSLog(@"current time: %@", dateTimeInSystemLocalTimezone);
+//                        NSLog(@"last yesterday hours: %@", lastHourRangeFromYesterday);
+//                        NSLog(@"current time is %@", dateTimeInSystemLocalTimezone);
+//                        NSLog(@"yesterday time was %@", yesterdayDate);
                         
                         //See if the restaurant is still open right now within last night's last hour range
+//                        NSLog(@"see if open now from last night's hours");
                         BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:lastHourRangeFromYesterday
                                                                                onDate:yesterdayDate
                                                                          isOpenAtTime:dateTimeInSystemLocalTimezone];
                         
+//                        NSLog(@"done checking last night's hours");
+                        
                         if (restaurantIsOpen == TRUE)
                         {
-                            NSLog(@"%@ IS OPEN from last night. Hours:%@", restaurantObject.name, [yesterdayHours lastObject]);
+//                            NSLog(@"%@ IS OPEN from last night. Hours:%@", restaurantObject.name, [yesterdayHours lastObject]);
                             
                             //Get the time comment (if any) for this range of hours for this restaurant
                             //http://developer.factual.com/display/docs/Places+API+-+Restaurants#PlacesAPI-Restaurants-OpeningHoursJSON.1
@@ -601,7 +601,7 @@ how do we know if user wants details about a restaurant or just wants to know wh
                             [openNow addObject:restaurantObject];
                             addedAlready = TRUE;
                             
-                            //Re-sort by proximity and refresh table
+                            //Re-sort by proximity
                             NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
                             [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
                         }
@@ -617,7 +617,7 @@ how do we know if user wants details about a restaurant or just wants to know wh
                         //check each set of opening hours today for the restaurant
                         for (int i=0; i < todayHours.count; i++)
                         {
-                            
+//                            NSLog(@"checking hours TODAY");
                             BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:[todayHours objectAtIndex:i]
                                                                                    onDate:dateTimeInSystemLocalTimezone
                                                                              isOpenAtTime:dateTimeInSystemLocalTimezone];
@@ -635,37 +635,32 @@ how do we know if user wants details about a restaurant or just wants to know wh
                             
                             if (restaurantIsOpen == TRUE)
                             {
-                                NSLog(@"%@ IS OPEN. Hours:%@", restaurantObject.name, todayHours);
+//                                NSLog(@"%@ IS OPEN. Hours:%@", restaurantObject.name, todayHours);
                                 
                                 restaurantObject.isOpenNow = TRUE;
                                 [openNow addObject:restaurantObject];
-                                
+
                                 //Re-sort by proximity
                                 NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
                                 [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
                             }
                             else
                             {                                
-                                NSLog(@"%@ is CLOSED. Hours:%@", restaurantObject.name, todayHours);
+//                                NSLog(@"%@ is CLOSED. Hours:%@", restaurantObject.name, todayHours);
                                 
                                 //get date objects for when restaurant is open and closed
                                 NSString *openTimeString = [[todayHours objectAtIndex:i]objectAtIndex:0];
                                 NSString *closeTimeString = [[todayHours objectAtIndex:i]objectAtIndex:1];
                                 NSDate *openTimeDate = [[self getHoursWithOpenTime:openTimeString
                                                                          closeTime:closeTimeString
-                                                                            onDate:dateTimeInSystemLocalTimezone
-                                                                     withGMTOffset:deviceGMTOffset]objectAtIndex:0];
-                                NSDate *closeTimeDate = [[self getHoursWithOpenTime:openTimeString
-                                                                          closeTime:closeTimeString
-                                                                             onDate:dateTimeInSystemLocalTimezone
-                                                                      withGMTOffset:deviceGMTOffset]objectAtIndex:1];
+                                                                            onDate:dateTimeInSystemLocalTimezone]objectAtIndex:0];
                                 
-                                NSLog(@"now:%@    open:%@    close:%@", dateTimeInSystemLocalTimezone, openTimeDate, closeTimeDate);
+//                                NSLog(@"now:%@    open:%@    close:%@", dateTimeInSystemLocalTimezone, openTimeDate, closeTimeDate);
                                 
                                 // See if it's open later today
                                 if ([dateTimeInSystemLocalTimezone compare:openTimeDate] == NSOrderedAscending)
                                 {
-                                    NSLog(@"%@ is open LATER today.", restaurantObject.name);
+//                                    NSLog(@"%@ is open LATER today.", restaurantObject.name);
                                     
                                     //Format openNextDisplay to a string like "Opening at 7:00 pm"
                                     NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
@@ -678,13 +673,10 @@ how do we know if user wants details about a restaurant or just wants to know wh
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
                                     
-                                    NSLog(@"open later count:%i", [openLater count]);
-                                    
                                     //to-do: does sorting work now with custom object?
                                     //re-sort by opening soonest
                                     NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNextSort" ascending:YES];
-                                    [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
-                                    NSLog(@"open later count after re-sort:%i", [openLater count]);                                    
+                                    [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];                                 
 
                                     // Do not test other times for this restaurant since we already know it's open later.
                                     break;
@@ -731,24 +723,6 @@ how do we know if user wants details about a restaurant or just wants to know wh
     float distanceInMiles = sqrtf(latSquared + lngSquared) * (10000/90) * .621371;
     float distance = [[NSString stringWithFormat:@"%.2f", distanceInMiles] floatValue];
     return distance;
-}
-
--(NSInteger)getDeviceGMTOffset
-{
-    NSDate* GMTDate = [NSDate date];
-    NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
-    NSInteger deviceGMTOffset = [systemTimeZone secondsFromGMTForDate:GMTDate];
-    return deviceGMTOffset;
-}
-
--(NSMutableArray *)getOpenNow
-{
-    return openNow;
-}
-
--(NSMutableArray *)getOpenLater
-{
-    return openLater;
 }
 
 @end
