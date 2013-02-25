@@ -28,6 +28,7 @@
     listView = [[listViewController alloc]init];
     
     queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
+//    queryCategories = [NSArray arrayWithObjects:@"food", nil];
     _restaurants = [[NSMutableArray alloc]init];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
@@ -40,23 +41,12 @@
 
 -(void)getRestaurants
 {
-/*
-    - begins google query, which also starts Facutal queries
-    - populates local openNow and openLater mutable arrays with restaurant objects as it goes
-    - each time openNow or openLater is updated, it is re-sorted
-    - each time either array is updated, listViewController is contacted:
-        - set property nsmutablearray openNow or openLater (whichever is updated just now)
-        - reload the table
-        - stop the spinner at some point
-        - if user set this off by refreshing, figure out when to stop showing that it's refreshing
- 
- 
- 
- What if I have openNow and openLater both stored in queryController.
- - when addObject to an array, call method from listVC telling it to get openNow (or openLater) from queryController and reload table
- */
-
     [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
+}
+
+-(void)restaurantDetails
+{
+    //to-do: finish this
 }
 
 #pragma mark - Google Places Query
@@ -169,6 +159,7 @@
         //to-do: in factual query, don't reset lat/lng if already set by Google (make sure whichever one used for detailview.text is same as the one in the details page for the restaurant
         
         restaurantObject.name = [place objectForKey:@"name"];
+        restaurantObject.googleID = [place objectForKey:@"reference"];
         restaurantObject.latitude = [[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
         restaurantObject.longitude = [[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
         
@@ -445,7 +436,11 @@
 
 # pragma mark - Factual request complete
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
-{   
+{
+    
+//to-do: even if facutal doesn't find a restaurant match for this restaurant, we should add it to openNow if G knows it's open
+//to-do: need to then explain to user why we don't have any hours for it
+    
     restaurant *restaurantObject = [[restaurant alloc]init];
     
     for (restaurant *restaurantToCheck in _restaurants) {
@@ -456,12 +451,7 @@
     }
 
 /*
- - now that I have the correct restaurant from the array, I can finish filling out the properties of it
- - then, I can check about open hours and such and stick it in either openNow or openLater
-                [openNow addObject:restaurantObject];
  
-
-
 how do we know if user wants details about a restaurant or just wants to know when it's open?
  - doesn't matter. we already found the restaurants to display in tableview in listVC, and they have all the info filled in that we need from factual. They also have a G reference ID.
  - when user taps restaurant, we call queryGoogleForDetails from queryController and pass it restaurantObject.googleReference
@@ -469,18 +459,7 @@ how do we know if user wants details about a restaurant or just wants to know wh
  - the acquiredRestaurantDetailsFromGoogle method then checks to see which properties are already filled in by Factual and fills in anything that's missing (being careful not to make info inconsistent from tableview display to the details page).
  
  - what if G knows one is open but it's not found at all in Factual? User taps it to see details. Need details from Google. WOn't ahve any factual details.
- 
- 
- get each result from Google
- see if it's open
- set value for key isOpenNow to 1 if so
- set any other values available
- search factual for that restaurant
- set all keys available
- if key isOpenNow == 1, get the hours but don't bother checking if it's open
- if isOpenNow !=1, see if it's open now or later, setting "openNext" if so
- 
- once all have been checked, 
+
 */
     
     _queryResult = queryResultObj;
@@ -506,8 +485,14 @@ how do we know if user wants details about a restaurant or just wants to know wh
         restaurantObject.latitude = [row valueForName:@"latitude"];
         restaurantObject.longitude = [row valueForName:@"longitude"];
         restaurantObject.proximity = proximity;
-        if ([row valueForName:@"rating"]) restaurantObject.rating = [row valueForName:@"rating"];
-        if ([row valueForName:@"price"]) restaurantObject.priceLevel = [row valueForName:@"price"];
+        if ([row valueForName:@"rating"])
+        {
+            restaurantObject.rating = [NSString stringWithFormat:@"%i/5",[[row valueForName:@"rating"]integerValue]];
+        }
+        if ([row valueForName:@"price"])
+        {
+            restaurantObject.priceLevel = [NSString stringWithFormat:@"%@/5",[row valueForName:@"price"]];
+        }
         if ([row valueForName:@"tel"]) restaurantObject.phone = [row valueForName:@"tel"];
         if ([row valueForName:@"accessible_wheelchair"]) restaurantObject.wheelchair = [row valueForName:@"accessible_wheelchair"];
         if ([row valueForName:@"alcohol"]) restaurantObject.servesAlcohol = [row valueForName:@"alcohol"];

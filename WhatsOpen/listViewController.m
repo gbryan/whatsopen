@@ -264,6 +264,7 @@ to-do: move querying into different file and set up as a singleton
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    
     if ([[segue identifier] isEqualToString:@"detailSegue"])
     {
         // Get reference to the destination view controller
@@ -276,35 +277,23 @@ to-do: move querying into different file and set up as a singleton
 //        destinationVC.deviceLat = [NSString stringWithFormat:@"%f",deviceLocation.latitude];
 //        destinationVC.deviceLng = [NSString stringWithFormat:@"%f",deviceLocation.longitude];
         
-        switch (section)
+        
+        //to-do: do I want a different view for those open later today than those open now?
+        
+        //open now
+        if (section == 0)
         {
-                
-            //to-do: some items in openNow may have been added from Factual. Do we want to pull the info from Google or Factual for the details page? If pulling from Google, we need to somehow get the "reference" value from Google into the NSMutableDictionary containing the restaurant that we added to openNow from Factual.  We would then query Google with the reference to get the details.
-            //to-do: I've set a value for key "provider" that is either "google" or "factual". Check this one to see which db to query and whether to use key "reference" (google) or key "factual_id" (factual).
-                
-            //open now
-            case 0:
-                destinationVC.placeReference = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"reference"];
-                destinationVC.provider = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"provider"];
-                destinationVC.placeRating = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"rating"];
-                destinationVC.proximity = [[_openNow objectAtIndex:indexPath.row]objectForKey:@"proximity"];
-                destinationVC.placeLat = [[[[_openNow objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
-                destinationVC.placeLng = [[[[_openNow objectAtIndex:indexPath.row]objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
-                break;
-            //open later today
-            case 1:
-//                destinationVC.placeReference = [[openLater objectAtIndex:indexPath.row]objectForKey:@"reference"];
-                //to-do: make sure tapping a place takes you to the right details page!
-                //to-do: should I get rating from Google or Factual? Need to set up openLaterPlace mutable dict for this entire implementation and set value for it within G query if using Google
-                //                destinationVC.placeRating = [[openLater objectAtIndex:indexPath.row]objectForKey:@"rating"];
-                destinationVC.placeReference = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"reference"];
-                destinationVC.provider = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"provider"];
-                destinationVC.placeRating = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"rating"];
-                destinationVC.proximity = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"proximity"];
-                destinationVC.placeLat = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"latitude"];
-                destinationVC.placeLng = [[_openLater objectAtIndex:indexPath.row]objectForKey:@"longitude"];
-                break;
-        } //end switch
+            destinationVC.restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        }
+        //open later today
+        else if (section == 1)
+        {
+            destinationVC.restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        }
+        else
+        {
+            NSLog(@"ERROR: Section %i has not been implemented in prepareForSegue.", section);
+        }
     }
 }
 @end

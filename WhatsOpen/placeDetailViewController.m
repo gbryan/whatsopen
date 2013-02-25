@@ -9,16 +9,22 @@
 #import "placeDetailViewController.h"
 
 @interface placeDetailViewController () {
-    NSMutableDictionary *placeDetailsDictionary;
-    BOOL didLoad;
+//    NSMutableDictionary *placeDetailsDictionary;
+//    BOOL didLoad;
 }
 
 @end
 
 @implementation placeDetailViewController
+/*
 @synthesize placeReference;
 @synthesize provider;
 @synthesize placeRating;
+@synthesize proximity;
+@synthesize placeLat;
+@synthesize placeLng;
+*/
+@synthesize restaurantObject;
 @synthesize priceLabel;
 @synthesize ratingLabel;
 @synthesize phoneLabel;
@@ -27,9 +33,6 @@
 @synthesize deviceLat;
 @synthesize deviceLng;
 @synthesize loadingIndicator;
-@synthesize proximity;
-@synthesize placeLat;
-@synthesize placeLng;
 @synthesize viewDirections;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -46,27 +49,26 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    placeNameLabel.hidden = TRUE;
-    ratingLabel.hidden = TRUE;
-    priceLabel.hidden = TRUE;
-    phoneLabel.hidden = TRUE;
-    distanceLabel.hidden = TRUE;
-    viewDirections.hidden = TRUE;
+//    placeNameLabel.hidden = TRUE;
+//    ratingLabel.hidden = TRUE;
+//    priceLabel.hidden = TRUE;
+//    phoneLabel.hidden = TRUE;
+//    distanceLabel.hidden = TRUE;
+//    viewDirections.hidden = TRUE;
     [loadingIndicator startAnimating];
+    [loadingIndicator setHidesWhenStopped:TRUE];
     
-    if ([provider isEqualToString:@"google"])
-    {
-        [self queryGooglePlaces:placeReference];
-        [self loadGoogleMap:placeLat lng:placeLng];
-    }
-    else
-    {
-        //query Factual
-    }
-    
+    placeNameLabel.text = restaurantObject.name;
+    distanceLabel.text = restaurantObject.proximity;
+    ratingLabel.text = restaurantObject.rating;
+    priceLabel.text = restaurantObject.priceLevel;
+    phoneLabel.text = restaurantObject.phone;
 
+    //to-do: stop animating loading indicator when Google map finishes loading
+    [loadingIndicator stopAnimating];
 }
 
+/*
 - (void)loadGoogleMap:(NSString *)lat lng:(NSString *)lng {
     
     NSString *icon = @"http://png.findicons.com/files/icons/2083/go_green_web/64/open_sign.png";
@@ -86,6 +88,7 @@
     }
     NSLog(@"finished loading!!!!");
 }
+ */
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -104,6 +107,7 @@
     [super viewDidUnload];
 }
 
+/*
 - (void)queryGooglePlaces:(NSString *)placeReferenceString {
     NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?reference=%@&sensor=true&key=%@", placeReferenceString, GOOGLE_API_KEY];
     
@@ -197,10 +201,12 @@
         didLoad = TRUE;
     }
 }
-
+*/
 - (IBAction)viewDirections:(id)sender {
+
+    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
     
-    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", placeLat, placeLng];
+    //to-do: it would be best to get up-to-date device location now
     NSString *deviceLatLngString = [NSString stringWithFormat:@"%@,%@", deviceLat, deviceLng];
     
     NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, placeLatLngString]];
