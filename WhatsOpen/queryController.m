@@ -20,7 +20,7 @@
 @synthesize queryCategories;
 @synthesize openNow;
 @synthesize openLater;
-
+@synthesize farthestPlaceString;
 
 -(id)init
 {
@@ -28,7 +28,7 @@
     listView = [[listViewController alloc]init];
     
     queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
-//    queryCategories = [NSArray arrayWithObjects:@"food", nil];
+//    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
     _restaurants = [[NSMutableArray alloc]init];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
@@ -142,7 +142,6 @@
     // to-do: if all places are open, there are none "open later today", so check for count of 0
     
     int numOpenNow = 0;
-    NSString *farthestPlaceString = [[NSString alloc]init];
     
     /*Look at each restaurant from Google to see if it's open. If open, add to openNow, which displays in the table
      under the section "Open Now".  If not currently open (or if Google doesn't make it clear whether or not it's open),
@@ -182,22 +181,7 @@
         //Get distance of farthest place in the results. Since results are ordered by distance, we'll look at the last result.
         if (i == (placesArray.count - 1))
         {
-            farthestPlaceString = distanceString;
-            NSString *proximityMessage = [NSString stringWithFormat:@"Open restaurants within %@:",farthestPlaceString];
-            
-            //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
-            //to-do: is this the right size for iPhone 5 screen also?
-            UIFont *font = [UIFont boldSystemFontOfSize:14.0];
-            CGRect frame = CGRectMake(0, 0, [proximityMessage sizeWithFont:font].width, 44);
-            UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
-            titleLabel.backgroundColor = [UIColor clearColor];
-            titleLabel.font = font;
-            titleLabel.textColor = [UIColor whiteColor];
-            titleLabel.text = proximityMessage;
-            
-            //to-do: is this working?
-            //to-do: is it bad practice to use the built-in setter (as a property) instead of using a homemade method?
-            listView.navBar.titleView = titleLabel;
+            farthestPlaceString = [NSString stringWithFormat:@"Open restaurants within %@:",distanceString];
         }
         
         restaurantObject.isOpenNow = FALSE;

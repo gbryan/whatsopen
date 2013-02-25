@@ -27,7 +27,9 @@
 @property (nonatomic, strong) NSArray *queryCategories;
 @property (nonatomic, strong) NSMutableArray *openNow;
 @property (nonatomic, strong) NSMutableArray *openLater;
+@property (nonatomic, strong) NSString *farthestPlaceString;
 
+//to-do: am I still manipulating these such that they need to be mutable arrays?
 -(void)getRestaurants;
 -(NSMutableArray *)getOpenNow;
 -(NSMutableArray *)getOpenLater;

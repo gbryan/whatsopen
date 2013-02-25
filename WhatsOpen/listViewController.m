@@ -62,18 +62,16 @@ to-do: move querying into different file and set up as a singleton
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
-    [pullToRefresh addTarget:self action:@selector(refreshResults) forControlEvents:UIControlEventValueChanged];
+    [pullToRefresh addTarget:self action:@selector(loadRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadTable:)
+                                             selector:@selector(restaurantsAcquired:)
                                                  name:@"restaurantsAcquired"
                                                object:nil];
     
-    //Begin query to Google and Factual to retrieve restaurants that are open today]
-    [[UMAAppDelegate getQueryController] getRestaurants];
-    [_spinner startAnimating];
+    [self loadRestaurantList];
 
 
     
@@ -97,14 +95,40 @@ to-do: move querying into different file and set up as a singleton
     [_restaurantTableView setTableFooterView:footerImageView];
 }
 
-- (void)reloadTable:(NSNotification *)notification
+- (void)loadRestaurantList
 {
-    _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
-    _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
-    NSLog(@"open later: %@", _openLater);
+    //Begin query to Google and Factual to retrieve restaurants that are open today
+    [[UMAAppDelegate getQueryController] getRestaurants];
+    [_spinner startAnimating];
+}
+
+- (void)restaurantsAcquired:(NSNotification *)notification
+{
+    
+    //to-do: remove getOpenNow and getOpenLater in queryController
+    //change this to just openNow and openLater
+    _openNow = [[NSMutableArray alloc]
+                initWithArray:[[UMAAppDelegate getQueryController]openNow]];
+    _openLater = [[NSMutableArray alloc]
+                initWithArray:[[UMAAppDelegate getQueryController]openLater]];
+    
+    //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
+    //to-do: is this the right size for iPhone 5 screen also?
+    NSString *farthestPlaceString = [[UMAAppDelegate getQueryController]farthestPlaceString];
+    UIFont *font = [UIFont boldSystemFontOfSize:14.0];
+    CGRect frame = CGRectMake(0, 0, [farthestPlaceString sizeWithFont:font].width, 44);
+    UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
+    titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.font = font;
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.text = farthestPlaceString;
+    
+    //to-do: is this working?
+    _navBar.titleView = titleLabel;
     
     [_restaurantTableView reloadData];
     [_spinner stopAnimating];
+    [self.refreshControl endRefreshing];
 }
 
 /*
@@ -147,31 +171,16 @@ to-do: move querying into different file and set up as a singleton
     // Dispose of any resources that can be recreated.
 }
 
-- (void)refreshResults
-{
-    //to-do: turn this back on
-//    [[UMAAppDelegate getQueryController] getRestaurants];
-    
-    
-    //This test is working. Why aren't restaurants showing up? array count is 8!
-    NSMutableDictionary *test = [[NSMutableDictionary alloc]init];
-    [test setValue:@"hi" forKey:@"test"];
-//    [openNow addObject:test];
-    
-    _openNow = [[UMAAppDelegate getQueryController]getOpenNow];
-    _openLater = [[UMAAppDelegate getQueryController]getOpenLater];
-    
-    [_restaurantTableView reloadData];
-    NSLog(@"refreshing");
-    //to-do: would it look better to wait 2-3 seconds before stopping the animation?
-    [self.refreshControl endRefreshing];
-}
-
 #pragma mark - Table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // section 0 is "open now," and section 1 is "open later today"
-    return 2;
+    //Don't display "open later" if there are no nearby restaurants open later.
+    //Always display "open now" since it'll crash if there is not > 0 sections.
+    int numSections=1;
+    
+    if ([_openLater count] > 0) numSections=2;
+    
+    return numSections;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
