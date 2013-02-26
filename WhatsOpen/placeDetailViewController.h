@@ -11,8 +11,10 @@
 #import "restaurant.h"
 #import "keys.h"
 #import "locationServices.h"
+#import "websiteViewController.h"
+#import "queryController.h"
 
-@interface placeDetailViewController : UIViewController <UIWebViewDelegate>
+@interface placeDetailViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *priceIcon;
 @property (weak, nonatomic) IBOutlet UITextView *phoneTextView;
@@ -27,6 +29,6 @@
 @property (weak, nonatomic) IBOutlet UITextView *openNowOrLater;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (weak, nonatomic) IBOutlet UIView *mapContainer;
-- (IBAction)openWebsite:(id)sender;
+@property (weak, nonatomic) IBOutlet UIButton *websiteButton;
 
 @end

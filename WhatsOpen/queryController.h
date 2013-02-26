@@ -23,7 +23,8 @@
 @property (nonatomic, strong) NSMutableArray *openNow;
 @property (nonatomic, strong) NSMutableArray *openLater;
 @property (nonatomic, strong) NSString *farthestPlaceString;
+@property (nonatomic, strong) restaurant *detailRestaurant;
 
-//to-do: am I still manipulating these such that they need to be mutable arrays?
 -(void)getRestaurants;
+-(void)getRestaurantDetail:(restaurant *)restaurantObject;
 @end

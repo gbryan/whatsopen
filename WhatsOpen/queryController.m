@@ -40,6 +40,10 @@
                 continue
             else: continue
         at end of _restaurants loop, re-sort both arrays and notify VC to update tableview
+    if outside the US, issue restaurants query to Google to get 20 closest restaurants
+        show which are open now (can’t show open later since G doesn’t give hours)
+        show only G supplied details since F has no international data in restaurants table
+
  */
 
 
@@ -61,6 +65,7 @@
 @synthesize openNow;
 @synthesize openLater;
 @synthesize farthestPlaceString;
+@synthesize detailRestaurant;
 
 -(id)init
 {
@@ -91,6 +96,45 @@
     [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude];
 
 //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
+}
+
+-(void)getRestaurantDetail:(restaurant *)restaurantObject
+{
+    //to-do: this won't work yet bc I need to write the methods to match F restaurant with G restaurant. Otherwise, there is no googleID to use!
+    detailRestaurant = restaurantObject;
+    [self queryGooglePlacesWithReference:restaurantObject.googleID];
+}
+
+- (void)queryGooglePlacesWithReference:(NSString *)placeReferenceString {
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?reference=%@&sensor=true&key=%@", placeReferenceString, GOOGLE_API_KEY];
+    
+    NSURL *googleRequestURL=[NSURL URLWithString:url];
+    NSData* detailRestaurantData = [NSData dataWithContentsOfURL: googleRequestURL];
+    
+    //to-do: check if detailRestaurantData is nil so app won't crash 
+    [self acquiredRestaurantDetail:detailRestaurantData];
+}
+
+- (void)acquiredRestaurantDetail:(NSData *)responseData {
+    //parse out the json data
+    NSError* error;
+    NSDictionary* json = [NSJSONSerialization
+                          JSONObjectWithData:responseData
+                          
+                          options:kNilOptions
+                          error:&error];
+    
+    NSDictionary *restaurantDetails = [json objectForKey:@"result"];
+    
+    NSLog(@"Google restaurant details: %@", restaurantDetails);
+    
+    /*to-do:
+    - fill in any new details from G in detailRestaurant
+     - be sure to get an image (or maybe an array of all images?)
+     */
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
+                                                        object:nil];
 }
 
 //#pragma mark - Google Places Query
@@ -362,7 +406,14 @@
             restaurantObject.latitude = [row valueForName:@"latitude"];
             restaurantObject.longitude = [row valueForName:@"longitude"];
             restaurantObject.proximity = proximity;
-            if ([row valueForName:@"rating"]) restaurantObject.rating = [[row valueForName:@"rating"]floatValue];
+            if ([row valueForName:@"rating"])
+            {
+                restaurantObject.rating = [NSString stringWithFormat:@"%.1f",[[row valueForName:@"rating"]floatValue]];
+            }
+            else
+            {
+                restaurantObject.rating = @"";
+            }
             if ([row valueForName:@"price"]) restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
             if ([row valueForName:@"tel"]) restaurantObject.phone = [row valueForName:@"tel"];
             if ([row valueForName:@"accessible_wheelchair"]) restaurantObject.wheelchair = [row valueForName:@"accessible_wheelchair"];

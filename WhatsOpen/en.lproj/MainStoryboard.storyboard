@@ -12,9 +12,9 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="distance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SnC-jR-wWu">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SnC-jR-wWu">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="132" id="DmZ-Zi-mBM"/>
+                                    <constraint firstAttribute="width" constant="125" id="Nrw-zk-H9X"/>
                                     <constraint firstAttribute="height" constant="21" id="fS9-iJ-Kq1"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -40,14 +40,13 @@
                             </textView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="restaurantImage" translatesAutoresizingMaskIntoConstraints="NO" id="xQP-QZ-Iyy">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="174" id="MFW-us-3IX"/>
-                                    <constraint firstAttribute="height" constant="114" id="w9f-yG-vPs"/>
+                                    <constraint firstAttribute="height" constant="150" id="J2e-4J-mTT"/>
+                                    <constraint firstAttribute="width" constant="175" id="pAO-MP-CYg"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="rating" translatesAutoresizingMaskIntoConstraints="NO" id="qcF-Bv-FGJ">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="23" id="3Q5-mp-6WH"/>
-                                    <constraint firstAttribute="width" constant="99" id="vTV-S0-pMe"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="priceLevel" translatesAutoresizingMaskIntoConstraints="NO" id="caw-iO-eot">
@@ -74,51 +73,73 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="open now or opening at" translatesAutoresizingMaskIntoConstraints="NO" id="Oa9-M6-2aX">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oa9-M6-2aX">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="134" id="DxR-dA-wZv"/>
                                     <constraint firstAttribute="height" constant="28" id="YWs-tb-HNn"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="open">
+                                        <attributes>
+                                            <font key="NSFont" size="14" name="Helvetica"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <dataDetectorType key="dataDetectorTypes" calendarEvent="YES"/>
                             </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hMM-D3-RrH">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="31" id="Zms-jT-ZfQ"/>
+                                    <constraint firstAttribute="width" constant="98" id="sO5-Fe-PxF"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Website">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="XEx-lQ-kbl" kind="modal" identifier="webView" id="frv-u2-WAD"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="H7o-yD-t1L" firstAttribute="top" secondItem="3" secondAttribute="top" constant="120" id="0h3-Q6-csv"/>
+                            <constraint firstItem="H7o-yD-t1L" firstAttribute="leading" secondItem="J6M-SX-XlL" secondAttribute="leading" type="default" id="0yr-kc-gJk"/>
                             <constraint firstItem="0Gq-Fu-bAt" firstAttribute="trailing" secondItem="J6M-SX-XlL" secondAttribute="trailing" type="default" id="1tm-ni-eeL"/>
-                            <constraint firstItem="SnC-jR-wWu" firstAttribute="leading" secondItem="xQP-QZ-Iyy" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="45T-cM-O1v"/>
                             <constraint firstItem="xQP-QZ-Iyy" firstAttribute="leading" secondItem="3" secondAttribute="leading" type="default" id="4xK-FO-TWY"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="top" secondItem="ReE-HB-0bk" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="5qJ-Ia-FnV"/>
-                            <constraint firstItem="9oJ-4X-Mid" firstAttribute="centerX" secondItem="3" secondAttribute="centerX" type="default" id="97l-ar-e1c"/>
+                            <constraint firstAttribute="bottom" secondItem="0Gq-Fu-bAt" secondAttribute="bottom" constant="84" id="5RI-YM-f7S"/>
+                            <constraint firstItem="ReE-HB-0bk" firstAttribute="trailing" secondItem="SnC-jR-wWu" secondAttribute="trailing" type="default" id="743-uK-HIW"/>
+                            <constraint firstItem="caw-iO-eot" firstAttribute="top" secondItem="qcF-Bv-FGJ" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="7C9-yJ-Wr4"/>
+                            <constraint firstItem="hMM-D3-RrH" firstAttribute="leading" secondItem="caw-iO-eot" secondAttribute="leading" type="default" id="Bzr-gu-GK5"/>
+                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="top" secondItem="3" secondAttribute="top" constant="220" id="DKy-xr-aLs"/>
+                            <constraint firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" constant="39" id="Evk-aO-LWc"/>
                             <constraint firstItem="0Gq-Fu-bAt" firstAttribute="leading" secondItem="J6M-SX-XlL" secondAttribute="leading" type="default" id="F6N-j1-JJl"/>
-                            <constraint firstItem="H7o-yD-t1L" firstAttribute="leading" secondItem="J6M-SX-XlL" secondAttribute="leading" type="default" id="Gmm-ro-Xcf"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="top" secondItem="H7o-yD-t1L" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="Hcp-Ka-YdV"/>
-                            <constraint firstItem="caw-iO-eot" firstAttribute="bottom" secondItem="xQP-QZ-Iyy" secondAttribute="bottom" type="default" id="Ptb-Xw-4sD"/>
-                            <constraint firstItem="caw-iO-eot" firstAttribute="leading" secondItem="qcF-Bv-FGJ" secondAttribute="leading" type="default" id="QL8-eo-dAa"/>
+                            <constraint firstItem="ReE-HB-0bk" firstAttribute="top" secondItem="H7o-yD-t1L" secondAttribute="top" type="default" id="HGC-5Y-r1a"/>
+                            <constraint firstItem="caw-iO-eot" firstAttribute="leading" secondItem="qcF-Bv-FGJ" secondAttribute="leading" type="default" id="NaE-5W-DYz"/>
+                            <constraint firstItem="ReE-HB-0bk" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="116" id="SYj-6X-67P"/>
                             <constraint firstItem="xQP-QZ-Iyy" firstAttribute="top" secondItem="3" secondAttribute="top" type="default" id="THT-dd-vV0"/>
-                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="top" secondItem="3" secondAttribute="top" constant="187" id="VLT-8d-ihV"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="centerX" secondItem="9oJ-4X-Mid" secondAttribute="centerX" type="default" id="Y1u-2C-ghr"/>
+                            <constraint firstItem="9oJ-4X-Mid" firstAttribute="centerX" secondItem="J6M-SX-XlL" secondAttribute="centerX" type="default" id="VVC-99-Z3W"/>
+                            <constraint firstItem="H7o-yD-t1L" firstAttribute="bottom" secondItem="ReE-HB-0bk" secondAttribute="bottom" type="default" id="WSu-Dn-0N4"/>
                             <constraint firstItem="Oa9-M6-2aX" firstAttribute="trailing" secondItem="SnC-jR-wWu" secondAttribute="trailing" type="default" id="YBG-xo-vMv"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="top" secondItem="9oJ-4X-Mid" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="a9L-US-exA"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="trailing" secondItem="ReE-HB-0bk" secondAttribute="trailing" type="default" id="fT7-Fu-SBl"/>
-                            <constraint firstItem="ReE-HB-0bk" firstAttribute="top" secondItem="H7o-yD-t1L" secondAttribute="top" type="default" id="iXe-cp-yU3"/>
-                            <constraint firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" constant="19" id="lel-js-ISK"/>
+                            <constraint firstItem="H7o-yD-t1L" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="4" id="dT6-p7-HyD"/>
+                            <constraint firstItem="9oJ-4X-Mid" firstAttribute="top" secondItem="3" secondAttribute="top" constant="160" id="eJv-0c-Hpi"/>
+                            <constraint firstItem="H7o-yD-t1L" firstAttribute="top" secondItem="3" secondAttribute="top" constant="157" id="hMP-kC-pUN"/>
                             <constraint firstItem="Oa9-M6-2aX" firstAttribute="top" secondItem="3" secondAttribute="top" constant="4" id="mpM-0V-NOl"/>
+                            <constraint firstItem="hMM-D3-RrH" firstAttribute="centerX" secondItem="caw-iO-eot" secondAttribute="centerX" type="default" id="pOy-4q-efa"/>
+                            <constraint firstItem="J6M-SX-XlL" firstAttribute="top" secondItem="3" secondAttribute="top" constant="194" id="so8-hr-aEk"/>
                             <constraint firstItem="SnC-jR-wWu" firstAttribute="top" secondItem="3" secondAttribute="top" constant="33" id="szg-D2-nd8"/>
-                            <constraint firstAttribute="bottom" secondItem="0Gq-Fu-bAt" secondAttribute="bottom" constant="145" id="tGR-uf-AN9"/>
                             <constraint firstItem="caw-iO-eot" firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" type="default" id="v7f-P1-4OM"/>
-                            <constraint firstItem="qcF-Bv-FGJ" firstAttribute="top" secondItem="3" secondAttribute="top" constant="57" id="y04-RB-Yul"/>
+                            <constraint firstItem="hMM-D3-RrH" firstAttribute="bottom" secondItem="xQP-QZ-Iyy" secondAttribute="bottom" type="default" id="xa6-Sp-iYo"/>
+                            <constraint firstItem="hMM-D3-RrH" firstAttribute="top" secondItem="caw-iO-eot" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="xa6-Zr-XHF"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="t9h-0e-m37">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="LH2-aH-l8z">
-                            <connections>
-                                <action selector="openWebsite:" destination="2" id="BWj-iZ-Tdw"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="t9h-0e-m37"/>
                     <connections>
                         <outlet property="addressLabel" destination="J6M-SX-XlL" id="F7L-H3-zM8"/>
                         <outlet property="distanceLabel" destination="SnC-jR-wWu" id="NLU-ek-N6e"/>
@@ -131,6 +152,7 @@
                         <outlet property="priceIcon" destination="caw-iO-eot" id="B2w-el-aHz"/>
                         <outlet property="ratingIcon" destination="qcF-Bv-FGJ" id="IzO-xn-e8T"/>
                         <outlet property="restaurantImage" destination="xQP-QZ-Iyy" id="O9W-Mf-EXc"/>
+                        <outlet property="websiteButton" destination="hMM-D3-RrH" id="h5n-AU-VVb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
@@ -204,12 +226,56 @@
             </objects>
             <point key="canvasLocation" x="288" y="-95"/>
         </scene>
+        <!--Website View Controller-->
+        <scene sceneID="xTD-Db-yc4">
+            <objects>
+                <viewController id="XEx-lQ-kbl" customClass="websiteViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JAw-Yw-tQT">
+                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QB6-tx-3lU">
+                                <items>
+                                    <navigationItem title="Title" id="AAO-aZ-ncb">
+                                        <barButtonItem key="rightBarButtonItem" title="Close" style="done" id="p4L-uS-KNT">
+                                            <connections>
+                                                <action selector="closeWebView:" destination="XEx-lQ-kbl" id="kit-gv-58K"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <webView contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="UGN-kS-o4a">
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES"/>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="QB6-tx-3lU" firstAttribute="leading" secondItem="JAw-Yw-tQT" secondAttribute="leading" type="default" id="1ds-QN-eV2"/>
+                            <constraint firstItem="QB6-tx-3lU" firstAttribute="trailing" secondItem="JAw-Yw-tQT" secondAttribute="trailing" type="default" id="EIC-uc-I2h"/>
+                            <constraint firstItem="UGN-kS-o4a" firstAttribute="leading" secondItem="JAw-Yw-tQT" secondAttribute="leading" type="default" id="I9A-nj-cVw"/>
+                            <constraint firstItem="UGN-kS-o4a" firstAttribute="trailing" secondItem="JAw-Yw-tQT" secondAttribute="trailing" type="default" id="Os6-8A-iUY"/>
+                            <constraint firstItem="QB6-tx-3lU" firstAttribute="top" secondItem="JAw-Yw-tQT" secondAttribute="top" type="default" id="RvV-21-8Gt"/>
+                            <constraint firstItem="UGN-kS-o4a" firstAttribute="bottom" secondItem="JAw-Yw-tQT" secondAttribute="bottom" type="default" id="TDm-DL-V1Z"/>
+                            <constraint firstItem="UGN-kS-o4a" firstAttribute="top" secondItem="QB6-tx-3lU" secondAttribute="bottom" type="default" id="lKm-8C-Uy7"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="navBar" destination="AAO-aZ-ncb" id="yaO-He-afo"/>
+                        <outlet property="webView" destination="UGN-kS-o4a" id="Khv-vj-6cP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OXG-ta-zmf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1655" y="-743"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="RKC-s1-wb1">
             <objects>
                 <viewController id="aIc-w8-hKa" sceneMemberID="viewController">
                     <view key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="2Cz-ht-D8f">
-                        <rect key="frame" x="0.0" y="0.0" width="311" height="172"/>
+                        <rect key="frame" x="0.0" y="0.0" width="311" height="200"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -220,37 +286,6 @@
             <point key="canvasLocation" x="1655" y="75"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="listViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/listViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
-                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
-            </relationships>
-        </class>
-        <class className="placeDetailViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/placeDetailViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="openWebsite:"/>
-                <relationship kind="action" name="viewDirections:"/>
-                <relationship kind="outlet" name="addressLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="distanceLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="loadingIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="mapContainer" candidateClass="UIView"/>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="openNowOrLater" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="phoneIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="phoneTextView" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="priceIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="ratingIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="restaurantImage" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
