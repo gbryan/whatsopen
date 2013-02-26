@@ -352,69 +352,31 @@
             //calculate proximity of mobile device to the restaurant
             float lat = [[row valueForName:@"latitude"]floatValue];
             float lng = [[row valueForName:@"longitude"]floatValue];
-            NSString *proximity = [NSString stringWithFormat:@"Distance: %.2f miles",
+            NSString *proximity = [NSString stringWithFormat:@"%.2f miles",
                                    [self calculateDistanceFromDeviceLatitudeInMiles:_deviceLocation.latitude
                                                                     deviceLongitude:_deviceLocation.longitude
                                                                     toPlaceLatitude:lat placeLongitude:lng]];
             
             restaurantObject.factualID = [row rowId];
             restaurantObject.name = [row valueForName:@"name"];
-            NSLog(@"name is %@", restaurantObject.name);
             restaurantObject.latitude = [row valueForName:@"latitude"];
             restaurantObject.longitude = [row valueForName:@"longitude"];
             restaurantObject.proximity = proximity;
-            if ([row valueForName:@"rating"])
-            {
-                restaurantObject.rating = [NSString stringWithFormat:@"%.1f/5",[[row valueForName:@"rating"]floatValue]];
-            }
-            if ([row valueForName:@"price"])
-            {
-                int price = [[row valueForName:@"price"]integerValue];
-                NSString *dollarSymbols = [[NSString alloc]init];
-                
-                switch (price) {
-                    case 1:
-                        dollarSymbols = @"$";
-                        break;
-                    case 2:
-                        dollarSymbols = @"$$";
-                        break;
-                    case 3:
-                        dollarSymbols = @"$$$";
-                        break;
-                    case 4:
-                        dollarSymbols = @"$$$$";
-                        break;
-                    case 5:
-                        dollarSymbols = @"$$$$$";
-                        break;
-                    default:
-                        break;
-                }
-                restaurantObject.priceLevel = [NSString stringWithFormat:@"Price Level: %@", dollarSymbols];
-            }
+            if ([row valueForName:@"rating"]) restaurantObject.rating = [[row valueForName:@"rating"]floatValue];
+            if ([row valueForName:@"price"]) restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
             if ([row valueForName:@"tel"]) restaurantObject.phone = [row valueForName:@"tel"];
             if ([row valueForName:@"accessible_wheelchair"]) restaurantObject.wheelchair = [row valueForName:@"accessible_wheelchair"];
             if ([row valueForName:@"alcohol"]) restaurantObject.servesAlcohol = [row valueForName:@"alcohol"];
             if ([row valueForName:@"alcohol_bar"]) restaurantObject.hasFullBar = [row valueForName:@"alcohol_bar"];
             if ([row valueForName:@"address_extended"])
             {
-                restaurantObject.address = [[[[[[[row valueForName:@"address"]
+                restaurantObject.address = [[[row valueForName:@"address"]
                                                  stringByAppendingString:@" "]
-                                                stringByAppendingString:[row valueForName:@"address_extended"]]
-                                               stringByAppendingString:@" "]
-                                              stringByAppendingString:[row valueForName:@"locality"]]
-                                             stringByAppendingString:@", "]
-                                            stringByAppendingString:[row valueForName:@"region"]];
+                                                stringByAppendingString:[row valueForName:@"address_extended"]];
             }
             else
             {
-                restaurantObject.address = [[[[[row valueForName:@"address"]
-                                               stringByAppendingString:@" "]
-                                              stringByAppendingString:[row valueForName:@"locality"]]
-                                             stringByAppendingString:@", "]
-                                            stringByAppendingString:[row valueForName:@"region"]];
-                
+                restaurantObject.address = [row valueForName:@"address"];
             }
             if ([row valueForName:@"parking"]) restaurantObject.parking = [row valueForName:@"parking"];
             if ([row valueForName:@"attire"]) restaurantObject.attire = [row valueForName:@"attire"];
@@ -513,10 +475,6 @@
                             [openNow addObject:restaurantObject];
 //                            addedAlready = TRUE;
                             continue;
-                            
-                            //Re-sort by proximity
-                            NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
-                            [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
                         }
                     } //end if open yesterday
                     
@@ -551,10 +509,6 @@
                                 
                                 restaurantObject.isOpenNow = TRUE;
                                 [openNow addObject:restaurantObject];
-                                
-                                //Re-sort by proximity
-                                NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
-                                [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
                                 break;
                             }
                             else
@@ -587,10 +541,7 @@
                                     [openLater addObject:restaurantObject];
                                     
                                     //to-do: does sorting work now with custom object?
-                                    //re-sort by opening soonest
-                                    NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNextSort" ascending:YES];
-                                    [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
-                                    
+                                                                        
                                     // Do not test other times for this restaurant since we already know it's open later.
                                     break;
                                 }
@@ -603,9 +554,21 @@
             {
                 NSLog(@"%@ has no value for hours key", restaurantObject.name);
             }
+            
+            [_restaurants addObject:restaurantObject];
+            
         } //end if !empty query result
     } //end for loop to check each restaurant result
 
+    //Re-sort by proximity
+    NSSortDescriptor *sortByProximity = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
+    [openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByProximity]];
+    
+    //re-sort by opening soonest
+    NSSortDescriptor *sortByOpeningSoonest = [NSSortDescriptor sortDescriptorWithKey:@"openNextSort" ascending:YES];
+    [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
+
+    [self calculateFarthestRestaurant];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
                                                             object:nil];
     NSLog(@"number open now: %i", [openNow count]);
@@ -749,4 +712,17 @@
     return distance;
 }
 
+-(void)calculateFarthestRestaurant
+{
+    //Find farthest restaurant to display message to user: "Restaurants within x.x miles"
+    
+    //Re-sort _restaurants, which has all restaurants in query results (even those not open).
+    NSSortDescriptor *sortByDistance = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
+    [_restaurants sortUsingDescriptors:[NSArray arrayWithObject:sortByDistance]];
+    
+    //Currently in this format: x.xx miles
+    NSString *farthest = [[_restaurants lastObject] proximity];
+    
+    farthestPlaceString = [NSString stringWithFormat:@"Restaurants within %@", farthest];
+}
 @end

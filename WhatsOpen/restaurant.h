@@ -17,14 +17,14 @@
 @property (strong, nonatomic) NSString *latitude;
 @property (strong, nonatomic) NSString *longitude;
 @property (strong, nonatomic) NSString *proximity;
-@property (strong, nonatomic) NSDictionary *openHours;
-@property (strong, nonatomic) NSString *rating;
-@property (strong, nonatomic) NSString *priceLevel;
+@property (strong, nonatomic) NSArray *openHours;
+@property (assign, nonatomic) float rating;
+@property (assign, nonatomic) NSInteger *priceLevel;
 @property (strong, nonatomic) NSString *phone;
 @property (strong, nonatomic) NSString *parking;
 @property (strong, nonatomic) NSString *attire;
 @property (strong, nonatomic) NSString *cashOnly;
-@property (strong, nonatomic) NSString *website;
+@property (strong, nonatomic) NSURL *website;
 @property (strong, nonatomic) NSArray *cuisine;
 @property (strong, nonatomic) NSString *hasFullBar;
 @property (strong, nonatomic) NSString *reservations;
@@ -37,6 +37,6 @@
 @property (strong, nonatomic) NSDate *openNextSort;
 @property (strong, nonatomic) NSString *openNextDisplay;
 @property (assign, nonatomic) BOOL isOpenNow;
-@property (strong, nonatomic) NSString *requestId;
+//@property (strong, nonatomic) NSString *requestId;
 
 @end

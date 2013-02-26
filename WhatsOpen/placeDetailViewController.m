@@ -44,7 +44,17 @@
     [super viewDidLoad];
     
     _locationService = [[locationServices alloc]init];
-    self.navBar.title = restaurantObject.name;
+    
+    
+    UIFont *titleFont = [UIFont boldSystemFontOfSize:18.0];
+    CGRect frame = CGRectMake(0, 0, [restaurantObject.name sizeWithFont:titleFont].width, 44);
+    UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
+    titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.font = titleFont;
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.text = restaurantObject.name;
+    self.navBar.titleView = titleLabel;
+
 //    placeNameLabel.hidden = TRUE;
 //    ratingLabel.hidden = TRUE;
 //    priceLabel.hidden = TRUE;
