@@ -333,6 +333,7 @@
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
     _queryResult = queryResultObj;
+
     
     //check each restaurant retrieved from Factual
     for (int i=0; i < _queryResult.rowCount; i++)
@@ -340,7 +341,7 @@
         restaurant *restaurantObject = [[restaurant alloc]init];
 //        BOOL addedAlready = FALSE;
         
-//        NSLog(@"row #%i in loop: %@", i, [_queryResult.rows objectAtIndex:i]);
+        NSLog(@"row #%i in loop: %@", i, [_queryResult.rows objectAtIndex:i]);
         
         //run only if we have a valid response from Factual
         if ((_queryResult != nil) &&

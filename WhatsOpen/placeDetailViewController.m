@@ -24,15 +24,10 @@
 @synthesize placeLng;
 */
 @synthesize restaurantObject;
-@synthesize priceLabel;
-@synthesize ratingLabel;
-@synthesize phoneLabel;
-@synthesize placeNameLabel;
 @synthesize distanceLabel;
 @synthesize deviceLat;
 @synthesize deviceLng;
 @synthesize loadingIndicator;
-@synthesize viewDirections;
 @synthesize addressLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -59,12 +54,12 @@
     [self.loadingIndicator startAnimating];
     [self.loadingIndicator setHidesWhenStopped:TRUE];
     
-    placeNameLabel.text = restaurantObject.name;
     distanceLabel.text = restaurantObject.proximity;
-    ratingLabel.text = restaurantObject.rating;
-    priceLabel.text = restaurantObject.priceLevel;
-    phoneLabel.text = restaurantObject.phone;
+//    ratingLabel.text = restaurantObject.rating;
+//    priceLabel.text = restaurantObject.priceLevel;
+//    phoneLabel.text = restaurantObject.phone;
     addressLabel.text = restaurantObject.address;
+    
 
     //to-do: stop animating loading indicator when Google map finishes loading
     [self.loadingIndicator stopAnimating];
@@ -98,14 +93,8 @@
 }
 
 - (void)viewDidUnload {
-    [self setPlaceNameLabel:nil];
-    [self setRatingLabel:nil];
-    [self setPriceLabel:nil];
-    [self setPhoneLabel:nil];
     [self setDistanceLabel:nil];
     [self setLoadingIndicator:nil];
-    [self setGoogleMap:nil];
-    [self setViewDirections:nil];
     [super viewDidUnload];
 }
 
@@ -220,5 +209,7 @@
     else {
         [[UIApplication sharedApplication] openURL:openAppleMapsURL];
     }
+}
+- (IBAction)openWebsite:(id)sender {
 }
 @end

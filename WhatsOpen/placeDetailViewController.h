@@ -13,27 +13,20 @@
 #import "locationServices.h"
 
 @interface placeDetailViewController : UIViewController <UIWebViewDelegate>
+@property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
+@property (weak, nonatomic) IBOutlet UIImageView *priceIcon;
+@property (weak, nonatomic) IBOutlet UITextView *phoneTextView;
+@property (weak, nonatomic) IBOutlet UIImageView *phoneIcon;
 @property (nonatomic, strong) NSString *deviceLat;
 @property (nonatomic, strong) NSString *deviceLng;
 @property (nonatomic, strong) restaurant *restaurantObject;
-/*
-@property (nonatomic, strong) NSString *proximity;
-@property (nonatomic, strong) NSString *placeReference;
-@property (nonatomic, strong) NSString *provider;
-@property (nonatomic, strong) NSNumber *placeRating;
-@property (nonatomic, strong) NSString *placeLat;
-@property (nonatomic, strong) NSString *placeLng;
- */
-@property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
-@property (weak, nonatomic) IBOutlet UILabel *placeNameLabel;
-@property (weak, nonatomic) IBOutlet UILabel *distanceLabel;
-@property (weak, nonatomic) IBOutlet UILabel *ratingLabel;
-@property (weak, nonatomic) IBOutlet UILabel *priceLabel;
-@property (weak, nonatomic) IBOutlet UILabel *phoneLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *restaurantImage;
 @property (weak, nonatomic) IBOutlet UILabel *addressLabel;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
+@property (weak, nonatomic) IBOutlet UILabel *distanceLabel;
+@property (weak, nonatomic) IBOutlet UITextView *openNowOrLater;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
-@property (weak, nonatomic) IBOutlet UIWebView *googleMap;
-@property (weak, nonatomic) IBOutlet UIButton *viewDirections;
-- (IBAction)viewDirections:(id)sender;
+@property (weak, nonatomic) IBOutlet UIView *mapContainer;
+- (IBAction)openWebsite:(id)sender;
 
 @end
