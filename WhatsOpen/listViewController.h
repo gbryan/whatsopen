@@ -16,5 +16,6 @@
 @property (nonatomic, readonly) IBOutlet UITableView *restaurantTableView;
 @property (nonatomic, readonly) IBOutlet UIActivityIndicatorView *spinner;
 
+-(void)startListeningForCompletedQuery;
 //-(void)reloadRestaurantArrays;
 @end

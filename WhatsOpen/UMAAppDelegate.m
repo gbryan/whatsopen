@@ -11,8 +11,6 @@
 @implementation UMAAppDelegate
 
 @synthesize apiObject=_apiObject;
-@synthesize queryControl = _queryControl;
-//@synthesize listView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -20,8 +18,6 @@
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
-    _queryControl = [[queryController alloc]init];
-//    listView = [[listViewController alloc]init];
     
     // Override point for customization after application launch.
     return YES;
@@ -32,22 +28,11 @@
     return ((UMAAppDelegate*)app.delegate).apiObject;
 }
 
-//to-do: do I use this in my code elsewhere?
 +(UMAAppDelegate*) getDelegate {
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate*)app.delegate);
 }
 
-+(queryController *) getQueryController {
-    UIApplication *app = [UIApplication sharedApplication];
-    return ((UMAAppDelegate *) app.delegate).queryControl;
-}
-/*
-+(listViewController *) getListController {
-    UIApplication *app = [UIApplication sharedApplication];
-    return ((UMAAppDelegate *) app.delegate).listView;
-}
-*/
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

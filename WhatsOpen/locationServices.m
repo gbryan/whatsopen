@@ -19,6 +19,10 @@
     //to-do: actually get device location
 //    UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
     deviceLocation = CLLocationCoordinate2DMake(35.913164,-79.055765);
+//    Belmopan, Belize
+//    deviceLocation = CLLocationCoordinate2DMake(17.2511,-88.7676);
+//    London, England
+//    deviceLocation = CLLocationCoordinate2DMake(51.516607,-0.143207);
     
     return deviceLocation;
 }

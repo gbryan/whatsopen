@@ -15,7 +15,6 @@
 #import "listViewController.h"
 #import "UMAAppDelegate.h"
 
-@class locationServices;
 @interface queryController : NSObject <FactualAPIDelegate>
 
 //to-do: should these really be "retain"?

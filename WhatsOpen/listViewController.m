@@ -12,10 +12,8 @@
  //to-do: will queries fail gracefully if there's no location found?
 //to-do: what happens if there are none open now in 3 pages?
 //to-do: what if there are none open later today?
-//to-do: what if Google returns null result? Will it crash?
 //to-do: what if factual returns null result? will it crash?
  to-do: comment out test location code
- to-do: I occasionally get a data is nil exception. Be sure to implement success and failure blocks for the API calls.
 */
  
 #import "listViewController.h"
@@ -25,6 +23,7 @@
     NSMutableArray *_openNow;
     NSMutableArray *_openLater;
     queryController *_queryController;
+    BOOL isInitialLoad;
 }
 
 @end
@@ -48,6 +47,7 @@
     [super viewDidLoad];
     
     _queryController = [[queryController alloc]init];
+    isInitialLoad = TRUE;
     
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
@@ -65,12 +65,7 @@
     [pullToRefresh addTarget:self action:@selector(loadRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
-    //listViewController will listen for queryController to give notification that it has finished the query
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(restaurantsAcquired:)
-                                                 name:@"restaurantsAcquired"
-                                               object:nil];
-    
+    [self startListeningForCompletedQuery];
     [self loadRestaurantList];
 
 
@@ -95,11 +90,22 @@
     [_restaurantTableView setTableFooterView:footerImageView];
 }
 
+- (void)startListeningForCompletedQuery
+{
+    NSLog(@"LISTENING!!!!");
+    
+    [_spinner startAnimating];
+    //listViewController will listen for queryController to give notification that it has finished the query
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(restaurantsAcquired:)
+                                                 name:@"restaurantsAcquired"
+                                               object:nil];
+}
+
 - (void)loadRestaurantList
 {
     //Begin query to Google and Factual to retrieve restaurants that are open today
     [_queryController getRestaurants];
-    [_spinner startAnimating];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
@@ -108,6 +114,8 @@
                 initWithArray:_queryController.openNow];
     _openLater = [[NSMutableArray alloc]
                   initWithArray:_queryController.openLater];
+    
+    NSLog(@"Restaurants acquired:  openNow: %i   openLater: %i", [_openNow count], [_openLater count]);
     
     //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
     //to-do: is this the right size for iPhone 5 screen also?
@@ -123,9 +131,26 @@
     //to-do: make this bigger?
     _navBar.titleView = titleLabel;
     
-    [_restaurantTableView reloadData];
+    //check if this is the initial view load, and if so, just use reloadData. Subsequent times, use reloadSections. May need to check whether section 1 is displayed at all since there may not be any openLaters
+    if (isInitialLoad == TRUE)
+    {
+        [_restaurantTableView reloadData];
+        isInitialLoad = FALSE;
+    }
+
+    else
+    {
+        [_restaurantTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+        
+        if ([_openLater count] > 0)
+        {
+            [_restaurantTableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+        }
+    }
+
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
+
 }
 
 /*
