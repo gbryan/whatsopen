@@ -21,6 +21,12 @@
 		9324AB3016DF6EE40076E8BA /* google.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2F16DF6EE40076E8BA /* google.png */; };
 		9324AB3216DF7C240076E8BA /* webicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3116DF7C240076E8BA /* webicon.png */; };
 		9324AB3416DF7E110076E8BA /* iPhone.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3316DF7E110076E8BA /* iPhone.png */; };
+		9324AB3616DF80FC0076E8BA /* signpost.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3516DF80FC0076E8BA /* signpost.png */; };
+		9324AB4616DF911B0076E8BA /* dollar.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB4116DF911A0076E8BA /* dollar.png */; };
+		9324AB4716DF911B0076E8BA /* dollar2.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB4216DF911A0076E8BA /* dollar2.png */; };
+		9324AB4816DF911B0076E8BA /* dollar3.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB4316DF911A0076E8BA /* dollar3.png */; };
+		9324AB4916DF911B0076E8BA /* dollar4.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB4416DF911A0076E8BA /* dollar4.png */; };
+		9324AB4A16DF911B0076E8BA /* dollar5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB4516DF911A0076E8BA /* dollar5.png */; };
 		93408E4D168EA828004124BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E4C168EA828004124BE /* UIKit.framework */; };
 		93408E4F168EA828004124BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E4E168EA828004124BE /* Foundation.framework */; };
 		93408E51168EA828004124BE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E50168EA828004124BE /* CoreGraphics.framework */; };
@@ -58,6 +64,12 @@
 		9324AB2F16DF6EE40076E8BA /* google.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = google.png; sourceTree = "<group>"; };
 		9324AB3116DF7C240076E8BA /* webicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = webicon.png; sourceTree = "<group>"; };
 		9324AB3316DF7E110076E8BA /* iPhone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPhone.png; sourceTree = "<group>"; };
+		9324AB3516DF80FC0076E8BA /* signpost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = signpost.png; sourceTree = "<group>"; };
+		9324AB4116DF911A0076E8BA /* dollar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dollar.png; sourceTree = "<group>"; };
+		9324AB4216DF911A0076E8BA /* dollar2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dollar2.png; sourceTree = "<group>"; };
+		9324AB4316DF911A0076E8BA /* dollar3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dollar3.png; sourceTree = "<group>"; };
+		9324AB4416DF911A0076E8BA /* dollar4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dollar4.png; sourceTree = "<group>"; };
+		9324AB4516DF911A0076E8BA /* dollar5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dollar5.png; sourceTree = "<group>"; };
 		93408E48168EA828004124BE /* WhatsOpen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatsOpen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93408E4C168EA828004124BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		93408E4E168EA828004124BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -127,6 +139,12 @@
 				9324AB2F16DF6EE40076E8BA /* google.png */,
 				9324AB3316DF7E110076E8BA /* iPhone.png */,
 				9324AB3116DF7C240076E8BA /* webicon.png */,
+				9324AB3516DF80FC0076E8BA /* signpost.png */,
+				9324AB4116DF911A0076E8BA /* dollar.png */,
+				9324AB4216DF911A0076E8BA /* dollar2.png */,
+				9324AB4316DF911A0076E8BA /* dollar3.png */,
+				9324AB4416DF911A0076E8BA /* dollar4.png */,
+				9324AB4516DF911A0076E8BA /* dollar5.png */,
 				93408E6F168EAA07004124BE /* CoreLocation.framework */,
 				93408E52168EA828004124BE /* WhatsOpen */,
 				93408E4B168EA828004124BE /* Frameworks */,
@@ -319,6 +337,12 @@
 				9324AB3016DF6EE40076E8BA /* google.png in Resources */,
 				9324AB3216DF7C240076E8BA /* webicon.png in Resources */,
 				9324AB3416DF7E110076E8BA /* iPhone.png in Resources */,
+				9324AB3616DF80FC0076E8BA /* signpost.png in Resources */,
+				9324AB4616DF911B0076E8BA /* dollar.png in Resources */,
+				9324AB4716DF911B0076E8BA /* dollar2.png in Resources */,
+				9324AB4816DF911B0076E8BA /* dollar3.png in Resources */,
+				9324AB4916DF911B0076E8BA /* dollar4.png in Resources */,
+				9324AB4A16DF911B0076E8BA /* dollar5.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

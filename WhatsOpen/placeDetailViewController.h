@@ -14,7 +14,7 @@
 #import "websiteViewController.h"
 #import "queryController.h"
 
-@interface placeDetailViewController : UIViewController
+@interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *priceIcon;
 @property (weak, nonatomic) IBOutlet UITextView *phoneTextView;
@@ -30,5 +30,5 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (weak, nonatomic) IBOutlet UIView *mapContainer;
 @property (weak, nonatomic) IBOutlet UIButton *websiteButton;
-
+@property (nonatomic, readonly) IBOutlet UITableView *contactInfoTableView;
 @end

@@ -59,7 +59,8 @@
 //this is called by restaurantDetailsAcquired so that the page show info reflecting the updated restaurantObject from the detail query
 - (void)loadDisplay
 {
-    UIFont *labelsFont = [UIFont boldSystemFontOfSize:17];
+    UIFont *labelsFont = [UIFont fontWithName:@"Georgia-Bold" size:17];
+    UIColor *darkBlue = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
     distanceLabel.font = labelsFont;
     phoneTextView.font = labelsFont;
     openNowOrLater.font = labelsFont;
@@ -73,6 +74,8 @@
     distanceLabel.text = restaurantObject.proximity;
     addressLabel.text = restaurantObject.address;
     phoneTextView.text = restaurantObject.phone;
+    
+    NSLog(@"addr: %@", restaurantObject.address);
 
     /*
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
@@ -84,34 +87,41 @@
     if (restaurantObject.isOpenNow == TRUE)
     {
         openNowOrLater.text = @"OPEN NOW";
-        openNowOrLater.textColor = [UIColor colorWithRed:.055 green:.7 blue:0 alpha:1];
-        
-        //to-do: make it possible to tap this textView to push modal view of full listing of hours
+        openNowOrLater.textColor = [UIColor colorWithRed:.314 green:.604 blue:.067 alpha:1];
+        //to-do: make it possible to tap this textView (or something) to push modal view of full listing of hours
     }
     else
     {
         openNowOrLater.text = restaurantObject.openNextDisplay;
-        openNowOrLater.textColor = [UIColor blueColor];
-//        [openNowOrLater sizeToFit];
+        openNowOrLater.textColor = darkBlue;
         
         //to-do: make it possible to tap this textView to push modal view of full listing of hours
     }
     
     //Select the appropriate image to show for price
+    NSString *priceLevelString = [[NSString alloc]init];
     switch (restaurantObject.priceLevel) {
         case 1:
+            priceLevelString = @"dollar.png";
             break;
         case 2:
+            priceLevelString = @"dollar2.png";
             break;
         case 3:
+            priceLevelString = @"dollar3.png";
             break;
         case 4:
+            priceLevelString = @"dollar4.png";
             break;
         case 5:
+            priceLevelString = @"dollar5.png";
             break;
         default:
+            //to-do: image for no pricing info available
+            priceLevelString = @"";
             break;
     }
+    priceIcon.image = [UIImage imageNamed:priceLevelString];
 
     //Select the appropriate image with correct number of stars
     if (![restaurantObject.rating isEqualToString:@""])
@@ -162,7 +172,7 @@
         }
         else
         {
-            //load image for not yet rated
+            //to-do: load image for not yet rated
         }
     }
     
@@ -262,40 +272,7 @@
             priceLevelString = nil;
     }
     
-    NSString *priceLabelText = [[NSString alloc]init];
-    
-    //check this
-    if(priceLevelString == nil) {
-        priceLabelText = @"No pricing information available.";
-    }
-    else {
-        priceLabelText = [NSString stringWithFormat:@"Price Level: %@", priceLevelString];
-    }
-    
-    placeNameLabel.text = [placeDetailsDictionary objectForKey:@"name"];
-    placeNameLabel.font = [UIFont boldSystemFontOfSize:25];
-    placeNameLabel.textAlignment = NSTextAlignmentCenter;
-    ratingLabel.text = ratingLabelText;
-    priceLabel.text = priceLabelText;
-    phoneLabel.text = [placeDetailsDictionary objectForKey:@"formatted_phone_number"];
-    //NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", [placeDetailsDictionary objectForKey:@"formatted_phone_number"]]];
-    //phoneLabel.text = url;
-    distanceLabel.text = proximity;
-    
-    placeNameLabel.hidden = FALSE;
-    ratingLabel.hidden = FALSE;
-    priceLabel.hidden = FALSE;
-    phoneLabel.hidden = FALSE;
-    distanceLabel.hidden = FALSE;
-    viewDirections.hidden = FALSE;
-    
-    if(didLoad == TRUE) {
-        [loadingIndicator stopAnimating];
-        loadingIndicator.hidden = TRUE;
-    }
-    else {
-        didLoad = TRUE;
-    }
+ 
 }
 */
 //- (IBAction)viewDirections:(id)sender {
@@ -347,4 +324,32 @@
     }
 }
 
+#pragma mark - table view delegate methods
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 3;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactInfo"];
+
+    switch (indexPath.row) {
+        case 0:
+            cell.textLabel.text = @"Website";
+            cell.imageView.image = [UIImage imageNamed:@"webicon.png"];
+            break;
+        case 1:
+            cell.textLabel.text = @"Phone";
+            cell.imageView.image = [UIImage imageNamed:@"iPhone.png"];
+            break;
+        case 2:
+            cell.textLabel.text = @"Directions";
+            cell.imageView.image = [UIImage imageNamed:@"signpost.png"];            
+    }
+    return cell;
+}
 @end

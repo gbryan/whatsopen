@@ -25,26 +25,9 @@
                                     <constraint firstAttribute="width" constant="21" id="mc7-mS-xyS"/>
                                 </constraints>
                             </activityIndicatorView>
-                            <textView clipsSubviews="YES" contentMode="scaleAspectFit" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ReE-HB-0bk">
-                                <color key="backgroundColor" red="0.97971754510853348" green="0.98260176210152073" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" restorationIdentifier="restaurantImage" translatesAutoresizingMaskIntoConstraints="NO" id="xQP-QZ-Iyy">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="33" id="hYY-Mh-2YH"/>
-                                    <constraint firstAttribute="width" constant="157" id="iOt-gu-NPv"/>
-                                </constraints>
-                                <attributedString key="attributedText">
-                                    <fragment content="phone">
-                                        <attributes>
-                                            <font key="NSFont" size="14" name="Helvetica"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES"/>
-                            </textView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="restaurantImage" translatesAutoresizingMaskIntoConstraints="NO" id="xQP-QZ-Iyy">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="150" id="J2e-4J-mTT"/>
+                                    <constraint firstAttribute="height" constant="130" id="YeS-lc-IrM"/>
                                     <constraint firstAttribute="width" constant="150" id="mjn-Uw-2JN"/>
                                 </constraints>
                             </imageView>
@@ -59,25 +42,32 @@
                                     <constraint firstAttribute="height" constant="25" id="ASg-Kp-f1A"/>
                                 </constraints>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" restorationIdentifier="phoneIcon" image="iPhone.png" translatesAutoresizingMaskIntoConstraints="NO" id="H7o-yD-t1L"/>
                             <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Gq-Fu-bAt">
                                 <connections>
                                     <segue destination="aIc-w8-hKa" kind="embed" id="xUW-Wd-3i0"/>
                                 </connections>
                             </containerView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" text="address" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J6M-SX-XlL">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J6M-SX-XlL">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="311" id="9Oc-le-wce"/>
+                                    <constraint firstAttribute="height" constant="39" id="c8G-BP-FIq"/>
+                                    <constraint firstAttribute="width" constant="315" id="yXv-Ec-Z3K"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="address">
+                                        <attributes>
+                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <font key="NSFont" size="17" name="Helvetica"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oa9-M6-2aX">
+                            <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oa9-M6-2aX">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="MsG-tg-Z7l"/>
-                                    <constraint firstAttribute="width" constant="153" id="Pbu-rF-Cz3"/>
+                                    <constraint firstAttribute="width" constant="159" id="RJ9-rd-XFi"/>
                                 </constraints>
                                 <attributedString key="attributedText">
                                     <fragment content="open">
@@ -89,70 +79,73 @@
                                 </attributedString>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hMM-D3-RrH">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="dpR-Hy-0dW">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="37" id="i2f-5Z-fES"/>
+                                    <constraint firstAttribute="height" constant="144" id="mSM-S7-Tdf"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" image="webicon.png">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="Website">
-                                            <attributes>
-                                                <color key="NSColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                                <font key="NSFont" size="15" name="Helvetica-Bold"/>
-                                                <paragraphStyle key="NSParagraphStyle" alignment="right" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </state>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="contactInfo" textLabel="2OX-8c-8ir" style="IBUITableViewCellStyleDefault" id="5Oi-1a-X89">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2OX-8c-8ir">
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                </prototypes>
                                 <connections>
-                                    <segue destination="XEx-lQ-kbl" kind="modal" identifier="webView" id="frv-u2-WAD"/>
+                                    <outlet property="dataSource" destination="2" id="0hD-BT-PL7"/>
+                                    <outlet property="delegate" destination="2" id="hnF-xh-Vv7"/>
                                 </connections>
-                            </button>
+                            </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="H7o-yD-t1L" firstAttribute="top" secondItem="3" secondAttribute="top" constant="148" id="3vp-Ir-TJY"/>
+                            <constraint firstItem="qcF-Bv-FGJ" firstAttribute="top" secondItem="3" secondAttribute="top" constant="62" id="2vg-Ws-aRN"/>
                             <constraint firstItem="xQP-QZ-Iyy" firstAttribute="leading" secondItem="3" secondAttribute="leading" type="default" id="4xK-FO-TWY"/>
+                            <constraint firstItem="Oa9-M6-2aX" firstAttribute="top" secondItem="3" secondAttribute="top" constant="2" id="7Ve-73-P0d"/>
                             <constraint firstAttribute="trailing" secondItem="SnC-jR-wWu" secondAttribute="trailing" constant="27" id="BRz-aM-Es6"/>
+                            <constraint firstItem="J6M-SX-XlL" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="1" id="IQ7-Mh-0e5"/>
                             <constraint firstItem="9oJ-4X-Mid" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="149" id="Ifb-bd-dsq"/>
+                            <constraint firstItem="xQP-QZ-Iyy" firstAttribute="top" secondItem="3" secondAttribute="top" type="default" id="LuD-tA-KUU"/>
                             <constraint firstItem="caw-iO-eot" firstAttribute="leading" secondItem="qcF-Bv-FGJ" secondAttribute="leading" type="default" id="NaE-5W-DYz"/>
-                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="top" secondItem="3" secondAttribute="top" constant="241" id="Rjd-3a-kka"/>
-                            <constraint firstItem="xQP-QZ-Iyy" firstAttribute="top" secondItem="3" secondAttribute="top" type="default" id="THT-dd-vV0"/>
-                            <constraint firstAttribute="trailing" secondItem="Oa9-M6-2aX" secondAttribute="trailing" constant="6" id="Tc4-Ag-c60"/>
+                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="top" secondItem="3" secondAttribute="top" constant="318" id="S1g-VD-oTL"/>
+                            <constraint firstItem="dpR-Hy-0dW" firstAttribute="top" secondItem="3" secondAttribute="top" constant="130" id="UNV-CE-gBO"/>
                             <constraint firstItem="9oJ-4X-Mid" firstAttribute="top" secondItem="3" secondAttribute="top" constant="160" id="VVo-r0-WDw"/>
-                            <constraint firstItem="9oJ-4X-Mid" firstAttribute="centerX" secondItem="0Gq-Fu-bAt" secondAttribute="centerX" type="default" id="ZzM-4w-vMZ"/>
-                            <constraint firstItem="qcF-Bv-FGJ" firstAttribute="top" secondItem="3" secondAttribute="top" constant="57" id="a3b-hZ-ZIi"/>
-                            <constraint firstItem="ReE-HB-0bk" firstAttribute="top" secondItem="3" secondAttribute="top" constant="155" id="cLU-KK-uFt"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="top" secondItem="3" secondAttribute="top" constant="207" id="cd0-9s-oY6"/>
-                            <constraint firstAttribute="bottom" secondItem="0Gq-Fu-bAt" secondAttribute="bottom" constant="63" id="d90-nd-Wy6"/>
+                            <constraint firstItem="dpR-Hy-0dW" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" type="default" id="W8l-Tw-U6N"/>
+                            <constraint firstItem="Oa9-M6-2aX" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" type="default" id="aHV-T8-vlL"/>
+                            <constraint firstAttribute="bottom" secondItem="J6M-SX-XlL" secondAttribute="bottom" constant="188" id="c1D-Si-Utp"/>
                             <constraint firstItem="caw-iO-eot" firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" type="default" id="ddW-J9-gDb"/>
-                            <constraint firstItem="Oa9-M6-2aX" firstAttribute="top" secondItem="3" secondAttribute="top" type="default" id="f7A-HK-dpF"/>
-                            <constraint firstItem="hMM-D3-RrH" firstAttribute="leading" secondItem="caw-iO-eot" secondAttribute="leading" type="default" id="g7y-E4-OIZ"/>
-                            <constraint firstItem="H7o-yD-t1L" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="-9" id="gfX-bT-c15"/>
+                            <constraint firstItem="caw-iO-eot" firstAttribute="top" secondItem="3" secondAttribute="top" constant="93" id="f12-Lw-u1A"/>
+                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="bottom" secondItem="3" secondAttribute="bottom" type="default" id="iv7-nM-JSf"/>
                             <constraint firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" constant="33" id="mB6-4i-jdd"/>
-                            <constraint firstItem="caw-iO-eot" firstAttribute="top" secondItem="3" secondAttribute="top" constant="85" id="pze-L4-TUD"/>
-                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="4" id="sRd-yX-8qa"/>
-                            <constraint firstItem="J6M-SX-XlL" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" type="default" id="sgq-8J-uJH"/>
-                            <constraint firstItem="SnC-jR-wWu" firstAttribute="top" secondItem="3" secondAttribute="top" constant="33" id="szg-D2-nd8"/>
-                            <constraint firstItem="hMM-D3-RrH" firstAttribute="bottom" secondItem="xQP-QZ-Iyy" secondAttribute="bottom" type="default" id="xa6-Sp-iYo"/>
-                            <constraint firstItem="ReE-HB-0bk" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="6" id="zc8-dA-d8b"/>
+                            <constraint firstItem="dpR-Hy-0dW" firstAttribute="leading" secondItem="3" secondAttribute="leading" type="default" id="vph-E6-cOD"/>
+                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" type="default" id="vyk-aW-1fg"/>
+                            <constraint firstItem="0Gq-Fu-bAt" firstAttribute="leading" secondItem="3" secondAttribute="leading" type="default" id="wZJ-7t-Lzo"/>
+                            <constraint firstItem="SnC-jR-wWu" firstAttribute="top" secondItem="3" secondAttribute="top" constant="35" id="zr5-P5-G6f"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="t9h-0e-m37"/>
                     <connections>
                         <outlet property="addressLabel" destination="J6M-SX-XlL" id="F7L-H3-zM8"/>
+                        <outlet property="contactInfoTableView" destination="dpR-Hy-0dW" id="51H-m3-8Xt"/>
                         <outlet property="distanceLabel" destination="SnC-jR-wWu" id="NLU-ek-N6e"/>
                         <outlet property="loadingIndicator" destination="9oJ-4X-Mid" id="Lum-AA-1xa"/>
                         <outlet property="mapContainer" destination="0Gq-Fu-bAt" id="09F-L7-Jsx"/>
                         <outlet property="navBar" destination="t9h-0e-m37" id="3Jg-bG-7pp"/>
                         <outlet property="openNowOrLater" destination="Oa9-M6-2aX" id="ohr-EP-aCg"/>
-                        <outlet property="phoneIcon" destination="H7o-yD-t1L" id="MiX-6y-UUv"/>
-                        <outlet property="phoneTextView" destination="ReE-HB-0bk" id="hNV-tw-Tjb"/>
                         <outlet property="priceIcon" destination="caw-iO-eot" id="B2w-el-aHz"/>
                         <outlet property="ratingIcon" destination="qcF-Bv-FGJ" id="IzO-xn-e8T"/>
                         <outlet property="restaurantImage" destination="xQP-QZ-Iyy" id="O9W-Mf-EXc"/>
-                        <outlet property="websiteButton" destination="hMM-D3-RrH" id="h5n-AU-VVb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
@@ -275,7 +268,7 @@
             <objects>
                 <viewController id="aIc-w8-hKa" sceneMemberID="viewController">
                     <view key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="2Cz-ht-D8f">
-                        <rect key="frame" x="0.0" y="0.0" width="311" height="200"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="186"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -286,48 +279,6 @@
             <point key="canvasLocation" x="1655" y="75"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="iPhone.png" width="48" height="48"/>
-        <image name="webicon.png" width="32" height="32"/>
-    </resources>
-    <classes>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="listViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/listViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
-                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
-            </relationships>
-        </class>
-        <class className="placeDetailViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/placeDetailViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="addressLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="distanceLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="loadingIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="mapContainer" candidateClass="UIView"/>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="openNowOrLater" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="phoneIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="phoneTextView" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="priceIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="ratingIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="restaurantImage" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="websiteButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="websiteViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/websiteViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="closeWebView:"/>
-                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
-                <relationship kind="outlet" name="webView" candidateClass="UIWebView"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
