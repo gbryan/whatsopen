@@ -45,12 +45,13 @@
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="rating" translatesAutoresizingMaskIntoConstraints="NO" id="qcF-Bv-FGJ">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="23" id="3Q5-mp-6WH"/>
+                                    <constraint firstAttribute="height" constant="25" id="4GN-R8-Mwa"/>
+                                    <constraint firstAttribute="width" constant="120" id="DlZ-ww-bME"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="priceLevel" translatesAutoresizingMaskIntoConstraints="NO" id="caw-iO-eot">
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="23" id="plm-yx-0S8"/>
+                                    <constraint firstAttribute="height" constant="25" id="ASg-Kp-f1A"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" restorationIdentifier="phoneIcon" translatesAutoresizingMaskIntoConstraints="NO" id="H7o-yD-t1L">
@@ -72,11 +73,11 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oa9-M6-2aX">
+                            <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oa9-M6-2aX">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="134" id="DxR-dA-wZv"/>
                                     <constraint firstAttribute="height" constant="28" id="YWs-tb-HNn"/>
+                                    <constraint firstAttribute="width" constant="143" id="bLL-6t-6bg"/>
                                 </constraints>
                                 <attributedString key="attributedText">
                                     <fragment content="open">
@@ -112,29 +113,28 @@
                             <constraint firstItem="0Gq-Fu-bAt" firstAttribute="trailing" secondItem="J6M-SX-XlL" secondAttribute="trailing" type="default" id="1tm-ni-eeL"/>
                             <constraint firstItem="xQP-QZ-Iyy" firstAttribute="leading" secondItem="3" secondAttribute="leading" type="default" id="4xK-FO-TWY"/>
                             <constraint firstAttribute="bottom" secondItem="0Gq-Fu-bAt" secondAttribute="bottom" constant="84" id="5RI-YM-f7S"/>
-                            <constraint firstItem="ReE-HB-0bk" firstAttribute="trailing" secondItem="SnC-jR-wWu" secondAttribute="trailing" type="default" id="743-uK-HIW"/>
-                            <constraint firstItem="caw-iO-eot" firstAttribute="top" secondItem="qcF-Bv-FGJ" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="7C9-yJ-Wr4"/>
                             <constraint firstItem="hMM-D3-RrH" firstAttribute="leading" secondItem="caw-iO-eot" secondAttribute="leading" type="default" id="Bzr-gu-GK5"/>
                             <constraint firstItem="0Gq-Fu-bAt" firstAttribute="top" secondItem="3" secondAttribute="top" constant="220" id="DKy-xr-aLs"/>
-                            <constraint firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" constant="39" id="Evk-aO-LWc"/>
                             <constraint firstItem="0Gq-Fu-bAt" firstAttribute="leading" secondItem="J6M-SX-XlL" secondAttribute="leading" type="default" id="F6N-j1-JJl"/>
+                            <constraint firstItem="caw-iO-eot" firstAttribute="top" secondItem="3" secondAttribute="top" constant="88" id="Gey-tn-yqs"/>
                             <constraint firstItem="ReE-HB-0bk" firstAttribute="top" secondItem="H7o-yD-t1L" secondAttribute="top" type="default" id="HGC-5Y-r1a"/>
+                            <constraint firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" constant="18" id="K0k-8d-QB2"/>
                             <constraint firstItem="caw-iO-eot" firstAttribute="leading" secondItem="qcF-Bv-FGJ" secondAttribute="leading" type="default" id="NaE-5W-DYz"/>
+                            <constraint firstItem="Oa9-M6-2aX" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" type="default" id="Ojp-Ny-n9A"/>
                             <constraint firstItem="ReE-HB-0bk" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="116" id="SYj-6X-67P"/>
                             <constraint firstItem="xQP-QZ-Iyy" firstAttribute="top" secondItem="3" secondAttribute="top" type="default" id="THT-dd-vV0"/>
+                            <constraint firstItem="SnC-jR-wWu" firstAttribute="leading" secondItem="xQP-QZ-Iyy" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="Ts3-bT-dXR"/>
                             <constraint firstItem="9oJ-4X-Mid" firstAttribute="centerX" secondItem="J6M-SX-XlL" secondAttribute="centerX" type="default" id="VVC-99-Z3W"/>
                             <constraint firstItem="H7o-yD-t1L" firstAttribute="bottom" secondItem="ReE-HB-0bk" secondAttribute="bottom" type="default" id="WSu-Dn-0N4"/>
-                            <constraint firstItem="Oa9-M6-2aX" firstAttribute="trailing" secondItem="SnC-jR-wWu" secondAttribute="trailing" type="default" id="YBG-xo-vMv"/>
+                            <constraint firstItem="caw-iO-eot" firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" type="default" id="ZAM-rn-qUn"/>
+                            <constraint firstItem="qcF-Bv-FGJ" firstAttribute="top" secondItem="3" secondAttribute="top" constant="57" id="a3b-hZ-ZIi"/>
                             <constraint firstItem="H7o-yD-t1L" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="4" id="dT6-p7-HyD"/>
                             <constraint firstItem="9oJ-4X-Mid" firstAttribute="top" secondItem="3" secondAttribute="top" constant="160" id="eJv-0c-Hpi"/>
                             <constraint firstItem="H7o-yD-t1L" firstAttribute="top" secondItem="3" secondAttribute="top" constant="157" id="hMP-kC-pUN"/>
                             <constraint firstItem="Oa9-M6-2aX" firstAttribute="top" secondItem="3" secondAttribute="top" constant="4" id="mpM-0V-NOl"/>
-                            <constraint firstItem="hMM-D3-RrH" firstAttribute="centerX" secondItem="caw-iO-eot" secondAttribute="centerX" type="default" id="pOy-4q-efa"/>
                             <constraint firstItem="J6M-SX-XlL" firstAttribute="top" secondItem="3" secondAttribute="top" constant="194" id="so8-hr-aEk"/>
                             <constraint firstItem="SnC-jR-wWu" firstAttribute="top" secondItem="3" secondAttribute="top" constant="33" id="szg-D2-nd8"/>
-                            <constraint firstItem="caw-iO-eot" firstAttribute="trailing" secondItem="qcF-Bv-FGJ" secondAttribute="trailing" type="default" id="v7f-P1-4OM"/>
                             <constraint firstItem="hMM-D3-RrH" firstAttribute="bottom" secondItem="xQP-QZ-Iyy" secondAttribute="bottom" type="default" id="xa6-Sp-iYo"/>
-                            <constraint firstItem="hMM-D3-RrH" firstAttribute="top" secondItem="caw-iO-eot" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="xa6-Zr-XHF"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="t9h-0e-m37"/>

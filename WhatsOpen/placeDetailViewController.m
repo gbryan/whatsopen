@@ -59,13 +59,12 @@
 //this is called by restaurantDetailsAcquired so that the page show info reflecting the updated restaurantObject from the detail query
 - (void)loadDisplay
 {
-    UIFont *labelsFont = [UIFont boldSystemFontOfSize:18];
+    UIFont *labelsFont = [UIFont boldSystemFontOfSize:17];
     distanceLabel.font = labelsFont;
     phoneTextView.font = labelsFont;
     openNowOrLater.font = labelsFont;
     
     websiteButton.hidden = TRUE;
-    NSLog(@"website: %@", restaurantObject.website);
     if ([restaurantObject.website length] > 0)
     {
         websiteButton.hidden = FALSE;
@@ -96,7 +95,6 @@
         //to-do: make it possible to tap this textView to push modal view of full listing of hours
     }
     
-    
     //Select the appropriate image to show for price
     switch (restaurantObject.priceLevel) {
         case 1:
@@ -116,41 +114,49 @@
     //Select the appropriate image with correct number of stars
     if (![restaurantObject.rating isEqualToString:@""])
     {
-        if ([restaurantObject.rating isEqualToString:@"1.0"])
+        if ([restaurantObject.rating isEqualToString:@"0.0"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating0.png"];
+        }
+        else if ([restaurantObject.rating isEqualToString:@"0.5"])
+        {
+            ratingIcon.image = [UIImage imageNamed:@"rating0point5.png"];
+        }
+        else if ([restaurantObject.rating isEqualToString:@"1.0"])
+        {
+            ratingIcon.image = [UIImage imageNamed:@"rating1.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"1.5"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating1point5.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"2.0"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating2.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"2.5"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating2point5.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"3.0"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating3.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"3.5"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating3point5.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"4.0"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating4.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"4.5"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating4point5.png"];
         }
         else if ([restaurantObject.rating isEqualToString:@"5.0"])
         {
-            
+            ratingIcon.image = [UIImage imageNamed:@"rating5.png"];
         }
         else
         {
