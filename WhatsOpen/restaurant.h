@@ -37,7 +37,7 @@
 @property (strong, nonatomic) NSDate *openNextSort;
 @property (strong, nonatomic) NSString *openNextDisplay;
 @property (assign, nonatomic) BOOL isOpenNow;
-@property (strong, nonatomic) NSString *imageURLString;
+@property (strong, nonatomic) UIImage *image;
 //@property (strong, nonatomic) NSString *requestId;
 
 @end

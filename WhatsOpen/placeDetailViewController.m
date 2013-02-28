@@ -31,24 +31,16 @@
 @synthesize mapContainer;
 @synthesize websiteButton;
 
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    
-    NSLog(@"restaurnat passed: %@", restaurantObject);
-    
-    [self.loadingIndicator startAnimating];
-    
-    _locationService = [[locationServices alloc]init];
-    _queryControl = [[queryController alloc]init];
-    
-    [_queryControl getRestaurantDetail:restaurantObject];
-    [self startListeningForCompletedQuery];
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"restaurant passed: %@", restaurantObject);
+    
+    [self startListeningForCompletedQuery];
+    [self.loadingIndicator startAnimating];
+    _locationService = [[locationServices alloc]init];
+    _queryControl = [[queryController alloc]init];
+    [_queryControl getRestaurantDetail:restaurantObject];
     
     //Set the nav bar title to the restaurant name
     UIFont *titleFont = [UIFont boldSystemFontOfSize:18.0];
@@ -67,6 +59,11 @@
 //this is called by restaurantDetailsAcquired so that the page show info reflecting the updated restaurantObject from the detail query
 - (void)loadDisplay
 {
+    UIFont *labelsFont = [UIFont boldSystemFontOfSize:18];
+    distanceLabel.font = labelsFont;
+    phoneTextView.font = labelsFont;
+    openNowOrLater.font = labelsFont;
+    
     websiteButton.hidden = TRUE;
     NSLog(@"website: %@", restaurantObject.website);
     if ([restaurantObject.website length] > 0)
@@ -76,21 +73,17 @@
     distanceLabel.text = restaurantObject.proximity;
     addressLabel.text = restaurantObject.address;
     phoneTextView.text = restaurantObject.phone;
-    phoneTextView.font = [UIFont systemFontOfSize:20.0];
 
-    //to-do: finish this and display some placeholder icon if no img is available for this restaurant
-    NSURL *restaurantImageURL = [NSURL URLWithString:restaurantObject.imageURLString];
-    NSData *restaurantImageData = [NSData dataWithContentsOfURL:restaurantImageURL];
-    UIImage *restaurantImg = [UIImage imageWithData:restaurantImageData];
-    restaurantImage.image = restaurantImg;
+    /*
+     to-do: add image attribution: https://developers.google.com/places/documentation/photos
+     */
+    restaurantImage.image = restaurantObject.image;
     
-    
-    //figure out what to display for open status
+    //Open status display
     if (restaurantObject.isOpenNow == TRUE)
     {
-        openNowOrLater.text = @"Open Now";
-        openNowOrLater.textColor = [UIColor greenColor];
-        openNowOrLater.font = [UIFont boldSystemFontOfSize:14];
+        openNowOrLater.text = @"OPEN NOW";
+        openNowOrLater.textColor = [UIColor colorWithRed:.055 green:.7 blue:0 alpha:1];
         
         //to-do: make it possible to tap this textView to push modal view of full listing of hours
     }
@@ -331,7 +324,7 @@
     [self.loadingIndicator startAnimating];
     //placeDetailViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(restaurantDetailsAcquired:)
+                                             selector:@selector(restaurantDetailsAcquired)
                                                  name:@"restaurantDetailsAcquired"
                                                object:nil];
 }
@@ -340,6 +333,7 @@
 {
     if ([[segue identifier] isEqualToString:@"webView"])
     {
+        //to-do: while the user is viewing this detail page, can we run method in the background to check whether the website returns status 200 or not? It will make website loading a lot quicker later.
         websiteViewController *webVC = [segue destinationViewController];
         webVC.restaurantObject = self.restaurantObject;
     }

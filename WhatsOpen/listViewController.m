@@ -67,7 +67,7 @@
     
     [self startListeningForCompletedQuery];
     [self loadRestaurantList];
-
+//    [_queryController getGeocode];
 
     
 /*

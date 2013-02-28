@@ -14,19 +14,11 @@
         issue queries
             issue restaurants nearby query to Factual to get 50 closest restaurants
                 fill in all available info, and add all to _restaurants even if hours are unknown
-            at same time, issue query to G for closest 20 restaurants
+            at same time, issue query to G for closest 40 restaurants (2 pages) (this can run in background while Factual results are displayed to user)
         check G results to see which are open
             if a restaurant is open,
                 [self matchRestaurantWithName:(NSString *)fullName streetAddress:(NSString *)address]
-                     parse restaurant full name to find first significant word (not “a”, “an,” or “the”)
-                     get only the street number from the address
-                     for each restaurant in _restaurants (added by Factual):
-                     parse name
-                     get street num
-                     see if G restaurant nameBeginning IN explodedFactualName
-                     see if G restaurant streetNum == first GRestaurantStreetNum.length chars of F restaurant
-                     return the matched restaurant or nil
-                if (matchRestaurant != nil)
+                    if (matchRestaurant != nil)
                     if (r.isOpenNow == FALSE) //we only care about the G results if they give us info about an r that F didn’t know is currently open
                         r.isOpenNow = TRUE
                         facilitate the display to users that there is no hours info
@@ -43,7 +35,31 @@
     if outside the US, issue restaurants query to Google to get 20 closest restaurants
         show which are open now (can’t show open later since G doesn’t give hours)
         show only G supplied details since F has no international data in restaurants table
+ 
+ Why do we need data from both Factual and Google?
+ - bc only Google has photos
+ - bc Google may know that some are open that F doesn't know are open
+ - bc Google has international data, whereas F doesn't for restaurants
+ 
+ We get the Factual results immediately (for closest 50 restaurants, filtering those results by the ones that are open now or later today). When should we get Google results?
+ - Several options:
+        - Simultaneously. Load F results into one array and G results into another. Compare the arrays to match results and see if G's list has any known to be open that F doesn't know are open (G won't have any hours for most restaurants but will have the open_now value for most).
+            - problems: G is pulling only 20 results, so there are already a lot that won't match Factual. We only have G data for maybe 12-15 of the F results (maybe 25-30 with known hours).
+        - Simultaneously. Load F results into one array. Query G and get all 3 pages of available nearby restaurants, which will take 5 seconds (need to wait 2.5 seconds to be sure the page_token is active). Load these into separate array. Match up the F and G restaurantObjects and fill in the openNow and openLater arrays with the combination of F and G data (use F data if available, and use G to fill in only the missing F data. If F says it's closed but G says it's open, then it's open. Use G's photo reference to add to F restaurantObject so that we can load photo in the detail view).
+            -problems: 5 seconds (plus at least 1 more second to process the matches and fill in additional info) is a really long time to wait.  Also, we don't need the majority of the data from Google (only open_now if the key exists for that restaurant and == TRUE) until the user taps on a restaurant and needs to see the detailed info.  
+        - Simultaneously. Load F results into the only array that we'll use (_restaurants), but specify isOpenNow == TRUE or == FALSE. Change listVC's tableview to display based on this.   Display the tableview for the user to see the results.  Meanwhile, Google's query (all 3 pages) is running in the background (best performance while running that on another thread so as to not make user interaction with scrolling the tableview results slow???).  G results are loaded into separate array and compared with F results.  Since all of this is happening with the instances of _restaurants and _googleResults that were initialized by queryController instead of listViewController, the changing data will be separate in memory than the data from Factual that the user is currently viewing in the tableview.  The combined results are loaded into _restaurants.  queryController notifies listViewController to update its instance of _restaurants array. It does so, which causes a problem bc we now have a mismatch bw the data in the tableview data source and the actual results displaying in the tableview (we haven't reloaded the tableview results, only the array that provides the data for the tableview). If the user taps the restaurant in row 3 (for example) of the tableview, row 3 may not be Top of the Hill anymore (since the array was updated); it may be Pepper's Pizza, so they will then see the details page for Pepper's Pizza.
+            -problems: this is getting ugly really fast...
+        - Only when a user taps on an individual restaurant listing from Factual.  All results in tableview are solely Factual results (if within U.S.). Tapping on an individual listing initiates a query to Google Places to find that restaurant (
+ 
+ New idea:
+ - Since I don't have many results after filtering by which are open now or later (my results have to have data for the hours key), I could use Factual's paging (offset param) to get up to 500 results (each set of 50 results costs 1 access, and I have 10,000 per day and 300 per minute).
+ - Split open now and open later into tabs instead of tableview sections. When a user scrolls to the bottom of the results in either tab, the next 50 results are requested from Factual to add more rows to the table with fadeIn animation.
+ - Once user clicks/taps a specific row, I still need to request photo(s) from Google to display in the detailview.
+ 
+ if user wants food of a particular cuisine or something, we can issue a more specific query by cuisine, sorted by proximity, and then check which are open now and later to display new results.  Better to issue new query than filter only my small number of existing results.
 
+ Google's "reference" parameter for a given restaurant is not necessarily the same in subsequent requests!
+ 
  */
 
 
@@ -53,7 +69,8 @@
 {
     locationServices *_locationService;
     listViewController *_listView;
-    FactualAPIRequest *_activeRequest;    
+    FactualAPIRequest *_activeRequest;
+    FactualQuery *_queryObject;
     NSInteger _pageNum;
     CLLocationCoordinate2D _deviceLocation;
 //    NSInteger _numberOfResultsToCheck;
@@ -74,6 +91,55 @@
     _restaurants = [[NSMutableArray alloc]init];
         
     return self;
+}
+
+-(restaurant *)matchRestaurantWithName:(NSString *)fullName streetAddress:(NSString *)address
+{
+    /*
+     parse restaurant full name to find first significant word (not “a”, “an,” or “the”)
+     get only the street number from the address
+     for each restaurant in _restaurants (added by Factual):
+     parse name
+     get street num
+     see if G restaurant nameBeginning IN explodedFactualName
+     see if G restaurant streetNum == first GRestaurantStreetNum.length chars of F restaurant
+     return the matched restaurant or nil
+     */
+    
+    
+    
+    //filter Factual results by the street number of the Google-supplied address
+}
+
+-(NSString *)getStreetNumberFromFullAddress:(NSString *)address
+{
+    NSArray *addressParts = [address componentsSeparatedByString:@" "];
+    NSString *streetNumber = [addressParts objectAtIndex:0];
+    return streetNumber;
+}
+
+-(NSString *)getFirstSignificantWordInRestaurantName:(NSString *)restaurantName
+{
+    //clean restaurant name from Google before using the name to search Factual
+    NSString *queryString = restaurantName;
+    queryString = [queryString lowercaseString];
+    queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+    queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
+    NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
+    
+    //use the first non "a", "an", or "the" word of the restaurant full name (from Google) to search Factual
+    if (!([[restaurantNameExploded objectAtIndex:0] isEqualToString:@"a"] ||
+          [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"an"] ||
+          [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"the"]))
+    {
+        queryString = [restaurantNameExploded objectAtIndex:0];
+    }
+    else
+    {
+        queryString = [restaurantNameExploded objectAtIndex:1];
+    }
+    
+    return queryString;
 }
 
 -(void)getRestaurants
@@ -98,11 +164,63 @@
 //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
 }
 
+-(void)getGoogleMatchForRestaurant:(restaurant *)restaurantObject
+{
+    NSString *restaurantQueryName = [self getFirstSignificantWordInRestaurantName:restaurantObject.name];
+    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *googleURLString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%@,%@&radius=110&name=%@&vicinity=%@&sensor=true&key=%@", restaurantObject.latitude, restaurantObject.longitude, restaurantQueryName, restaurantAddress, GOOGLE_API_KEY];
+    NSURL *googleRequestURL = [NSURL URLWithString:googleURLString];
+    
+    NSLog(@"google request url: %@", googleURLString);
+    
+    NSData* googleQueryData = [NSData dataWithContentsOfURL:googleRequestURL];
+    
+    if (!googleQueryData)
+    {
+        //occasionally, data is nil, and the app crashes if I don't check !data
+        //just start the query over again if data is nil for some reason
+//        [self getRestaurants];
+        NSLog(@"googleQueryData was invalid for some reason. Oops.");
+    }
+    else
+    {
+        [self fetchedGoogleRestaurantDetails:googleQueryData];
+    }
+}
+
 -(void)getRestaurantDetail:(restaurant *)restaurantObject
 {
-    //to-do: this won't work yet bc I need to write the methods to match F restaurant with G restaurant. Otherwise, there is no googleID to use!
     detailRestaurant = restaurantObject;
-    [self queryGooglePlacesWithReference:restaurantObject.googleID];
+    [self getGoogleMatchForRestaurant:restaurantObject];
+}
+
+-(void)getGoogleImageForRestaurantWithReference:(NSString *)photoReference
+{
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
+    
+    NSLog(@"photo request: %@", url);
+    NSURL *googleRequestURL=[NSURL URLWithString:url];
+    NSData* restaurantImageRequestData = [NSData dataWithContentsOfURL: googleRequestURL];
+    if (!restaurantImageRequestData)
+    {
+        //occasionally, data is nil, and the app crashes if I don't check !data
+        //just start the query over again if data is nil for some reason
+        //        [self getRestaurants];
+        NSLog(@"googleQueryData was invalid for some reason. Oops.");
+    }
+    else
+    {
+        [self acquiredGoogleRestaurantImage:restaurantImageRequestData];
+    }
+}
+
+-(void)acquiredGoogleRestaurantImage:(NSData *)responseData
+{
+    UIImage *restaurantImage = [UIImage imageWithData:(NSData *)responseData];
+    detailRestaurant.image = restaurantImage;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
+                                                        object:nil];
+
 }
 
 - (void)queryGooglePlacesWithReference:(NSString *)placeReferenceString {
@@ -112,10 +230,11 @@
     NSData* detailRestaurantData = [NSData dataWithContentsOfURL: googleRequestURL];
     
     //to-do: check if detailRestaurantData is nil so app won't crash 
-    [self acquiredRestaurantDetail:detailRestaurantData];
+//    [self fetchedGoogleRestaurantDetails:detailRestaurantData];
 }
 
-- (void)acquiredRestaurantDetail:(NSData *)responseData {
+- (void)fetchedGoogleRestaurantDetails:(NSData *)responseData
+{
     //parse out the json data
     NSError* error;
     NSDictionary* json = [NSJSONSerialization
@@ -124,17 +243,40 @@
                           options:kNilOptions
                           error:&error];
     
-    NSDictionary *restaurantDetails = [json objectForKey:@"result"];
+    NSArray *restaurantResults = [json objectForKey:@"results"];
     
-    NSLog(@"Google restaurant details: %@", restaurantDetails);
+    //if Google returned a result
+    if ([restaurantResults count] > 0)
+    {
+        NSDictionary *restaurantDetails = [restaurantResults objectAtIndex:0];
     
-    /*to-do:
-    - fill in any new details from G in detailRestaurant
-     - be sure to get an image (or maybe an array of all images?)
-     */
+        //Google's address information appears to be more accurate than Factuals in some cases, so I'll use it.
+        detailRestaurant.address = [restaurantDetails objectForKey:@"vicinity"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
-                                                        object:nil];
+        detailRestaurant.googleID = [restaurantDetails objectForKey:@"reference"];
+        
+        NSLog(@"Google restaurant details: %@", restaurantDetails);
+        
+        if ([restaurantDetails objectForKey:@"photos"] &&
+            [[[restaurantDetails objectForKey:@"photos"]objectAtIndex:0]objectForKey:@"photo_reference"])
+        {   
+            [self getGoogleImageForRestaurantWithReference:
+             [[[restaurantDetails objectForKey:@"photos"]
+               objectAtIndex:0]objectForKey:@"photo_reference"]];
+        }
+        else
+        {
+            //if we don't send notification to placeDetailVC, the view will never load
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
+                                                                object:nil];
+        }
+    }
+    else
+    {
+        //if we don't send notification to placeDetailVC, the view will never load
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
+                                                            object:nil];
+    }
 }
 
 //#pragma mark - Google Places Query
@@ -220,7 +362,7 @@
 //    {
 //        [self fetchedGoogleData:data];
 //    }
-//    
+//
 //}
 //
 //
@@ -353,12 +495,12 @@
 #pragma mark - Factual Query
 - (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng
 {        
-        FactualQuery* queryObject = [FactualQuery query];
+        _queryObject = [FactualQuery query];
         
-        queryObject.limit = 50;
+        _queryObject.limit = 50;
     
         FactualSortCriteria* proximitySort = [[FactualSortCriteria alloc] initWithFieldName:@"$distance" sortOrder:FactualSortOrder_Ascending];
-        [queryObject setPrimarySortCriteria:proximitySort];
+        [_queryObject setPrimarySortCriteria:proximitySort];
     
 //        [queryObject addRowFilter:[FactualRowFilter fieldName:@"category" search:@"bar"]];
     
@@ -366,10 +508,10 @@
         CLLocationCoordinate2D geoFilterCoords = {
             lat, lng
         };
-        [queryObject setGeoFilter:geoFilterCoords radiusInMeters:500.0];
+        [_queryObject setGeoFilter:geoFilterCoords radiusInMeters:500.0];
         
         //execute the Factual request
-        _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:queryObject withDelegate:self];
+        _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:_queryObject withDelegate:self];
 //        [[_restaurants lastObject] setRequestId:[NSString stringWithFormat:@"%@", _activeRequest.requestId]];
     }
 
@@ -377,7 +519,6 @@
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
     _queryResult = queryResultObj;
-
     
     //check each restaurant retrieved from Factual
     for (int i=0; i < _queryResult.rowCount; i++)
@@ -429,6 +570,8 @@
             {
                 restaurantObject.address = [row valueForName:@"address"];
             }
+            NSLog(@"address is here: %@", restaurantObject.address);
+            
             if ([row valueForName:@"parking"]) restaurantObject.parking = [row valueForName:@"parking"];
             if ([row valueForName:@"attire"]) restaurantObject.attire = [row valueForName:@"attire"];
             if ([row valueForName:@"meal_takeout"]) restaurantObject.takeout = [row valueForName:@"meal_takeout"];
@@ -524,6 +667,7 @@
                             
                             restaurantObject.isOpenNow = TRUE;
                             [openNow addObject:restaurantObject];
+                            [_restaurants addObject:restaurantObject];
 //                            addedAlready = TRUE;
                             continue;
                         }
@@ -560,6 +704,7 @@
                                 
                                 restaurantObject.isOpenNow = TRUE;
                                 [openNow addObject:restaurantObject];
+                                [_restaurants addObject:restaurantObject];
                                 break;
                             }
                             else
@@ -587,7 +732,7 @@
                                     NSString *openNextString = [openNextFormatter stringFromDate:openTimeDate];
                                     
                                     restaurantObject.isOpenNow = FALSE;
-                                    restaurantObject.openNextDisplay = [NSString stringWithFormat:@"Opening at %@", openNextString];
+                                    restaurantObject.openNextDisplay = [NSString stringWithFormat:@"Opens %@", openNextString];
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
                                     
@@ -624,6 +769,7 @@
                                                             object:nil];
     NSLog(@"number open now: %i", [openNow count]);
     NSLog(@"number open later: %i", [openLater count]);
+    NSLog(@"number of _restaurants: %i", [_restaurants count]);
 }
 
 
