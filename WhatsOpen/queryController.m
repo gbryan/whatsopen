@@ -168,11 +168,13 @@
 {
     NSString *restaurantQueryName = [self getFirstSignificantWordInRestaurantName:restaurantObject.name];
     NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *googleURLString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%@,%@&radius=110&name=%@&vicinity=%@&sensor=true&key=%@", restaurantObject.latitude, restaurantObject.longitude, restaurantQueryName, restaurantAddress, GOOGLE_API_KEY];
+    NSString *googleURLString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%@,%@&radius=110&name=%@&vicinity=%@&sensor=true&key=%@",
+                                 restaurantObject.latitude,
+                                 restaurantObject.longitude,
+                                 restaurantQueryName,
+                                 restaurantAddress,
+                                 GOOGLE_API_KEY];
     NSURL *googleRequestURL = [NSURL URLWithString:googleURLString];
-    
-    NSLog(@"google request url: %@", googleURLString);
-    
     NSData* googleQueryData = [NSData dataWithContentsOfURL:googleRequestURL];
     
     if (!googleQueryData)
@@ -220,17 +222,6 @@
     detailRestaurant.image = restaurantImage;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
                                                         object:nil];
-
-}
-
-- (void)queryGooglePlacesWithReference:(NSString *)placeReferenceString {
-    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?reference=%@&sensor=true&key=%@", placeReferenceString, GOOGLE_API_KEY];
-    
-    NSURL *googleRequestURL=[NSURL URLWithString:url];
-    NSData* detailRestaurantData = [NSData dataWithContentsOfURL: googleRequestURL];
-    
-    //to-do: check if detailRestaurantData is nil so app won't crash 
-//    [self fetchedGoogleRestaurantDetails:detailRestaurantData];
 }
 
 - (void)fetchedGoogleRestaurantDetails:(NSData *)responseData
@@ -250,12 +241,10 @@
     {
         NSDictionary *restaurantDetails = [restaurantResults objectAtIndex:0];
     
-        //Google's address information appears to be more accurate than Factuals in some cases, so I'll use it.
+        //Google's address information appears to be more accurate than Factual's in some cases, so I'll use it.
+        //to-do: need to provide attribution to Google on placeDetailVC if I do this
         detailRestaurant.address = [restaurantDetails objectForKey:@"vicinity"];
-    
         detailRestaurant.googleID = [restaurantDetails objectForKey:@"reference"];
-        
-        NSLog(@"Google restaurant details: %@", restaurantDetails);
         
         if ([restaurantDetails objectForKey:@"photos"] &&
             [[[restaurantDetails objectForKey:@"photos"]objectAtIndex:0]objectForKey:@"photo_reference"])
@@ -499,12 +488,13 @@
         
         _queryObject.limit = 50;
     
-        FactualSortCriteria* proximitySort = [[FactualSortCriteria alloc] initWithFieldName:@"$distance" sortOrder:FactualSortOrder_Ascending];
+        FactualSortCriteria* proximitySort = [[FactualSortCriteria alloc]
+                                              initWithFieldName:@"$distance"
+                                              sortOrder:FactualSortOrder_Ascending];
         [_queryObject setPrimarySortCriteria:proximitySort];
     
 //        [queryObject addRowFilter:[FactualRowFilter fieldName:@"category" search:@"bar"]];
     
-        //filter by restaurants within 110 meters of Google's claimed restaurant location
         CLLocationCoordinate2D geoFilterCoords = {
             lat, lng
         };
@@ -512,7 +502,6 @@
         
         //execute the Factual request
         _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:_queryObject withDelegate:self];
-//        [[_restaurants lastObject] setRequestId:[NSString stringWithFormat:@"%@", _activeRequest.requestId]];
     }
 
 # pragma mark - Factual request complete
@@ -525,8 +514,6 @@
     {
         restaurant *restaurantObject = [[restaurant alloc]init];
 //        BOOL addedAlready = FALSE;
-        
-        NSLog(@"row #%i in loop: %@", i, [_queryResult.rows objectAtIndex:i]);
         
         //run only if we have a valid response from Factual
         if ((_queryResult != nil) &&
@@ -570,8 +557,6 @@
             {
                 restaurantObject.address = [row valueForName:@"address"];
             }
-            NSLog(@"address is here: %@", restaurantObject.address);
-            
             if ([row valueForName:@"parking"]) restaurantObject.parking = [row valueForName:@"parking"];
             if ([row valueForName:@"attire"]) restaurantObject.attire = [row valueForName:@"attire"];
             if ([row valueForName:@"meal_takeout"]) restaurantObject.takeout = [row valueForName:@"meal_takeout"];
@@ -600,11 +585,6 @@
                     
                     
                     //to-do: how should I display to users the optional string after the pair of hours? Example: ["11:00","16:00","Lunch"]. Factual says that these are just a guess if they say "lunch," "dinner," "breakfast," etc.  In their documentation, they also say that some say things like "only after Labor Day." How to display that to user? Show that it's open now (or later today), but if it has a message, display that message prominently on the details page?
-                    
-                                    NSLog(@"----------------------------------");
-                    //                NSLog(@"the response id: %@", request.requestId);
-                    //                NSLog(@"factual response:%@", [queryResultObj rows]);
-//                                    NSLog(@"hours for %@:%@", restaurantObject.name, hours);
                     
                     NSDate* GMTDate = [NSDate date];
                     NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
@@ -748,7 +728,7 @@
             } //end if it has a value for the hours key
             else
             {
-                NSLog(@"%@ has no value for hours key", restaurantObject.name);
+//                NSLog(@"%@ has no value for hours key", restaurantObject.name);
             }
             
             [_restaurants addObject:restaurantObject];

@@ -19,6 +19,8 @@
 		9324AB2D16DF6EA00076E8BA /* rating5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2216DF6E9F0076E8BA /* rating5.png */; };
 		9324AB2E16DF6EA00076E8BA /* ratingpoint5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2316DF6E9F0076E8BA /* ratingpoint5.png */; };
 		9324AB3016DF6EE40076E8BA /* google.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2F16DF6EE40076E8BA /* google.png */; };
+		9324AB3216DF7C240076E8BA /* webicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3116DF7C240076E8BA /* webicon.png */; };
+		9324AB3416DF7E110076E8BA /* iPhone.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3316DF7E110076E8BA /* iPhone.png */; };
 		93408E4D168EA828004124BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E4C168EA828004124BE /* UIKit.framework */; };
 		93408E4F168EA828004124BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E4E168EA828004124BE /* Foundation.framework */; };
 		93408E51168EA828004124BE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E50168EA828004124BE /* CoreGraphics.framework */; };
@@ -54,6 +56,8 @@
 		9324AB2216DF6E9F0076E8BA /* rating5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rating5.png; sourceTree = "<group>"; };
 		9324AB2316DF6E9F0076E8BA /* ratingpoint5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ratingpoint5.png; sourceTree = "<group>"; };
 		9324AB2F16DF6EE40076E8BA /* google.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = google.png; sourceTree = "<group>"; };
+		9324AB3116DF7C240076E8BA /* webicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = webicon.png; sourceTree = "<group>"; };
+		9324AB3316DF7E110076E8BA /* iPhone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPhone.png; sourceTree = "<group>"; };
 		93408E48168EA828004124BE /* WhatsOpen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatsOpen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93408E4C168EA828004124BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		93408E4E168EA828004124BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -121,6 +125,8 @@
 				93D04F9516A0725400FD3B43 /* whatsopen_retina.png */,
 				93D04F9316A0721B00FD3B43 /* whatsopen.png */,
 				9324AB2F16DF6EE40076E8BA /* google.png */,
+				9324AB3316DF7E110076E8BA /* iPhone.png */,
+				9324AB3116DF7C240076E8BA /* webicon.png */,
 				93408E6F168EAA07004124BE /* CoreLocation.framework */,
 				93408E52168EA828004124BE /* WhatsOpen */,
 				93408E4B168EA828004124BE /* Frameworks */,
@@ -311,6 +317,8 @@
 				9324AB2D16DF6EA00076E8BA /* rating5.png in Resources */,
 				9324AB2E16DF6EA00076E8BA /* ratingpoint5.png in Resources */,
 				9324AB3016DF6EE40076E8BA /* google.png in Resources */,
+				9324AB3216DF7C240076E8BA /* webicon.png in Resources */,
+				9324AB3416DF7E110076E8BA /* iPhone.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

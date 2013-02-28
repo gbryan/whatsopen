@@ -63,6 +63,7 @@
     distanceLabel.font = labelsFont;
     phoneTextView.font = labelsFont;
     openNowOrLater.font = labelsFont;
+    addressLabel.font = labelsFont;
     
     websiteButton.hidden = TRUE;
     if ([restaurantObject.website length] > 0)
@@ -75,6 +76,7 @@
 
     /*
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
+     to-do: visit website icon attribution: "Uses icons from Project Icons by Mihaiciuc Bogdan." The text Mihaiciuc Bogdan should link to http://bogo-d.deviantart.com
      */
     restaurantImage.image = restaurantObject.image;
     

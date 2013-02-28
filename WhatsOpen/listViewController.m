@@ -24,6 +24,7 @@
     NSMutableArray *_openLater;
     queryController *_queryController;
     BOOL isInitialLoad;
+    BOOL internationalQuery;
 }
 
 @end
@@ -82,12 +83,7 @@
     [locationManager setDistanceFilter:500.0f];
     [locationManager startUpdatingLocation];
 */    
-    //add "powered by Google"
-    //to-do: make this float or at least format right dimensions
-    UIImage *footerImage = [UIImage imageNamed:@"google.png"];
-    UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
-//    footerImageView.frame = CGRectMake(10,10,1,30);
-    [_restaurantTableView setTableFooterView:footerImageView];
+    
 }
 
 - (void)startListeningForCompletedQuery
@@ -110,6 +106,22 @@
 
 - (void)restaurantsAcquired:(NSNotification *)notification
 {
+    //to-do: set internationalQuery based on value pulled from queryController
+    internationalQuery = FALSE;
+    
+    if (internationalQuery == TRUE)
+    {
+        //Only non-U.S. queries are using Google data, so only load footer with attribution if international
+        UIImage *footerImage = [UIImage imageNamed:@"google.png"];
+        UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
+        footerImageView.contentMode = UIViewContentModeScaleAspectFit;
+        [_restaurantTableView setTableFooterView:footerImageView];
+    }
+    else
+    {
+        //display Factual attribution (if required)
+    }
+    
     _openNow = [[NSMutableArray alloc]
                 initWithArray:_queryController.openNow];
     _openLater = [[NSMutableArray alloc]
