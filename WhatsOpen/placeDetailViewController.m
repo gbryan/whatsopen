@@ -11,6 +11,7 @@
 @interface placeDetailViewController () {
     locationServices *_locationService;
     queryController *_queryControl;
+    CLLocationCoordinate2D _deviceLocation;
 }
 
 @end
@@ -24,20 +25,15 @@
 @synthesize addressLabel;
 @synthesize ratingIcon;
 @synthesize priceIcon;
-@synthesize phoneIcon;
-@synthesize phoneTextView;
 @synthesize restaurantImage;
 @synthesize openNowOrLater;
 @synthesize mapContainer;
-@synthesize websiteButton;
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
     NSLog(@"restaurant passed: %@", restaurantObject);
     
     [self startListeningForCompletedQuery];
-    [self.loadingIndicator startAnimating];
     _locationService = [[locationServices alloc]init];
     _queryControl = [[queryController alloc]init];
     [_queryControl getRestaurantDetail:restaurantObject];
@@ -62,20 +58,10 @@
     UIFont *labelsFont = [UIFont fontWithName:@"Georgia-Bold" size:17];
     UIColor *darkBlue = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
     distanceLabel.font = labelsFont;
-    phoneTextView.font = labelsFont;
     openNowOrLater.font = labelsFont;
     addressLabel.font = labelsFont;
-    
-    websiteButton.hidden = TRUE;
-    if ([restaurantObject.website length] > 0)
-    {
-        websiteButton.hidden = FALSE;
-    }
     distanceLabel.text = restaurantObject.proximity;
     addressLabel.text = restaurantObject.address;
-    phoneTextView.text = restaurantObject.phone;
-    
-    NSLog(@"addr: %@", restaurantObject.address);
 
     /*
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
@@ -180,118 +166,18 @@
     [self.loadingIndicator stopAnimating];
 }
 
-/*
-- (void)loadGoogleMap:(NSString *)lat lng:(NSString *)lng {
-    
-    NSString *icon = @"http://png.findicons.com/files/icons/2083/go_green_web/64/open_sign.png";
-    NSString *zoomLevel = @"16";
-    NSString *urlString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?size=320x180&markers=icon:%@%@%@,%@&sensor=false&zoom=%@&key=%@", icon, @"%7C",lat, lng, zoomLevel, GOOGLE_API_KEY];
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSLog(@"the url: %@",urlString);
-    [self.googleMap loadRequest:[NSURLRequest requestWithURL:url]];
-}
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    if(didLoad == TRUE) {
-        [loadingIndicator stopAnimating];
-        loadingIndicator.hidden = TRUE;
-    }
-    else {
-        didLoad = TRUE;
-    }
-    NSLog(@"finished loading!!!!");
-}
- */
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
     [self setDistanceLabel:nil];
     [self setLoadingIndicator:nil];
     [super viewDidUnload];
 }
-
-/*
-- (void)queryGooglePlaces:(NSString *)placeReferenceString {
-    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?reference=%@&sensor=true&key=%@", placeReferenceString, GOOGLE_API_KEY];
-    
-    NSURL *googleRequestURL=[NSURL URLWithString:url];
-    
-    // Retrieve the results of the URL.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
-        [self performSelectorOnMainThread:@selector(fetchedData:) withObject:data waitUntilDone:YES];
-    });
-}
-
-- (void)fetchedData:(NSData *)responseData {
-    //parse out the json data
-    NSError* error;
-    NSDictionary* json = [NSJSONSerialization
-                          JSONObjectWithData:responseData
-                          
-                          options:kNilOptions
-                          error:&error];
-    
-    //The results from Google will be an array obtained from the NSDictionary object with the key "results".
-    placeDetailsDictionary = [json objectForKey:@"result"];
-    
-    //    NSLog(@"place details: %@", placeDetailsDictionary);
-    
-    NSString *ratingLabelText = [[NSString alloc]init];
-    
-    if ([placeRating integerValue] == 0) {
-        ratingLabelText = @"Rating: Not yet rated";
-    }
-    else {
-        ratingLabelText = [NSString stringWithFormat:@"Rating: %.1f/5", [placeRating floatValue]];
-    }
-    
-    NSInteger priceLevelInt = [[placeDetailsDictionary objectForKey:@"price_level"]integerValue];
-    NSString *priceLevelString = [[NSString alloc]init];
-    
-    switch(priceLevelInt) {
-        case 1:
-            priceLevelString = @"$";
-            break;
-        case 2:
-            priceLevelString = @"$$";
-            break;
-        case 3:
-            priceLevelString = @"$$$";
-            break;
-        case 4:
-            priceLevelString = @"$$$$";
-            break;
-        case 5:
-            priceLevelString = @"$$$$$";
-            break;
-        default:
-            priceLevelString = nil;
-    }
-    
- 
-}
-*/
-//- (IBAction)viewDirections:(id)sender {
-//
-//    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
-//    
-//    //to-do: it would be best to get up-to-date device location now
-//    NSString *deviceLatLngString = [NSString stringWithFormat:@"%@,%@", deviceLat, deviceLng];
-//    
-//    NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, placeLatLngString]];
-//    NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, placeLatLngString]];
-//    
-//    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"comgooglemaps://"]]) {
-//        [[UIApplication sharedApplication] openURL:openGoogleMapsURL];
-//    }
-//    else {
-//        [[UIApplication sharedApplication] openURL:openAppleMapsURL];
-//    }
-//}
 
 - (void)restaurantDetailsAcquired
 {
@@ -314,42 +200,98 @@
                                                object:nil];
 }
 
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([[segue identifier] isEqualToString:@"webView"])
-    {
-        //to-do: while the user is viewing this detail page, can we run method in the background to check whether the website returns status 200 or not? It will make website loading a lot quicker later.
-        websiteViewController *webVC = [segue destinationViewController];
-        webVC.restaurantObject = self.restaurantObject;
-    }
-}
-
 #pragma mark - table view delegate methods
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
 }
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3;
+    if ([restaurantObject.website length] > 0)
+    {
+        return 3;
+    }
+
+    return 2;
 }
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactInfo"];
 
-    switch (indexPath.row) {
+    switch (indexPath.row)
+    {
         case 0:
-            cell.textLabel.text = @"Website";
-            cell.imageView.image = [UIImage imageNamed:@"webicon.png"];
-            break;
-        case 1:
             cell.textLabel.text = @"Phone";
             cell.imageView.image = [UIImage imageNamed:@"iPhone.png"];
             break;
-        case 2:
+        case 1:
             cell.textLabel.text = @"Directions";
-            cell.imageView.image = [UIImage imageNamed:@"signpost.png"];            
+            cell.imageView.image = [UIImage imageNamed:@"signpost.png"];
+            break;
+        case 2:
+            cell.textLabel.text = @"Website";
+            cell.imageView.image = [UIImage imageNamed:@"webicon.png"];
+            break;
     }
+    UIView *selectionColor = [[UIView alloc] init];
+    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+    cell.selectedBackgroundView = selectionColor;
     return cell;
+}
+
+- (void)viewDirections
+{
+    _deviceLocation = [_locationService getCurrentLocation];
+    
+    //to-do: it would be preferable to pass the address city, state instead of coords
+    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
+    NSString *deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
+
+    NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, placeLatLngString]];
+    NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, placeLatLngString]];
+
+    //try to open in Google Maps app but open in Apple maps if user doesn't have GM installed
+    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"comgooglemaps://"]]) {
+        [[UIApplication sharedApplication] openURL:openGoogleMapsURL];
+    }
+    else {
+        [[UIApplication sharedApplication] openURL:openAppleMapsURL];
+    }
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row)
+    {
+        case 0:
+            //phone            
+            [self callRestaurant];
+            break;
+        case 1:
+            //directions
+            [self viewDirections];
+            break;
+        case 2:
+            //website
+            [self pushWebModalViewController];
+            break;
+    }
+    [tableView deselectRowAtIndexPath:indexPath animated:TRUE];
+}
+
+
+-(void)callRestaurant
+{
+    NSString *phoneNumber = [NSString stringWithFormat:@"telprompt:%@", restaurantObject.phone];
+    NSURL *URL = [NSURL URLWithString:phoneNumber];
+    [[UIApplication sharedApplication] openURL:URL];
+}
+
+-(void)pushWebModalViewController
+{
+    websiteViewController *webVC = (websiteViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"webView"];
+    webVC.restaurantObject = self.restaurantObject;
+    [self presentViewController:webVC animated:TRUE completion:nil];
 }
 @end

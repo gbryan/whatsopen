@@ -17,8 +17,6 @@
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *priceIcon;
-@property (weak, nonatomic) IBOutlet UITextView *phoneTextView;
-@property (weak, nonatomic) IBOutlet UIImageView *phoneIcon;
 @property (nonatomic, strong) NSString *deviceLat;
 @property (nonatomic, strong) NSString *deviceLng;
 @property (nonatomic, strong) restaurant *restaurantObject;
@@ -29,6 +27,5 @@
 @property (weak, nonatomic) IBOutlet UITextView *openNowOrLater;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (weak, nonatomic) IBOutlet UIView *mapContainer;
-@property (weak, nonatomic) IBOutlet UIButton *websiteButton;
-@property (nonatomic, readonly) IBOutlet UITableView *contactInfoTableView;
+@property (nonatomic, strong) IBOutlet UITableView *contactInfoTableView;
 @end

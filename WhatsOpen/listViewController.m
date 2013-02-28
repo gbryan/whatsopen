@@ -279,7 +279,9 @@
     //remove halo effect in background color
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.detailTextLabel.backgroundColor = [UIColor clearColor];
-    
+    UIView *selectionColor = [[UIView alloc] init];
+    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+    cell.selectedBackgroundView = selectionColor;
     return cell;
 }
 

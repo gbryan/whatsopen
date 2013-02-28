@@ -513,7 +513,7 @@
     for (int i=0; i < _queryResult.rowCount; i++)
     {
         restaurant *restaurantObject = [[restaurant alloc]init];
-//        BOOL addedAlready = FALSE;
+        BOOL addedAlready = FALSE;
         
         //run only if we have a valid response from Factual
         if ((_queryResult != nil) &&
@@ -543,7 +543,14 @@
                 restaurantObject.rating = @"";
             }
             if ([row valueForName:@"price"]) restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
-            if ([row valueForName:@"tel"]) restaurantObject.phone = [row valueForName:@"tel"];
+            if ([row valueForName:@"tel"])
+            {
+                NSString *phoneNumber = [row valueForName:@"tel"];
+                NSString *numbersOnly = [[phoneNumber componentsSeparatedByCharactersInSet:
+                                        [[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
+                                       componentsJoinedByString:@""];
+                restaurantObject.phone = numbersOnly;
+            }
             if ([row valueForName:@"accessible_wheelchair"]) restaurantObject.wheelchair = [row valueForName:@"accessible_wheelchair"];
             if ([row valueForName:@"alcohol"]) restaurantObject.servesAlcohol = [row valueForName:@"alcohol"];
             if ([row valueForName:@"alcohol_bar"]) restaurantObject.hasFullBar = [row valueForName:@"alcohol_bar"];
@@ -623,13 +630,9 @@
 //                        NSLog(@"yesterday time was %@", yesterdayDate);
                         
                         //See if the restaurant is still open right now within last night's last hour range
-//                        NSLog(@"see if open now from last night's hours");
                         BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:lastHourRangeFromYesterday
                                                                                onDate:yesterdayDate
                                                                          isOpenAtTime:dateTimeInSystemLocalTimezone];
-                        
-//                        NSLog(@"done checking last night's hours");
-                        
                         if (restaurantIsOpen == TRUE)
                         {
 //                            NSLog(@"%@ IS OPEN from last night. Hours:%@", restaurantObject.name, [yesterdayHours lastObject]);
@@ -648,8 +651,9 @@
                             restaurantObject.isOpenNow = TRUE;
                             [openNow addObject:restaurantObject];
                             [_restaurants addObject:restaurantObject];
-//                            addedAlready = TRUE;
-                            continue;
+                            addedAlready = TRUE;
+                            //Don't check any more hours for this restaurant becuase we already know that it's open from last night
+                            break;
                         }
                     } //end if open yesterday
                     
@@ -657,7 +661,8 @@
                     NSArray *todayHours = [hours objectForKey:dayToday];
                     
                     // If we know it's open from last night still, don't bother checking if it's open now based on today's hours
-                    if (todayHours.count > 0)
+                    if ((todayHours.count > 0) &&
+                        (addedAlready == FALSE))
                     {
                         //check each set of opening hours today for the restaurant
                         for (int i=0; i < todayHours.count; i++)
@@ -685,9 +690,10 @@
                                 restaurantObject.isOpenNow = TRUE;
                                 [openNow addObject:restaurantObject];
                                 [_restaurants addObject:restaurantObject];
+                                addedAlready = TRUE;
                                 break;
                             }
-                            else
+                            else if (restaurantIsOpen == FALSE)
                             {
 //                                NSLog(@"%@ is CLOSED. Hours:%@", restaurantObject.name, todayHours);
                                 
@@ -715,7 +721,7 @@
                                     restaurantObject.openNextDisplay = [NSString stringWithFormat:@"Opens %@", openNextString];
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
-                                    
+                                 
                                     //to-do: does sorting work now with custom object?
                                                                         
                                     // Do not test other times for this restaurant since we already know it's open later.
@@ -730,9 +736,10 @@
             {
 //                NSLog(@"%@ has no value for hours key", restaurantObject.name);
             }
-            
-            [_restaurants addObject:restaurantObject];
-            
+            if (addedAlready == FALSE)
+            {
+                [_restaurants addObject:restaurantObject];
+            }
         } //end if !empty query result
     } //end for loop to check each restaurant result
 
