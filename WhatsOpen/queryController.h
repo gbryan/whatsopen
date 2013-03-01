@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSString *farthestPlaceString;
 @property (nonatomic, strong) restaurant *detailRestaurant;
 
--(void)getRestaurants;
+-(void)refreshRestaurants;
+-(void)appendNewRestaurants;
 -(void)getRestaurantDetail:(restaurant *)restaurantObject;
 @end

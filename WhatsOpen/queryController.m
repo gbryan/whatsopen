@@ -62,6 +62,12 @@
  
  
  to-do: determine whether restaurants are closing or opening "soon" (maybe within 30 mins since Factual doesn't seem to be more granular than 30 mins)
+ 
+ 
+ Does Google really return the closest 20 restaurants to wherever you are, or does it give you only those within some radius (even when you don't specify radius)?  If it really searches for closest 20, I should fall back to Google query if Factual doesn't find any results within 500 meters).
+ 
+ With each Factual query, save included_rows value and check if it is < 50.  If < 50, there is not another set of results to acquire.
+ 
  */
 
 
@@ -86,9 +92,15 @@
 
 -(id)init
 {
+    NSLog(@"initializing queryController");
     _locationService = [[locationServices alloc]init];
     _restaurants = [[NSMutableArray alloc]init];
-        
+    
+    //We initialize these only on queryController init (not with each run of a query) so that we can append newly acquired results to these arrays when running the arrays subsequent times.  Since queryController is re-initialized each time I click a different listView tab, arrays will be cleaned out when switching from one tab to the other, but scrolling to the bottom of the list in one tab will trigger a query for more results in queryController, which will APPEND new results to the already initialized arrays.
+    openNow = [[NSMutableArray alloc]init];
+    openLater = [[NSMutableArray alloc]init];
+    hoursUnknown = [[NSMutableArray alloc]init];
+    
     return self;
 }
 
@@ -141,13 +153,14 @@
     return queryString;
 }
 
--(void)getRestaurants
+-(void)refreshRestaurants
 {
     _deviceLocation = [_locationService getCurrentLocation];
     
     //these categories are for Google
 //    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
+    _restaurants = [[NSMutableArray alloc]init];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
     hoursUnknown = [[NSMutableArray alloc]init];
@@ -159,9 +172,30 @@
 //    _numberOfResultsToCheck = 0;
 //    _waitForMoreResults = FALSE;
     
-    [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude];
+    [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude withOffset:0];
 
 //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
+}
+
+-(void)appendNewRestaurants
+{
+    //to-do: make sure that when restaurants are appended to bottom of list in any tab, the data source array is sorted such that
+    //all new results are added to the bottom of the list instead of somewhere else in the list in the listView
+    
+    //If the last Factual query had 50 results, we can assume it's safe to query for the next set of 50. If < 50 returned last time, then there are no more results to acquire.
+    //to-do: what if Factual has exactly some multiple of 50 # of results? This will eval to true, but there are still no results to get.  Do I really need to check this, or can I just run the query anyway and then let it return 0 rows?
+    
+    //We will not re-initialize the arrays becuase we want to just add more restaurants to the lists
+    _deviceLocation = [_locationService getCurrentLocation];
+    
+    NSInteger offset = [_restaurants count];
+    
+    //Don't run the query if there are already 500 restaurants acquired because Factual provides a max of 500, and the query will return an error.
+    if (offset < 500)
+    {
+        [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude withOffset:offset];
+    }
+    //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
 }
 
 -(void)getGoogleMatchForRestaurant:(restaurant *)restaurantObject
@@ -482,11 +516,13 @@
 //} //end fetchedGoogleData
 
 #pragma mark - Factual Query
-- (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng
+- (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng withOffset:(NSInteger)offset
 {        
         _queryObject = [FactualQuery query];
         
         _queryObject.limit = 50;
+    
+        if (offset > 0) _queryObject.offset = offset;
     
         FactualSortCriteria* proximitySort = [[FactualSortCriteria alloc]
                                               initWithFieldName:@"$distance"

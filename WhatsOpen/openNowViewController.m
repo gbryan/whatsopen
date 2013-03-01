@@ -53,7 +53,7 @@
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
-    [pullToRefresh addTarget:self action:@selector(loadRestaurantList) forControlEvents:UIControlEventValueChanged];
+    [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
     [self startListeningForCompletedQuery];
@@ -90,8 +90,16 @@
 
 - (void)loadRestaurantList
 {
-    //Begin query to Google and Factual to retrieve restaurants that are open today
-    [_queryController getRestaurants];
+    //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
+    
+    //to-do: make it run this method when user scrolls to bottom of existing results list in tableview
+    [_queryController appendNewRestaurants];
+}
+
+- (void)refreshRestaurantList
+{
+    //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
+    [_queryController refreshRestaurants];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
@@ -134,6 +142,7 @@
     //Since reloadSections withRowAnimation will crash the app if there are < 1 array items, we run reloadData the first time and then subsequent times ensure that there is at least 1 restaurant in the array before reloadingSections.
     if (isInitialLoad == TRUE)
     {
+        
         [_restaurantTableView reloadData];
         isInitialLoad = FALSE;
     }
@@ -142,7 +151,10 @@
     {
         if ([_openNow count] > 0)
         {
-            [_restaurantTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+//            UIAlertView *initialLoad = [[UIAlertView alloc]initWithTitle:@"initial load" message:@"this is the first time results have loaded" delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
+//            [initialLoad show];
+            [_restaurantTableView reloadData];
+//            [_restaurantTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
         }
     }
 
@@ -191,7 +203,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
+#pragma mark - Table view delegate methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -234,19 +246,17 @@
     return cell;
 }
 
-
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+//Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
+//This loads more restaurants if user scrolls to the end of the existing results.
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    
+    NSInteger currentOffset = scrollView.contentOffset.y;
+    NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
+    
+    if (currentOffset >= maximumOffset) {
+        NSLog(@"adding more restaurants to the list");
+        [self loadRestaurantList];
+    }
 }
 
 - (void)viewDidUnload

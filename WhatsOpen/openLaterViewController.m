@@ -41,7 +41,7 @@
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
-    [pullToRefresh addTarget:self action:@selector(loadRestaurantList) forControlEvents:UIControlEventValueChanged];
+    [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
     [self startListeningForCompletedQuery];
@@ -64,8 +64,16 @@
 
 - (void)loadRestaurantList
 {
-    NSLog(@"querying for restaurants");
-    [_queryController getRestaurants];
+    //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
+    
+    //to-do: make it run this method when user scrolls to bottom of existing results list in tableview
+    [_queryController appendNewRestaurants];
+}
+
+- (void)refreshRestaurantList
+{
+    //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
+    [_queryController refreshRestaurants];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
@@ -167,18 +175,6 @@
 }
 
 #pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
-}
-
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row %2 == 0)
@@ -198,7 +194,6 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    NSLog(@"segue id:", [segue identifier]);
     // Get reference to the destination view controller
     placeDetailViewController *destinationVC = [segue destinationViewController];
     NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
