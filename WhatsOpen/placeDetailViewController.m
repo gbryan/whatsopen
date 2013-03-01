@@ -22,12 +22,10 @@
 @synthesize deviceLat;
 @synthesize deviceLng;
 @synthesize loadingIndicator;
-@synthesize addressLabel;
 @synthesize ratingIcon;
 @synthesize priceIcon;
 @synthesize restaurantImage;
 @synthesize openNowOrLater;
-@synthesize mapContainer;
 
 - (void)viewDidLoad
 {
@@ -59,9 +57,7 @@
     UIColor *darkBlue = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
     distanceLabel.font = labelsFont;
     openNowOrLater.font = labelsFont;
-    addressLabel.font = labelsFont;
     distanceLabel.text = restaurantObject.proximity;
-    addressLabel.text = restaurantObject.address;
 
     /*
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
@@ -223,11 +219,12 @@
     switch (indexPath.row)
     {
         case 0:
-            cell.textLabel.text = @"Phone";
+            cell.textLabel.text = @"Call Restaurant";
             cell.imageView.image = [UIImage imageNamed:@"iPhone.png"];
             break;
         case 1:
             cell.textLabel.text = @"Directions";
+            cell.detailTextLabel.text = restaurantObject.address;
             cell.imageView.image = [UIImage imageNamed:@"signpost.png"];
             break;
         case 2:
@@ -260,6 +257,7 @@
         [[UIApplication sharedApplication] openURL:openAppleMapsURL];
     }
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.row)
@@ -279,7 +277,6 @@
     }
     [tableView deselectRowAtIndexPath:indexPath animated:TRUE];
 }
-
 
 -(void)callRestaurant
 {

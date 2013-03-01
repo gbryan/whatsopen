@@ -21,11 +21,9 @@
 @property (nonatomic, strong) NSString *deviceLng;
 @property (nonatomic, strong) restaurant *restaurantObject;
 @property (weak, nonatomic) IBOutlet UIImageView *restaurantImage;
-@property (weak, nonatomic) IBOutlet UILabel *addressLabel;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
 @property (weak, nonatomic) IBOutlet UILabel *distanceLabel;
 @property (weak, nonatomic) IBOutlet UITextView *openNowOrLater;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
-@property (weak, nonatomic) IBOutlet UIView *mapContainer;
 @property (nonatomic, strong) IBOutlet UITableView *contactInfoTableView;
 @end
