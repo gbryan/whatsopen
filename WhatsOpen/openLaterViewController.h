@@ -1,9 +1,9 @@
 //
-//  listViewController.h
+//  openLaterViewController.h
 //  WhatsOpen
 //
-//  Created by Bryan Gaston on 12/25/12.
-//  Copyright (c) 2012 UNC-CH. All rights reserved.
+//  Created by Bryan Gaston on 3/1/13.
+//  Copyright (c) 2013 UNC-CH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -11,11 +11,11 @@
 #import "queryController.h"
 #import "placeDetailViewController.h"
 
-@interface listViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
+@interface openLaterViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
 @property (nonatomic, readonly) IBOutlet UITableView *restaurantTableView;
 @property (nonatomic, readonly) IBOutlet UIActivityIndicatorView *spinner;
 
 -(void)startListeningForCompletedQuery;
-//-(void)reloadRestaurantArrays;
+
 @end

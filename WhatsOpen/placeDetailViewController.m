@@ -62,6 +62,7 @@
     /*
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
      to-do: visit website icon attribution: "Uses icons from Project Icons by Mihaiciuc Bogdan." The text Mihaiciuc Bogdan should link to http://bogo-d.deviantart.com
+     to-do: if I add icons other than his, I need to provide attribution
      */
     restaurantImage.image = restaurantObject.image;
     
@@ -204,20 +205,17 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ([restaurantObject.website length] > 0)
-    {
-        return 3;
-    }
 
-    return 2;
+    return 4;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    //to-do: check when to display these based on whether current restaurant has a website, phone number, hours, etc.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactInfo"];
 
     switch (indexPath.row)
-    {
+    {        
         case 0:
             cell.textLabel.text = @"Call Restaurant";
             cell.imageView.image = [UIImage imageNamed:@"iPhone.png"];
@@ -230,6 +228,13 @@
         case 2:
             cell.textLabel.text = @"Website";
             cell.imageView.image = [UIImage imageNamed:@"webicon.png"];
+            break;
+        case 3:
+            cell.textLabel.text = @"Hours";
+//            cell.detailTextLabel.text = restaurantObject.address;
+            //to-do: show nextOpen if closed or nextClose if open??
+//            cell.imageView.image = [UIImage imageNamed:@"signpost.png"];
+            //to-do: find icon to represent hours
             break;
     }
     UIView *selectionColor = [[UIView alloc] init];
@@ -274,8 +279,19 @@
             //website
             [self pushWebModalViewController];
             break;
+        case 3:
+            [self viewHours];
+            break;
     }
     [tableView deselectRowAtIndexPath:indexPath animated:TRUE];
+}
+
+-(void)viewHours
+{
+    //to-do: write this to display modal view with neatly organized hours for the whole week
+    hoursViewController *hoursVC = [self.storyboard instantiateViewControllerWithIdentifier:@"hoursView"];
+    hoursVC.restaurantObject = self.restaurantObject;
+    [self presentViewController:hoursVC animated:TRUE completion:nil];
 }
 
 -(void)callRestaurant
@@ -287,7 +303,7 @@
 
 -(void)pushWebModalViewController
 {
-    websiteViewController *webVC = (websiteViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"webView"];
+    websiteViewController *webVC = [self.storyboard instantiateViewControllerWithIdentifier:@"webView"];
     webVC.restaurantObject = self.restaurantObject;
     [self presentViewController:webVC animated:TRUE completion:nil];
 }

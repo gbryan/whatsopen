@@ -12,7 +12,6 @@
 #import "keys.h"
 #import "locationServices.h"
 #import "restaurant.h"
-#import "listViewController.h"
 #import "UMAAppDelegate.h"
 
 @interface queryController : NSObject <FactualAPIDelegate>
@@ -22,6 +21,7 @@
 @property (nonatomic, strong) NSArray *queryCategories;
 @property (nonatomic, strong) NSMutableArray *openNow;
 @property (nonatomic, strong) NSMutableArray *openLater;
+@property (nonatomic, strong) NSMutableArray *hoursUnknown;
 @property (nonatomic, strong) NSString *farthestPlaceString;
 @property (nonatomic, strong) restaurant *detailRestaurant;
 

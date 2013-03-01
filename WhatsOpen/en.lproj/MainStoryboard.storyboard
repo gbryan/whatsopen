@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C3012" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ozm-tI-Xsl">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C3012" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="kJk-D5-CPq">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
+        <!--Tab Bar Controller-->
+        <scene sceneID="Tlg-0y-3Bl">
+            <objects>
+                <tabBarController definesPresentationContext="YES" id="kJk-D5-CPq" sceneMemberID="viewController">
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="TQc-B5-M3C">
+                        <rect key="frame" x="129" y="330" width="163" height="49"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="ozm-tI-Xsl" kind="relationship" relationship="viewControllers" id="ViU-FB-FFl"/>
+                        <segue destination="pDD-E5-IYl" kind="relationship" relationship="viewControllers" id="W76-92-NDy"/>
+                        <segue destination="ewh-YB-qzs" kind="relationship" relationship="viewControllers" id="nrf-7y-Llo"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="URA-8H-uoe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-575" y="580"/>
+        </scene>
         <!--Place Detail View Controller-->
         <scene sceneID="5">
             <objects>
                 <viewController id="2" customClass="placeDetailViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleAspectFit" id="3">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="455"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="distance" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SnC-jR-wWu">
@@ -128,14 +148,59 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1199" y="-83"/>
+            <point key="canvasLocation" x="1595" y="565"/>
         </scene>
-        <!--List View Controller-->
+        <!--Hours View Controller-->
+        <scene sceneID="cSk-7g-uee">
+            <objects>
+                <viewController storyboardIdentifier="hoursView" id="qQH-PP-zXu" customClass="hoursViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4xE-Uz-Uw8">
+                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Lorem ipsum" translatesAutoresizingMaskIntoConstraints="NO" id="7OE-4U-v5K">
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S70-xO-4kF">
+                                <items>
+                                    <navigationItem title="Hours" id="f2k-Zu-6Zn">
+                                        <barButtonItem key="rightBarButtonItem" title="Close" id="zOl-2c-RQJ">
+                                            <connections>
+                                                <action selector="closeHoursView:" destination="qQH-PP-zXu" id="JWa-z2-dMH"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="7OE-4U-v5K" firstAttribute="bottom" secondItem="4xE-Uz-Uw8" secondAttribute="bottom" type="default" id="4iC-Ce-9XT"/>
+                            <constraint firstItem="7OE-4U-v5K" firstAttribute="top" secondItem="S70-xO-4kF" secondAttribute="bottom" type="default" id="7f5-ci-lwq"/>
+                            <constraint firstItem="7OE-4U-v5K" firstAttribute="leading" secondItem="4xE-Uz-Uw8" secondAttribute="leading" type="default" id="G4M-a5-dMa"/>
+                            <constraint firstItem="S70-xO-4kF" firstAttribute="top" secondItem="4xE-Uz-Uw8" secondAttribute="top" type="default" id="ZEB-0A-dgO"/>
+                            <constraint firstItem="S70-xO-4kF" firstAttribute="trailing" secondItem="4xE-Uz-Uw8" secondAttribute="trailing" type="default" id="vXX-ab-ZRE"/>
+                            <constraint firstItem="S70-xO-4kF" firstAttribute="leading" secondItem="4xE-Uz-Uw8" secondAttribute="leading" type="default" id="vil-SN-bvI"/>
+                            <constraint firstItem="7OE-4U-v5K" firstAttribute="trailing" secondItem="4xE-Uz-Uw8" secondAttribute="trailing" type="default" id="xtz-p9-84M"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="hoursTextView" destination="7OE-4U-v5K" id="LlR-D4-c2l"/>
+                        <outlet property="navBar" destination="f2k-Zu-6Zn" id="leW-E7-ciP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NPY-Qq-dpw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1963" y="553"/>
+        </scene>
+        <!--Open Now View Controller-->
         <scene sceneID="pFV-ce-S68">
             <objects>
-                <tableViewController id="UqC-eg-RCR" customClass="listViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="" id="UqC-eg-RCR" customClass="openNowViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleAspectFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="pBi-Yl-ERB">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="455"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -179,10 +244,11 @@
             </objects>
             <point key="canvasLocation" x="750" y="-83"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Navigation Controller - Open Now-->
         <scene sceneID="auK-BC-MQ8">
             <objects>
-                <navigationController id="ozm-tI-Xsl" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="" id="ozm-tI-Xsl" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Open Now" id="kob-Js-vJb"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="jNp-lH-x0D">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -196,6 +262,104 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nhf-VF-BbH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="288" y="-95"/>
+        </scene>
+        <!--Open Later View Controller-->
+        <scene sceneID="9XZ-MA-sG2">
+            <objects>
+                <tableViewController storyboardIdentifier="" id="PnH-Hu-qfM" customClass="openLaterViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="h9h-tM-O6W">
+                        <rect key="frame" x="0.0" y="64" width="320" height="455"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="placeCell" textLabel="Jrb-FA-AO1" detailTextLabel="eVZ-Dn-x8v" style="IBUITableViewCellStyleSubtitle" id="h8L-aR-APO">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jrb-FA-AO1">
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eVZ-Dn-x8v">
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <connections>
+                                    <segue destination="2" kind="push" id="axe-fd-DHw"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="PnH-Hu-qfM" id="FhM-h3-1jJ"/>
+                            <outlet property="delegate" destination="PnH-Hu-qfM" id="H74-T7-S9P"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="ge3-Kd-66r"/>
+                    <connections>
+                        <outlet property="navBar" destination="ge3-Kd-66r" id="n8v-GN-ENW"/>
+                        <outlet property="restaurantTableView" destination="h9h-tM-O6W" id="9xN-VA-V2J"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TRK-8Q-PoV" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="762" y="580"/>
+        </scene>
+        <!--Hours Unknown View Controller-->
+        <scene sceneID="egW-ft-VK8">
+            <objects>
+                <tableViewController id="AAF-TF-KwX" customClass="hoursUnknownViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="CiD-pP-Tuc">
+                        <rect key="frame" x="0.0" y="64" width="320" height="455"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="placeCell" textLabel="cZr-F3-jWw" detailTextLabel="Jkc-GS-od8" style="IBUITableViewCellStyleSubtitle" id="Wdh-kL-l0n">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cZr-F3-jWw">
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jkc-GS-od8">
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <connections>
+                                    <segue destination="2" kind="push" id="7SZ-Wj-wkx"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="AAF-TF-KwX" id="NJ4-cM-rXs"/>
+                            <outlet property="delegate" destination="AAF-TF-KwX" id="xyJ-sp-jf7"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="BTs-Jy-33o"/>
+                    <connections>
+                        <outlet property="navBar" destination="BTs-Jy-33o" id="Ihy-hI-TLo"/>
+                        <outlet property="restaurantTableView" destination="CiD-pP-Tuc" id="iON-fh-tNh"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wmU-1D-KBS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="772" y="1276"/>
         </scene>
         <!--Website View Controller-->
         <scene sceneID="xTD-Db-yc4">
@@ -239,15 +403,77 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OXG-ta-zmf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1655" y="-743"/>
+            <point key="canvasLocation" x="2051" y="-95"/>
+        </scene>
+        <!--Navigation Controller - Open Later Today-->
+        <scene sceneID="8jI-TR-hrM">
+            <objects>
+                <navigationController id="pDD-E5-IYl" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Open Later Today" id="gHR-I6-8G4"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Yud-B5-X7z">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="PnH-Hu-qfM" kind="relationship" relationship="rootViewController" id="iHQ-In-wnf"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pc9-0I-qZe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="268" y="592"/>
+        </scene>
+        <!--Navigation Controller - Hours Unknown-->
+        <scene sceneID="3l6-6o-S12">
+            <objects>
+                <navigationController id="ewh-YB-qzs" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Hours Unknown" id="ixO-Ax-nhr"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="3Qf-Qq-z5L">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="AAF-TF-KwX" kind="relationship" relationship="rootViewController" id="ta5-lT-IIZ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6C4-9a-cqc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="268" y="1282"/>
         </scene>
     </scenes>
     <classes>
         <class className="NSLayoutConstraint" superclassName="NSObject">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
         </class>
-        <class className="listViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/listViewController.h"/>
+        <class className="hoursUnknownViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/hoursUnknownViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="hoursViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/hoursViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeHoursView:"/>
+                <relationship kind="outlet" name="hoursTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+            </relationships>
+        </class>
+        <class className="openLaterViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/openLaterViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="openNowViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/openNowViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
                 <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
@@ -281,4 +507,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="7SZ-Wj-wkx"/>
+    </inferredMetricsTieBreakers>
 </document>

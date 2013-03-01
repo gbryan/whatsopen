@@ -12,6 +12,7 @@
 #import "keys.h"
 #import "locationServices.h"
 #import "websiteViewController.h"
+#import "hoursViewController.h"
 #import "queryController.h"
 
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>

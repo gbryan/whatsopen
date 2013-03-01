@@ -60,6 +60,8 @@
 
  Google's "reference" parameter for a given restaurant is not necessarily the same in subsequent requests!
  
+ 
+ to-do: determine whether restaurants are closing or opening "soon" (maybe within 30 mins since Factual doesn't seem to be more granular than 30 mins)
  */
 
 
@@ -68,26 +70,23 @@
 @implementation queryController
 {
     locationServices *_locationService;
-    listViewController *_listView;
     FactualAPIRequest *_activeRequest;
     FactualQuery *_queryObject;
     NSInteger _pageNum;
     CLLocationCoordinate2D _deviceLocation;
-//    NSInteger _numberOfResultsToCheck;
     NSMutableArray *_restaurants;
 //    NSInteger _nullQueryAttempts;
-//    BOOL _waitForMoreResults;
 }
 @synthesize queryCategories;
 @synthesize openNow;
 @synthesize openLater;
+@synthesize hoursUnknown;
 @synthesize farthestPlaceString;
 @synthesize detailRestaurant;
 
 -(id)init
 {
     _locationService = [[locationServices alloc]init];
-    _listView = [[listViewController alloc]init];
     _restaurants = [[NSMutableArray alloc]init];
         
     return self;
@@ -151,6 +150,7 @@
     //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
+    hoursUnknown = [[NSMutableArray alloc]init];
     
     //set pg to 1 since initial Google Places query will pull the 1st page of results
 //    _pageNum = 1;
