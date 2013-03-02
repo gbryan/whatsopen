@@ -545,6 +545,7 @@
 {
     _queryResult = queryResultObj;
     
+    NSLog(@"row count: %i", _queryResult.rowCount);
     if (_queryResult.rowCount < 1)
     {
         lastResultWasNull = TRUE;
@@ -619,7 +620,7 @@
             if ([row valueForName:@"payment_cashonly"]) restaurantObject.cashOnly = [row valueForName:@"payment_cashonly"];
             if ([row valueForName:@"cuisine"]) restaurantObject.cuisine = [row valueForName:@"cuisine"];
             if ([row valueForName:@"hours"])
-            {
+            {   
                 NSData *hoursData = [[row valueForName:@"hours"] dataUsingEncoding:NSUTF8StringEncoding];
                 NSDictionary *hours = [NSJSONSerialization JSONObjectWithData:hoursData
                                                                       options:NSJSONReadingMutableContainers
@@ -683,8 +684,10 @@
                         }
                         hoursFormattedForTextView = [hoursFormattedForTextView stringByAppendingString:hoursStringForDay];
                     }
-                    restaurantObject.openHours = hoursFormattedForTextView;
+                    restaurantObject.openHours = hoursFormattedForTextView;                    
                     
+//                    NSLog(@"---------------------------------------------");
+//                    NSLog(@"%@", restaurantObject.name);
                     NSDate* GMTDate = [NSDate date];
                     NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
                     NSInteger deviceGMTOffset = [systemTimeZone secondsFromGMTForDate:GMTDate];
@@ -728,23 +731,12 @@
                         {
 //                            NSLog(@"%@ IS OPEN from last night. Hours:%@", restaurantObject.name, [yesterdayHours lastObject]);
                             
-                            //Get the time comment (if any) for this range of hours for this restaurant
-                            //http://developer.factual.com/display/docs/Places+API+-+Restaurants#PlacesAPI-Restaurants-OpeningHoursJSON.1
-                            if ([lastHourRangeFromYesterday count] > 2)
-                            {
-                                //to-do: display this somehow to users - maybe highlight the cell some color if there's a comment to indicate that there's a qualifier (the comment might say that it's only open at this time on special occasions, for example)
-                                
-                                //this is an optional value that may not exist for most restaurants
-                                NSString *optionalTimeComment = [lastHourRangeFromYesterday objectAtIndex:2];
-                                NSLog(@"time comment: %@", optionalTimeComment);
-                            }
-                            
                             restaurantObject.isOpenNow = TRUE;
                             [openNow addObject:restaurantObject];
                             [_restaurants addObject:restaurantObject];
                             addedAlready = TRUE;
                             //Don't check any more hours for this restaurant becuase we already know that it's open from last night
-                            break;
+                            continue;
                         }
                     } //end if open yesterday
                     
@@ -762,18 +754,6 @@
                             BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:[todayHours objectAtIndex:i]
                                                                                    onDate:dateTimeInSystemLocalTimezone
                                                                              isOpenAtTime:dateTimeInSystemLocalTimezone];
-                            
-                            //Get the time comment (if any) for this range of hours for this restaurant
-                            //http://developer.factual.com/display/docs/Places+API+-+Restaurants#PlacesAPI-Restaurants-OpeningHoursJSON.1
-                            if ([[todayHours objectAtIndex:i] count] > 2)
-                            {
-                                //to-do: display this somehow to users - maybe highlight the cell some color if there's a comment to indicate that there's a qualifier (the comment might say that it's only open at this time on special occasions, for example)
-                                
-                                //this is an optional value that may not exist for most restaurants
-                                NSString *optionalTimeComment = [[todayHours objectAtIndex:i]objectAtIndex:2];
-                                NSLog(@"time comment: %@", optionalTimeComment);
-                            }
-                            
                             if (restaurantIsOpen == TRUE)
                             {
 //                                NSLog(@"%@ IS OPEN. Hours:%@", restaurantObject.name, todayHours);
@@ -782,6 +762,8 @@
                                 [openNow addObject:restaurantObject];
                                 [_restaurants addObject:restaurantObject];
                                 addedAlready = TRUE;
+                                
+                                //move on to the next restaurant because we know this one is open
                                 break;
                             }
                             else if (restaurantIsOpen == FALSE)
@@ -956,6 +938,8 @@
                                               closeTime:closeTimeString
                                                  onDate:dateOfSpecifiedHours]
                              objectAtIndex:1];
+    
+    NSLog(@"open: %@       close: %@", openTimeDate, closeTimeDate);
     
     //Is the restaurant still open now (hasn't closed since it opened yesterday)?
     if (([dateToCheck compare:closeTimeDate] == NSOrderedAscending) &&
