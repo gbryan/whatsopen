@@ -630,13 +630,60 @@
                 }
                 else
                 {
-                    
-                    
-                    //to-do: get hours in pretty format and save to restaurantObject.openHours
-                    //to-do: put the optional label (described below) in array of openHours and deal with display in VC
-                    
-                    
-                    //to-do: how should I display to users the optional string after the pair of hours? Example: ["11:00","16:00","Lunch"]. Factual says that these are just a guess if they say "lunch," "dinner," "breakfast," etc.  In their documentation, they also say that some say things like "only after Labor Day." How to display that to user? Show that it's open now (or later today), but if it has a message, display that message prominently on the details page?
+                    //Get hours in pretty format to display in detail modal view
+                    NSArray *daysOfWeek = [NSArray arrayWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
+                    NSString *hoursFormattedForTextView = [[NSString alloc]init];
+                    for (NSString *day in daysOfWeek)
+                    {
+                        NSString *hoursStringForDay = [[NSString alloc]init];
+                        
+                        NSString *dayToSearch = [day lowercaseString];
+                        if ([hours objectForKey:dayToSearch])
+                        {
+                            NSString *dayInfoToAdd = [NSString stringWithFormat:@"%@:\r",[day capitalizedString]];
+                            NSString *allOpenTimes = [[NSString alloc]init];
+                            NSArray *hoursArraysThisDay = [hours objectForKey:dayToSearch];
+                            // hoursArray is something like ["10:00","14:00", "BRUNCH"]
+                            for (NSArray *hoursArray in hoursArraysThisDay)
+                            {                                
+                                NSDateFormatter *dateFormatterOriginal = [[NSDateFormatter alloc]init];
+                                [dateFormatterOriginal setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                                [dateFormatterOriginal setDateFormat:@"HH:mm"];
+                                NSDate *openTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:0]];
+                                NSDate *closeTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:1]];
+
+                                NSDateFormatter *dateFormatterDisplay = [[NSDateFormatter alloc]init];
+                                [dateFormatterDisplay setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                                [dateFormatterDisplay setDateFormat:@"hh:mm a"];
+                                NSString *open = [dateFormatterDisplay stringFromDate:openTimeDate];
+                                NSString *close = [dateFormatterDisplay stringFromDate:closeTimeDate];
+                                NSString *openTimes = [NSString stringWithFormat:@"\t %@ - %@", open, close];
+                                
+                                //If there's a comment such as "BRUNCH" above
+                                if (hoursArray.count > 2)
+                                {
+                                    NSString *comment = [[hoursArray objectAtIndex:2]capitalizedString];
+                                    openTimes = [NSString stringWithFormat:@"%@ (%@)\r", openTimes, comment];
+                                }
+                                else
+                                {
+                                    openTimes = [NSString stringWithFormat:@"%@\r", openTimes];
+                                }
+                                
+                                //Add another line break if this is the last set of hours in the day
+                                if (hoursArray == [hoursArraysThisDay lastObject])
+                                {
+                                    openTimes = [NSString stringWithFormat:@"%@\r", openTimes];
+                                }
+                            
+                                allOpenTimes = [allOpenTimes stringByAppendingString:openTimes];
+                                
+                            }// end for each set of hours this day
+                            hoursStringForDay = [dayInfoToAdd stringByAppendingString:allOpenTimes];
+                        }
+                        hoursFormattedForTextView = [hoursFormattedForTextView stringByAppendingString:hoursStringForDay];
+                    }
+                    restaurantObject.openHours = hoursFormattedForTextView;
                     
                     NSDate* GMTDate = [NSDate date];
                     NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
@@ -661,7 +708,6 @@
                                              options:0];
                     NSString *dayYesterday = [[dayOfWeekFormatter stringFromDate:yesterdayDate]lowercaseString];
                     
-                    //See if it's open right now
 //                    NSLog(@"checking if %@ is open", restaurantObject.name);
                     //Is restaurant still open within last night's hour range?
                     NSArray *yesterdayHours = [hours objectForKey:dayYesterday];

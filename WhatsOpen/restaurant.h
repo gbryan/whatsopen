@@ -17,7 +17,7 @@
 @property (strong, nonatomic) NSString *latitude;
 @property (strong, nonatomic) NSString *longitude;
 @property (strong, nonatomic) NSString *proximity;
-@property (strong, nonatomic) NSArray *openHours;
+@property (strong, nonatomic) NSString *openHours;
 @property (strong, nonatomic) NSString *rating;
 @property (assign, nonatomic) int priceLevel;
 @property (strong, nonatomic) NSString *phone;

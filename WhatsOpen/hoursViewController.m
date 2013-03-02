@@ -27,12 +27,9 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    
-    hoursTextView.text = @"the hours will go here";
-    
-    NSLog(@"name: %@", restaurantObject.name);
-    NSLog(@"hours: %@", restaurantObject.openHours);
+    [super viewDidLoad];    
+    hoursTextView.text = restaurantObject.openHours;
+
 }
 
 - (void)didReceiveMemoryWarning
