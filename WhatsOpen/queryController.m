@@ -161,12 +161,6 @@
     //these categories are for Google
 //    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
-
-    [_restaurants removeAllObjects];
-    [openNow removeAllObjects];
-    [openLater removeAllObjects];
-    [hoursUnknown removeAllObjects];
-    
     _restaurants = [[NSMutableArray alloc]init];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
