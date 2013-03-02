@@ -81,7 +81,6 @@
     NSInteger _pageNum;
     CLLocationCoordinate2D _deviceLocation;
     NSMutableArray *_restaurants;
-//    NSInteger _nullQueryAttempts;
 }
 @synthesize queryCategories;
 @synthesize openNow;
@@ -170,7 +169,6 @@
     //set pg to 1 since initial Google Places query will pull the 1st page of results
 //    _pageNum = 1;
     
-//    _nullQueryAttempts = 0;
 //    _numberOfResultsToCheck = 0;
 //    _waitForMoreResults = FALSE;
     
