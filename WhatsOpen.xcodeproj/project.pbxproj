@@ -43,6 +43,7 @@
 		93408E69168EA828004124BE /* openNowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93408E68168EA828004124BE /* openNowViewController.m */; };
 		93408E70168EAA07004124BE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93408E6F168EAA07004124BE /* CoreLocation.framework */; };
 		93408E73168EAA35004124BE /* placeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93408E72168EAA35004124BE /* placeDetailViewController.m */; };
+		934E257516E2A56500036258 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934E257416E2A56500036258 /* QuartzCore.framework */; };
 		9375F7B316DD2A1800337A47 /* websiteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9375F7B216DD2A1800337A47 /* websiteViewController.m */; };
 		93973D2016D84FF1006C2B94 /* queryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D1F16D84FF1006C2B94 /* queryController.m */; };
 		93973D2316D86862006C2B94 /* locationServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2216D86862006C2B94 /* locationServices.m */; };
@@ -99,6 +100,7 @@
 		93408E71168EAA35004124BE /* placeDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = placeDetailViewController.h; sourceTree = "<group>"; };
 		93408E72168EAA35004124BE /* placeDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = placeDetailViewController.m; sourceTree = "<group>"; };
 		9343DD4E16B340720095F9BD /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keys.h; sourceTree = "<group>"; };
+		934E257416E2A56500036258 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9375F7B116DD2A1800337A47 /* websiteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = websiteViewController.h; sourceTree = "<group>"; };
 		9375F7B216DD2A1800337A47 /* websiteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = websiteViewController.m; sourceTree = "<group>"; };
 		93973D1E16D84FF1006C2B94 /* queryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queryController.h; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				934E257516E2A56500036258 /* QuartzCore.framework in Frameworks */,
 				93DA345D16CCB32700CC6C59 /* FactualSDK.framework in Frameworks */,
 				93408E70168EAA07004124BE /* CoreLocation.framework in Frameworks */,
 				93408E4D168EA828004124BE /* UIKit.framework in Frameworks */,
@@ -131,6 +134,7 @@
 		93408E3D168EA828004124BE = {
 			isa = PBXGroup;
 			children = (
+				934E257416E2A56500036258 /* QuartzCore.framework */,
 				93DA345C16CCB32700CC6C59 /* FactualSDK.framework */,
 				93408E6F168EAA07004124BE /* CoreLocation.framework */,
 				93408E52168EA828004124BE /* WhatsOpen */,

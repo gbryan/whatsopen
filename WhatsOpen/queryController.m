@@ -232,7 +232,7 @@
 
 -(void)getGoogleImageForRestaurantWithReference:(NSString *)photoReference
 {
-    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=150&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=130&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
     
     NSLog(@"photo request: %@", url);
     NSURL *googleRequestURL=[NSURL URLWithString:url];

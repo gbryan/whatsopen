@@ -14,6 +14,7 @@
 #import "websiteViewController.h"
 #import "hoursViewController.h"
 #import "queryController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
@@ -27,4 +28,5 @@
 @property (weak, nonatomic) IBOutlet UITextView *openNowOrLater;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) IBOutlet UITableView *contactInfoTableView;
+@property (weak, nonatomic) IBOutlet UIView *topView;
 @end

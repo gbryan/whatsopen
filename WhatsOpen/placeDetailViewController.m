@@ -26,9 +26,21 @@
 @synthesize priceIcon;
 @synthesize restaurantImage;
 @synthesize openNowOrLater;
+@synthesize contactInfoTableView;
+@synthesize topView;
 
 - (void)viewDidLoad
 {
+//    topView.layer.borderColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0].CGColor;
+//    topView.layer.borderWidth = 4.0f;
+
+    self.view.layer.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0].CGColor;
+    self.topView.layer.backgroundColor = [UIColor whiteColor].CGColor;
+    [[self.topView layer] setCornerRadius:5.0];
+    [[self.topView layer] setMasksToBounds:TRUE];
+    [[self.contactInfoTableView layer] setCornerRadius:5.0];
+    [[self.contactInfoTableView layer] setMasksToBounds:TRUE];
+    
     NSLog(@"restaurant passed: %@", restaurantObject);
     NSLog(@"opennext: %@      closeNext: %@", restaurantObject.openNextDisplay, restaurantObject.closingNextDisplay);
     NSLog(@"open now? %i", restaurantObject.isOpenNow);
