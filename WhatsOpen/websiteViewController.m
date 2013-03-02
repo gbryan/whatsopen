@@ -41,7 +41,7 @@
         
         if ([response statusCode] != 200)
         {
-            [self.webView loadHTMLString:@"This website is down." baseURL:nil];
+            [self.webView loadHTMLString:@"<span style='font-size:100px;'>This website is down.</span>" baseURL:nil];
         }
         else
         {
@@ -50,7 +50,7 @@
     }
     else
     {
-        [self.webView loadHTMLString:@"This website is down." baseURL:nil];
+        [self.webView loadHTMLString:@"<span style='font-size:100px;'>This website does not exist.</span>" baseURL:nil];
     }
     
 }

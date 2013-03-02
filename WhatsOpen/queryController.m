@@ -632,62 +632,12 @@
                 else
                 {
                     //Get hours in pretty format to display in detail modal view
-                    NSArray *daysOfWeek = [NSArray arrayWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
-                    NSString *hoursFormattedForTextView = [[NSString alloc]init];
-                    for (NSString *day in daysOfWeek)
-                    {
-                        NSString *hoursStringForDay = [[NSString alloc]init];
-                        
-                        NSString *dayToSearch = [day lowercaseString];
-                        if ([hours objectForKey:dayToSearch])
-                        {
-                            NSString *dayInfoToAdd = [NSString stringWithFormat:@"%@:\r",[day capitalizedString]];
-                            NSString *allOpenTimes = [[NSString alloc]init];
-                            NSArray *hoursArraysThisDay = [hours objectForKey:dayToSearch];
-                            // hoursArray is something like ["10:00","14:00", "BRUNCH"]
-                            for (NSArray *hoursArray in hoursArraysThisDay)
-                            {                                
-                                NSDateFormatter *dateFormatterOriginal = [[NSDateFormatter alloc]init];
-                                [dateFormatterOriginal setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-                                [dateFormatterOriginal setDateFormat:@"HH:mm"];
-                                NSDate *openTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:0]];
-                                NSDate *closeTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:1]];
-
-                                NSDateFormatter *dateFormatterDisplay = [[NSDateFormatter alloc]init];
-                                [dateFormatterDisplay setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-                                [dateFormatterDisplay setDateFormat:@"hh:mm a"];
-                                NSString *open = [dateFormatterDisplay stringFromDate:openTimeDate];
-                                NSString *close = [dateFormatterDisplay stringFromDate:closeTimeDate];
-                                NSString *openTimes = [NSString stringWithFormat:@"\t %@ - %@", open, close];
-                                
-                                //If there's a comment such as "BRUNCH" above
-                                if (hoursArray.count > 2)
-                                {
-                                    NSString *comment = [[hoursArray objectAtIndex:2]capitalizedString];
-                                    openTimes = [NSString stringWithFormat:@"%@ (%@)\r", openTimes, comment];
-                                }
-                                else
-                                {
-                                    openTimes = [NSString stringWithFormat:@"%@\r", openTimes];
-                                }
-                                
-                                //Add another line break if this is the last set of hours in the day
-                                if (hoursArray == [hoursArraysThisDay lastObject])
-                                {
-                                    openTimes = [NSString stringWithFormat:@"%@\r", openTimes];
-                                }
-                            
-                                allOpenTimes = [allOpenTimes stringByAppendingString:openTimes];
-                                
-                            }// end for each set of hours this day
-                            hoursStringForDay = [dayInfoToAdd stringByAppendingString:allOpenTimes];
-                        }
-                        hoursFormattedForTextView = [hoursFormattedForTextView stringByAppendingString:hoursStringForDay];
-                    }
-                    restaurantObject.openHours = hoursFormattedForTextView;                    
+                    restaurantObject.openHours = [self getStringFromFacualHoursFormat:hours];
                     
 //                    NSLog(@"---------------------------------------------");
 //                    NSLog(@"%@", restaurantObject.name);
+//                    NSLog(@"%@", restaurantObject.openHours);
+                    
                     NSDate* GMTDate = [NSDate date];
                     NSTimeZone* systemTimeZone = [NSTimeZone systemTimeZone];
                     NSInteger deviceGMTOffset = [systemTimeZone secondsFromGMTForDate:GMTDate];
@@ -698,6 +648,7 @@
                     //get current day of week
                     NSDateFormatter *dayOfWeekFormatter = [[NSDateFormatter alloc]init];
                     [dayOfWeekFormatter setDateFormat:@"EEEE"];
+                    [dayOfWeekFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
                     NSString *dayToday = [[dayOfWeekFormatter stringFromDate:[NSDate date]]lowercaseString];
                     
                     //to-do: will this work with [self getDate....]?
@@ -711,6 +662,8 @@
                                              options:0];
                     NSString *dayYesterday = [[dayOfWeekFormatter stringFromDate:yesterdayDate]lowercaseString];
                     
+//                    NSLog(@"yesterday date: %@         %@", dayYesterday, yesterdayDate);
+                    
 //                    NSLog(@"checking if %@ is open", restaurantObject.name);
                     //Is restaurant still open within last night's hour range?
                     NSArray *yesterdayHours = [hours objectForKey:dayYesterday];
@@ -719,19 +672,53 @@
                     {
                         NSArray *lastHourRangeFromYesterday = [yesterdayHours lastObject];
                         
-                        //                        NSLog(@"last yesterday hours: %@", lastHourRangeFromYesterday);
+//                        NSLog(@"last yesterday hours: %@", lastHourRangeFromYesterday);
 //                        NSLog(@"current time is %@", dateTimeInSystemLocalTimezone);
 //                        NSLog(@"yesterday time was %@", yesterdayDate);
                         
                         //See if the restaurant is still open right now within last night's last hour range
-                        BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:lastHourRangeFromYesterday
-                                                                               onDate:yesterdayDate
-                                                                         isOpenAtTime:dateTimeInSystemLocalTimezone];
-                        if (restaurantIsOpen == TRUE)
+                        
+                        /*
+                         if it's still open from last night, then closeTimeDate is next close time
+                         
+                         change restaurantWIthOpeningHoursRange to return last open and close times yesterday
+                         we can compare in this section to see if it's currently open
+                         */
+//                        BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:lastHourRangeFromYesterday
+//                                                                               onDate:yesterdayDate
+//                                                                         isOpenAtTime:dateTimeInSystemLocalTimezone];
+                        
+                        //Get opening hours of restaurant
+                        //Example open time: "10:00"     Example close time: "2:00"
+                        NSString *yesterdayLastOpenTimeString = [lastHourRangeFromYesterday objectAtIndex:0];
+                        NSString *yesterdayLastCloseTimeString = [lastHourRangeFromYesterday objectAtIndex:1];
+                        
+                        //Get date objects for open and close times
+                        NSDate *yesterdayLastOpenTimeDate = [[self getHoursWithOpenTime:yesterdayLastOpenTimeString
+                                                                 closeTime:yesterdayLastCloseTimeString
+                                                                    onDate:yesterdayDate]
+                                                objectAtIndex:0];
+                        NSDate *yesterdayLastCloseTimeDate = [[self getHoursWithOpenTime:yesterdayLastOpenTimeString
+                                                                  closeTime:yesterdayLastCloseTimeString
+                                                                     onDate:yesterdayDate]
+                                                 objectAtIndex:1];
+//                        NSLog(@"last from yesterday open: %@     close: %@", yesterdayLastOpenTimeDate, yesterdayLastCloseTimeDate);
+                        
+                        NSDateFormatter *df = [[NSDateFormatter alloc]init];
+                        [df setDateFormat:@"hh:mm a"];
+                        [df setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                        NSString *closeTimeDisplay = [df stringFromDate:yesterdayLastCloseTimeDate];
+                        
+                        //Is the restaurant still open now (hasn't closed since it opened yesterday)?
+                        if (([dateTimeInSystemLocalTimezone compare:yesterdayLastCloseTimeDate] == NSOrderedAscending) &&
+                            ([dateTimeInSystemLocalTimezone compare:yesterdayLastOpenTimeDate] == NSOrderedDescending))
                         {
 //                            NSLog(@"%@ IS OPEN from last night. Hours:%@", restaurantObject.name, [yesterdayHours lastObject]);
                             
                             restaurantObject.isOpenNow = TRUE;
+                            NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);                         
+                            restaurantObject.closingNextSort = yesterdayLastCloseTimeDate;
+                            restaurantObject.closingNextDisplay = [NSString stringWithFormat:@"Closing at %@", closeTimeDisplay];
                             [openNow addObject:restaurantObject];
                             [_restaurants addObject:restaurantObject];
                             addedAlready = TRUE;
@@ -743,30 +730,51 @@
                     // Is the restaurant open today? (not just from yesterday's hours carrying over to today)
                     NSArray *todayHours = [hours objectForKey:dayToday];
                     
-                    // If we know it's open from last night still, don't bother checking if it's open now based on today's hours
-                    if ((todayHours.count > 0) &&
-                        (addedAlready == FALSE))
+                    if (todayHours.count > 0)
                     {
                         //check each set of opening hours today for the restaurant
                         for (int i=0; i < todayHours.count; i++)
                         {
 //                            NSLog(@"checking hours TODAY");
-                            BOOL restaurantIsOpen = [self restaurantWithOpeningHoursRange:[todayHours objectAtIndex:i]
-                                                                                   onDate:dateTimeInSystemLocalTimezone
-                                                                             isOpenAtTime:dateTimeInSystemLocalTimezone];
-                            if (restaurantIsOpen == TRUE)
+                            
+                            //Get opening hours of restaurant
+                            //Example open time: "10:00"     Example close time: "2:00"
+                            NSString *openTimeString = [[todayHours objectAtIndex:i] objectAtIndex:0];
+                            NSString *closeTimeString = [[todayHours objectAtIndex:i] objectAtIndex:1];
+                            
+                            //Get date objects for open and close times
+                            NSDate *openTimeDate = [[self getHoursWithOpenTime:openTimeString
+                                                                     closeTime:closeTimeString
+                                                                        onDate:dateTimeInSystemLocalTimezone]
+                                                    objectAtIndex:0];
+                            NSDate *closeTimeDate = [[self getHoursWithOpenTime:openTimeString
+                                                                      closeTime:closeTimeString
+                                                                         onDate:dateTimeInSystemLocalTimezone]
+                                                     objectAtIndex:1];
+                            
+                            NSDateFormatter *df = [[NSDateFormatter alloc]init];
+                            [df setDateFormat:@"hh:mm a"];
+                            [df setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                            NSString *closeTimeDisplay = [df stringFromDate:closeTimeDate];
+                            
+                            //Is the restaurant open now?
+                            if (([dateTimeInSystemLocalTimezone compare:closeTimeDate] == NSOrderedAscending) &&
+                                ([dateTimeInSystemLocalTimezone compare:openTimeDate] == NSOrderedDescending))
                             {
-//                                NSLog(@"%@ IS OPEN. Hours:%@", restaurantObject.name, todayHours);
-                                
-                                restaurantObject.isOpenNow = TRUE;
-                                [openNow addObject:restaurantObject];
-                                [_restaurants addObject:restaurantObject];
-                                addedAlready = TRUE;
-                                
-                                //move on to the next restaurant because we know this one is open
-                                break;
+                                if (addedAlready == FALSE)
+                                {
+                                    restaurantObject.isOpenNow = TRUE;
+                                    NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);
+                                    restaurantObject.closingNextSort = closeTimeDate;
+                                    restaurantObject.closingNextDisplay = [NSString stringWithFormat:@"Closing at %@", closeTimeDisplay];
+                                    [openNow addObject:restaurantObject];
+                                    [_restaurants addObject:restaurantObject];
+                                    addedAlready = TRUE;
+                                    //move on to the next restaurant because we know this one is open
+                                    break;
+                                }                                
                             }
-                            else if (restaurantIsOpen == FALSE)
+                            else
                             {
 //                                NSLog(@"%@ is CLOSED. Hours:%@", restaurantObject.name, todayHours);
                                 
@@ -791,6 +799,7 @@
                                     NSString *openNextString = [openNextFormatter stringFromDate:openTimeDate];
                                     
                                     restaurantObject.isOpenNow = FALSE;
+                                    NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);
                                     restaurantObject.openNextDisplay = [NSString stringWithFormat:@"Opens %@", openNextString];
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
@@ -807,6 +816,7 @@
             } //end if it has a value for the hours key
             else
             {
+                [hoursUnknown addObject:restaurantObject];
 //                NSLog(@"%@ has no value for hours key", restaurantObject.name);
             }
             if (addedAlready == FALSE)
@@ -833,6 +843,62 @@
 }
 
 
+- (NSString *)getStringFromFacualHoursFormat:(NSDictionary *)hours
+{
+    NSArray *daysOfWeek = [NSArray arrayWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
+    NSString *hoursFormattedForTextView = [[NSString alloc]init];
+    for (NSString *day in daysOfWeek)
+    {
+        NSString *hoursStringForDay = [[NSString alloc]init];
+        
+        NSString *dayToSearch = [day lowercaseString];
+        if ([hours objectForKey:dayToSearch])
+        {
+            NSString *dayInfoToAdd = [NSString stringWithFormat:@"%@:\r",[day capitalizedString]];
+            NSString *allOpenTimes = [[NSString alloc]init];
+            NSArray *hoursArraysThisDay = [hours objectForKey:dayToSearch];
+            // hoursArray is something like ["10:00","14:00", "BRUNCH"]
+            for (NSArray *hoursArray in hoursArraysThisDay)
+            {
+                NSDateFormatter *dateFormatterOriginal = [[NSDateFormatter alloc]init];
+                [dateFormatterOriginal setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                [dateFormatterOriginal setDateFormat:@"HH:mm"];
+                NSDate *openTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:0]];
+                NSDate *closeTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:1]];
+                
+                NSDateFormatter *dateFormatterDisplay = [[NSDateFormatter alloc]init];
+                [dateFormatterDisplay setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                [dateFormatterDisplay setDateFormat:@"hh:mm a"];
+                NSString *open = [dateFormatterDisplay stringFromDate:openTimeDate];
+                NSString *close = [dateFormatterDisplay stringFromDate:closeTimeDate];
+                NSString *openTimes = [NSString stringWithFormat:@"\t %@ - %@", open, close];
+                
+                //If there's a comment such as "BRUNCH" above
+                if (hoursArray.count > 2)
+                {
+                    NSString *comment = [[hoursArray objectAtIndex:2]capitalizedString];
+                    openTimes = [NSString stringWithFormat:@"%@ (%@)\r", openTimes, comment];
+                }
+                else
+                {
+                    openTimes = [NSString stringWithFormat:@"%@\r", openTimes];
+                }
+                
+                //Add another line break if this is the last set of hours in the day
+                if (hoursArray == [hoursArraysThisDay lastObject])
+                {
+                    openTimes = [NSString stringWithFormat:@"%@\r", openTimes];
+                }
+                
+                allOpenTimes = [allOpenTimes stringByAppendingString:openTimes];
+                
+            }
+            hoursStringForDay = [dayInfoToAdd stringByAppendingString:allOpenTimes];
+        }
+        hoursFormattedForTextView = [hoursFormattedForTextView stringByAppendingString:hoursStringForDay];
+    }
+    return hoursFormattedForTextView;
+}
 
 -(NSDate *) getDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second onDate:(NSDate *)date withDayOffset:(NSInteger)dayOffset
 {
@@ -917,42 +983,6 @@
     NSArray *openAndCloseHours = [NSArray arrayWithObjects:openTimeDate, closeTimeDate, nil];
     
     return openAndCloseHours;
-}
-
-//Answers questions like this: Is restaurant with hours ["11:00","4:00"] on Thursday open now (Friday early morning at 2:30)?
--(BOOL) restaurantWithOpeningHoursRange:(NSArray *)hours onDate:(NSDate *)dateOfSpecifiedHours isOpenAtTime:(NSDate *)dateToCheck
-{
-    BOOL isOpen;
-    
-    //Get opening hours of restaurant
-    //Example open time: "10:00"     Example close time: "2:00"
-    NSString *openTimeString = [hours objectAtIndex:0];
-    NSString *closeTimeString = [hours objectAtIndex:1];
-    
-    //Get date objects for open and close times
-    NSDate *openTimeDate = [[self getHoursWithOpenTime:openTimeString
-                                             closeTime:closeTimeString
-                                                onDate:dateOfSpecifiedHours]
-                            objectAtIndex:0];
-    NSDate *closeTimeDate = [[self getHoursWithOpenTime:openTimeString
-                                              closeTime:closeTimeString
-                                                 onDate:dateOfSpecifiedHours]
-                             objectAtIndex:1];
-    
-    NSLog(@"open: %@       close: %@", openTimeDate, closeTimeDate);
-    
-    //Is the restaurant still open now (hasn't closed since it opened yesterday)?
-    if (([dateToCheck compare:closeTimeDate] == NSOrderedAscending) &&
-        ([dateToCheck compare:openTimeDate] == NSOrderedDescending))
-    {
-        isOpen = TRUE;
-    }
-    else
-    {
-        isOpen = FALSE;
-    }
-    
-    return  isOpen;
 }
 
 -(void)requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {

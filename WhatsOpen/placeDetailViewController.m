@@ -30,6 +30,8 @@
 - (void)viewDidLoad
 {
     NSLog(@"restaurant passed: %@", restaurantObject);
+    NSLog(@"opennext: %@      closeNext: %@", restaurantObject.openNextDisplay, restaurantObject.closingNextDisplay);
+    NSLog(@"open now? %i", restaurantObject.isOpenNow);
     
     [self startListeningForCompletedQuery];
     _locationService = [[locationServices alloc]init];
@@ -213,7 +215,11 @@
 {
     //to-do: check when to display these based on whether current restaurant has a website, phone number, hours, etc.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactInfo"];
-
+    
+    NSString *hoursDetail = [[NSString alloc]init];
+    if (restaurantObject.isOpenNow == TRUE) hoursDetail = restaurantObject.closingNextDisplay;
+    if (restaurantObject.isOpenNow == FALSE) hoursDetail = restaurantObject.openNextDisplay;
+    
     switch (indexPath.row)
     {        
         case 0:
@@ -231,9 +237,8 @@
             break;
         case 3:
             cell.textLabel.text = @"Hours";
-//            cell.detailTextLabel.text = restaurantObject.address;
+            cell.detailTextLabel.text = hoursDetail;
             //to-do: show nextOpen if closed or nextClose if open??
-//            cell.imageView.image = [UIImage imageNamed:@"signpost.png"];
             //to-do: find icon to represent hours
             break;
     }

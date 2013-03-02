@@ -210,4 +210,12 @@
     [self setTableView:nil];
     [super viewDidUnload];
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get reference to the destination view controller
+    placeDetailViewController *destinationVC = [segue destinationViewController];
+    NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
+    destinationVC.restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
+}
 @end
