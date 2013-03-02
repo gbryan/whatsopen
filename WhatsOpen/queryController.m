@@ -161,6 +161,12 @@
     //these categories are for Google
 //    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
+
+    [_restaurants removeAllObjects];
+    [openNow removeAllObjects];
+    [openLater removeAllObjects];
+    [hoursUnknown removeAllObjects];
+    
     _restaurants = [[NSMutableArray alloc]init];
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
@@ -715,12 +721,15 @@
                         {
 //                            NSLog(@"%@ IS OPEN from last night. Hours:%@", restaurantObject.name, [yesterdayHours lastObject]);
                             
+                            NSTimeInterval diff = [yesterdayLastCloseTimeDate timeIntervalSinceDate:dateTimeInSystemLocalTimezone];
+                            if (diff <= abs(1800)) restaurantObject.closingSoon = TRUE;
+                            
                             restaurantObject.isOpenNow = TRUE;
                             NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);                         
                             restaurantObject.closingNextSort = yesterdayLastCloseTimeDate;
                             restaurantObject.closingNextDisplay = [NSString stringWithFormat:@"Closing at %@", closeTimeDisplay];
                             [openNow addObject:restaurantObject];
-                            [_restaurants addObject:restaurantObject];
+                            [_restaurants addObject:restaurantObject];                            
                             addedAlready = TRUE;
                             //Don't check any more hours for this restaurant becuase we already know that it's open from last night
                             continue;
@@ -763,8 +772,11 @@
                             {
                                 if (addedAlready == FALSE)
                                 {
+                                    
+                                    NSTimeInterval diff = [closeTimeDate timeIntervalSinceDate:dateTimeInSystemLocalTimezone];
+                                    if (diff <= abs(1800)) restaurantObject.closingSoon = TRUE;
+                                    NSLog(@"%@ closing soon? %d   diff: %f", restaurantObject.name, restaurantObject.closingSoon, diff);
                                     restaurantObject.isOpenNow = TRUE;
-                                    NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);
                                     restaurantObject.closingNextSort = closeTimeDate;
                                     restaurantObject.closingNextDisplay = [NSString stringWithFormat:@"Closing at %@", closeTimeDisplay];
                                     [openNow addObject:restaurantObject];
@@ -792,6 +804,10 @@
                                 {
 //                                    NSLog(@"%@ is open LATER today.", restaurantObject.name);
                                     
+                                    //Is this restaurant opening within 30 minutes?
+                                    NSTimeInterval diff = [openTimeDate timeIntervalSinceDate:dateTimeInSystemLocalTimezone];
+                                    if (diff <= abs(1800)) restaurantObject.openingSoon = TRUE;
+                                    
                                     //Format openNextDisplay to a string like "Opening at 7:00 pm"
                                     NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
                                     [openNextFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
@@ -803,7 +819,6 @@
                                     restaurantObject.openNextDisplay = [NSString stringWithFormat:@"Opens %@", openNextString];
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
-                                 
                                     //to-do: does sorting work now with custom object?
                                                                         
                                     // Do not test other times for this restaurant since we already know it's open later.

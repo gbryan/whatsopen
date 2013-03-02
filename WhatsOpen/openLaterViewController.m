@@ -203,6 +203,17 @@
         UIColor *lightBlue = [UIColor colorWithRed:0.05 green:0.1 blue:0.15 alpha:0.15];
         cell.backgroundColor = lightBlue;
     }
+    
+    //Use green background to indicate that the restaurant is opening soon
+    if (_openLater.count > 0)
+    {
+        restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        if (restaurantObject.openingSoon == TRUE)
+        {
+            cell.backgroundColor = [UIColor colorWithRed:0 green:.7 blue:.1 alpha:1];
+            cell.detailTextLabel.textColor = [UIColor whiteColor];
+        }
+    }
 }
 
 

@@ -125,6 +125,7 @@
     }
     
     _lastResultWasNull = [_queryController lastResultWasNull];
+    [_openNow removeAllObjects];
     _openNow = [[NSMutableArray alloc]initWithArray:_queryController.openNow];
     
     NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
@@ -220,6 +221,21 @@
         UIColor *lightBlue = [UIColor colorWithRed:0.05 green:0.1 blue:0.15 alpha:0.15];
         cell.backgroundColor = lightBlue;
     }
+
+    //Use red background to indicate that the restaurant is closing soon
+    if (_openNow.count > 0)
+    {
+        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        if (restaurantObject.closingSoon == TRUE)
+        {
+            cell.backgroundColor = [UIColor colorWithRed:.7 green:0 blue:.1 alpha:1];
+            cell.detailTextLabel.textColor = [UIColor whiteColor];
+        }
+        else
+        {
+            cell.detailTextLabel.textColor = [UIColor grayColor];
+        }
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -256,8 +272,9 @@
     
     NSInteger currentOffset = scrollView.contentOffset.y;
     NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
+    NSLog(@"current:%i  max:%i", currentOffset, maximumOffset);
     
-    if (currentOffset >= maximumOffset) {
+    if (currentOffset >= (maximumOffset + 350)) {
         NSLog(@"adding more restaurants to the list");
         _spinner.center = CGPointMake(160, currentOffset+100);
         [self loadRestaurantList];

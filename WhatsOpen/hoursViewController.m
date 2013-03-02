@@ -28,8 +28,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];    
-    hoursTextView.text = restaurantObject.openHours;
-
+    if ([restaurantObject.openHours length] > 0) hoursTextView.text = restaurantObject.openHours;
+    else
+    {
+        hoursTextView.text = [NSString stringWithFormat:@"No hours are available for %@.", restaurantObject.name];
+        hoursTextView.font = [UIFont boldSystemFontOfSize:16];
+    }
 }
 
 - (void)didReceiveMemoryWarning

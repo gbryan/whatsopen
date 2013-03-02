@@ -6,6 +6,10 @@
 //  Copyright (c) 2013 UNC-CH. All rights reserved.
 //
 
+
+
+
+//to-do: make sure that I have placeholders for the missing information so that these don't look stupid. Provide way for users to add missing info on Factual
 #import "hoursUnknownViewController.h"
 
 @interface hoursUnknownViewController ()
