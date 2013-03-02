@@ -165,7 +165,7 @@
 				93DA346416D5AE6100CC6C59 /* Query Controller */,
 				93408E76168EAA76004124BE /* Storyboard */,
 				93408E75168EAA5E004124BE /* List Views */,
-				93408E77168EAAA0004124BE /* Detail View */,
+				93408E77168EAAA0004124BE /* Detail Views */,
 				93408E74168EAA53004124BE /* App Delegate */,
 				93408E53168EA828004124BE /* Supporting Files */,
 			);
@@ -239,7 +239,7 @@
 			name = Storyboard;
 			sourceTree = "<group>";
 		};
-		93408E77168EAAA0004124BE /* Detail View */ = {
+		93408E77168EAAA0004124BE /* Detail Views */ = {
 			isa = PBXGroup;
 			children = (
 				93408E71168EAA35004124BE /* placeDetailViewController.h */,
@@ -249,7 +249,7 @@
 				9324AB5116E14B0E0076E8BA /* hoursViewController.h */,
 				9324AB5216E14B0E0076E8BA /* hoursViewController.m */,
 			);
-			name = "Detail View";
+			name = "Detail Views";
 			sourceTree = "<group>";
 		};
 		93973D2416D87364006C2B94 /* Restaurants */ = {

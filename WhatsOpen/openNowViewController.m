@@ -24,6 +24,7 @@
     queryController *_queryController;
     BOOL isInitialLoad;
     BOOL internationalQuery;
+    BOOL _lastResultWasNull;
 }
 
 @end
@@ -36,9 +37,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
+    _lastResultWasNull = FALSE;
     
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
@@ -79,8 +81,6 @@
 - (void)startListeningForCompletedQuery
 {
     NSLog(@"LISTENING!!!!");
-    
-    [_spinner startAnimating];
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(restaurantsAcquired:)
@@ -88,23 +88,27 @@
                                                object:nil];
 }
 
-- (void)loadRestaurantList
+- (void) loadRestaurantList
 {
     //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
-    
-    //to-do: make it run this method when user scrolls to bottom of existing results list in tableview
-    [_queryController appendNewRestaurants];
+    if (_lastResultWasNull == FALSE)
+    {
+        [_spinner startAnimating];
+        [_queryController appendNewRestaurants];
+    }
 }
 
 - (void)refreshRestaurantList
 {
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
+    [_spinner startAnimating];    
     [_queryController refreshRestaurants];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
-{
+{    
     //to-do: set internationalQuery based on value pulled from queryController
+    //to-do: if I use Google results for something other than just international queries, I need to display attribution then
     internationalQuery = FALSE;
     
     if (internationalQuery == TRUE)
@@ -120,8 +124,8 @@
         //to-do: display Factual attribution (if required)
     }
     
-    _openNow = [[NSMutableArray alloc]
-                initWithArray:_queryController.openNow];
+    _lastResultWasNull = [_queryController lastResultWasNull];
+    _openNow = [[NSMutableArray alloc]initWithArray:_queryController.openNow];
     
     NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
     
@@ -135,32 +139,16 @@
     titleLabel.font = font;
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text = farthestPlaceString;
-    
-    //to-do: make this bigger?
     _navBar.titleView = titleLabel;
-    
-    //Since reloadSections withRowAnimation will crash the app if there are < 1 array items, we run reloadData the first time and then subsequent times ensure that there is at least 1 restaurant in the array before reloadingSections.
+
     if (isInitialLoad == TRUE)
     {
-        
-        [_restaurantTableView reloadData];
         isInitialLoad = FALSE;
     }
-
-    else
-    {
-        if ([_openNow count] > 0)
-        {
-//            UIAlertView *initialLoad = [[UIAlertView alloc]initWithTitle:@"initial load" message:@"this is the first time results have loaded" delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil];
-//            [initialLoad show];
-            [_restaurantTableView reloadData];
-//            [_restaurantTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
-        }
-    }
-
+    
+    [_restaurantTableView reloadData];
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
-
 }
 
 /*
@@ -216,6 +204,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    //If this is the initial load, _openNow.count will always be 0 until we've retrieved results. Don't show the cell (return 1) telling the user there are no restaurants unless we've gotten the query back and know that there are actually no results.
+    if (_openNow.count < 1 && isInitialLoad == FALSE)
+    {
+        return 1;
+    }
+    
     return _openNow.count;
 }
 
@@ -230,19 +224,29 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    //to-do: once I update tableViewCell with custom design, I need to use separate identifier for cell showing no results
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
     
-    restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
-    cell.textLabel.text = restaurantObject.name;
-    cell.detailTextLabel.text = restaurantObject.proximity;
-    
-    //remove halo effect in background color
-    cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
-    UIView *selectionColor = [[UIView alloc] init];
-    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
-    cell.selectedBackgroundView = selectionColor;
+    if (_openNow.count > 0)
+    {
+        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        cell.textLabel.text = restaurantObject.name;
+        cell.detailTextLabel.text = restaurantObject.proximity;
+        
+        //remove halo effect in background color
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+        UIView *selectionColor = [[UIView alloc] init];
+        selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+        cell.selectedBackgroundView = selectionColor;
+    }
+    else
+    {
+        cell.textLabel.text = @"No nearby restaurants are open :(";
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.textLabel.font = [UIFont systemFontOfSize:18];
+        cell.detailTextLabel.text = nil;
+    }
     return cell;
 }
 
@@ -255,6 +259,7 @@
     
     if (currentOffset >= maximumOffset) {
         NSLog(@"adding more restaurants to the list");
+        _spinner.center = CGPointMake(160, currentOffset+100);
         [self loadRestaurantList];
     }
 }
