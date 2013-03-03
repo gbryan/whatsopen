@@ -29,4 +29,6 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) IBOutlet UITableView *contactInfoTableView;
 @property (weak, nonatomic) IBOutlet UIView *topView;
+
+
 @end

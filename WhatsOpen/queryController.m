@@ -582,11 +582,58 @@
             restaurantObject.proximity = proximity;
             if ([row valueForName:@"rating"])
             {
-                restaurantObject.rating = [NSString stringWithFormat:@"%.1f",[[row valueForName:@"rating"]floatValue]];
+                restaurantObject.ratingSort = [NSString stringWithFormat:@"%.1f",[[row valueForName:@"rating"]floatValue]];
+                
+                //Select the appropriate image with correct number of stars
+                if ([restaurantObject.ratingSort isEqualToString:@"0.0"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating0.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"0.5"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating0point5.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"1.0"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating1.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"1.5"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating1point5.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"2.0"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating2.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"2.5"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating2point5.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"3.0"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating3.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"3.5"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating3point5.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"4.0"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating4.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"4.5"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating4point5.png"];
+                }
+                else if ([restaurantObject.ratingSort isEqualToString:@"5.0"])
+                {
+                    restaurantObject.ratingImage = [UIImage imageNamed:@"rating5.png"];
+                }
             }
             else
             {
-                restaurantObject.rating = @"";
+                restaurantObject.ratingSort = @"";
+                restaurantObject.ratingImage = [UIImage imageNamed:@"ratingnone.png"];
             }
             if ([row valueForName:@"price"]) restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
             if ([row valueForName:@"tel"])
@@ -618,7 +665,26 @@
             if ([row valueForName:@"reservations"]) restaurantObject.reservations = [row valueForName:@"reservations"];
             if ([row valueForName:@"website"]) restaurantObject.website = [row valueForName:@"website"];
             if ([row valueForName:@"payment_cashonly"]) restaurantObject.cashOnly = [row valueForName:@"payment_cashonly"];
-            if ([row valueForName:@"cuisine"]) restaurantObject.cuisine = [row valueForName:@"cuisine"];
+            if ([row valueForName:@"cuisine"])
+            {
+                restaurantObject.cuisine = [row valueForName:@"cuisine"];
+                
+                NSArray *cuisineItems = [[NSArray alloc]init];
+                if ([restaurantObject.cuisine count] > 2)
+                {
+                    cuisineItems = [NSArray arrayWithObjects:[restaurantObject.cuisine objectAtIndex:0], [restaurantObject.cuisine objectAtIndex:1], [restaurantObject.cuisine objectAtIndex:2], nil];
+                    restaurantObject.cuisineLabel = [cuisineItems componentsJoinedByString:@", "];
+                }
+                else if ([restaurantObject.cuisine count] > 1)
+                {
+                    cuisineItems = [NSArray arrayWithObjects:[restaurantObject.cuisine objectAtIndex:0], [restaurantObject.cuisine objectAtIndex:1], nil];
+                    restaurantObject.cuisineLabel = [cuisineItems componentsJoinedByString:@", "];
+                }
+                else
+                {
+                    restaurantObject.cuisineLabel = [restaurantObject.cuisine objectAtIndex:0];
+                }
+            }
             if ([row valueForName:@"hours"])
             {   
                 NSData *hoursData = [[row valueForName:@"hours"] dataUsingEncoding:NSUTF8StringEncoding];
@@ -1021,6 +1087,6 @@
     //Currently in this format: x.xx miles
     NSString *farthest = [[_restaurants lastObject] proximity];
     
-    farthestPlaceString = [NSString stringWithFormat:@"Restaurants within %@", farthest];
+    farthestPlaceString = [NSString stringWithFormat:@"Within %@", farthest];
 }
 @end

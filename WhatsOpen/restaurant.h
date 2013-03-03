@@ -18,7 +18,8 @@
 @property (strong, nonatomic) NSString *longitude;
 @property (strong, nonatomic) NSString *proximity;
 @property (strong, nonatomic) NSString *openHours;
-@property (strong, nonatomic) NSString *rating;
+@property (strong, nonatomic) NSString *ratingSort;
+@property (strong, nonatomic) UIImage *ratingImage;
 @property (assign, nonatomic) int priceLevel;
 @property (strong, nonatomic) NSString *phone;
 @property (strong, nonatomic) NSString *parking;
@@ -26,6 +27,7 @@
 @property (strong, nonatomic) NSString *cashOnly;
 @property (strong, nonatomic) NSString *website;
 @property (strong, nonatomic) NSArray *cuisine;
+@property (strong, nonatomic) NSString *cuisineLabel;
 @property (strong, nonatomic) NSString *hasFullBar;
 @property (strong, nonatomic) NSString *reservations;
 @property (strong, nonatomic) NSString *outdoorSeating;

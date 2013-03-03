@@ -31,9 +31,7 @@
 
 - (void)viewDidLoad
 {
-//    topView.layer.borderColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0].CGColor;
-//    topView.layer.borderWidth = 4.0f;
-
+    //Set up background colors and rounded corners
     self.view.layer.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0].CGColor;
     self.topView.layer.backgroundColor = [UIColor whiteColor].CGColor;
     [[self.topView layer] setCornerRadius:5.0];
@@ -120,58 +118,7 @@
     }
     priceIcon.image = [UIImage imageNamed:priceLevelString];
 
-    //Select the appropriate image with correct number of stars
-    if (![restaurantObject.rating isEqualToString:@""])
-    {
-        if ([restaurantObject.rating isEqualToString:@"0.0"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating0.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"0.5"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating0point5.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"1.0"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating1.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"1.5"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating1point5.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"2.0"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating2.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"2.5"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating2point5.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"3.0"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating3.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"3.5"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating3point5.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"4.0"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating4.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"4.5"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating4point5.png"];
-        }
-        else if ([restaurantObject.rating isEqualToString:@"5.0"])
-        {
-            ratingIcon.image = [UIImage imageNamed:@"rating5.png"];
-        }
-        else
-        {
-            //to-do: load image for not yet rated
-        }
-    }
+    ratingIcon.image = restaurantObject.ratingImage;
     
     //to-do: stop animating loading indicator when Google map finishes loading
     [self.loadingIndicator stopAnimating];

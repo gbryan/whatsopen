@@ -40,7 +40,7 @@
 
     _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
-    _lastResultWasNull = FALSE;
+    _lastResultWasNull = FALSE;  
     
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
@@ -130,17 +130,17 @@
     
     NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
     
-    //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
+    //set message to farthest place distance. Example: "Within 1.24 miles:"
     //to-do: is this the right size for iPhone 5 screen also?
-    NSString *farthestPlaceString = _queryController.farthestPlaceString;
-    UIFont *font = [UIFont boldSystemFontOfSize:18.0];
-    CGRect frame = CGRectMake(0, 0, [farthestPlaceString sizeWithFont:font].width, 44);
-    UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.font = font;
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text = farthestPlaceString;
-    _navBar.titleView = titleLabel;
+    UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
+    navBarTitle.textAlignment = NSTextAlignmentLeft;
+    navBarTitle.text = @"Open Now";
+    navBarTitle.backgroundColor = [UIColor clearColor];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:25];
+    navBarTitle.textColor = [UIColor whiteColor];
+    _navBar.titleView = navBarTitle;
+    
+
 
     if (isInitialLoad == TRUE)
     {
@@ -198,10 +198,16 @@
     return 1;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return @"Open Now";
-}
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    //such as "Within 1.25 miles"
+//    return [_queryController farthestPlaceString];
+//}
+//
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    
+//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -241,17 +247,34 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //to-do: once I update tableViewCell with custom design, I need to use separate identifier for cell showing no results
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"openNowCell"];
     
     if (_openNow.count > 0)
     {
         restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
-        cell.textLabel.text = restaurantObject.name;
-        cell.detailTextLabel.text = restaurantObject.proximity;
         
-        //remove halo effect in background color
-        cell.textLabel.backgroundColor = [UIColor clearColor];
-        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
+        nameLabel.text = restaurantObject.name;
+        nameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:15.5];
+        nameLabel.numberOfLines = 2;
+        nameLabel.backgroundColor = [UIColor clearColor];
+        
+        UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
+        cuisine.text = restaurantObject.cuisineLabel;
+        
+        UILabel *address = (UILabel *)[cell viewWithTag:3];
+        address.text = restaurantObject.address;
+        
+        UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
+        ratingView.image = restaurantObject.ratingImage;
+        
+        UILabel *distance = (UILabel *)[cell viewWithTag:5];
+        distance.text = restaurantObject.proximity;
+        
+        UILabel *price = (UILabel *)[cell viewWithTag:6];
+        price.text = [NSString stringWithFormat:@"%i", restaurantObject.priceLevel];
+        
+        //Make cell dark blue when selecting it
         UIView *selectionColor = [[UIView alloc] init];
         selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
         cell.selectedBackgroundView = selectionColor;
@@ -260,6 +283,7 @@
     {
         cell.textLabel.text = @"No nearby restaurants are open :(";
         cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
         cell.textLabel.font = [UIFont systemFontOfSize:18];
         cell.detailTextLabel.text = nil;
     }
