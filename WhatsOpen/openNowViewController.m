@@ -272,7 +272,7 @@
         distance.text = restaurantObject.proximity;
         
         UILabel *price = (UILabel *)[cell viewWithTag:6];
-        price.text = [NSString stringWithFormat:@"%i", restaurantObject.priceLevel];
+        price.text = restaurantObject.priceLevelDisplay;
         
         //Make cell dark blue when selecting it
         UIView *selectionColor = [[UIView alloc] init];

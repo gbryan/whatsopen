@@ -635,7 +635,44 @@
                 restaurantObject.ratingSort = @"";
                 restaurantObject.ratingImage = [UIImage imageNamed:@"ratingnone.png"];
             }
-            if ([row valueForName:@"price"]) restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
+            if ([row valueForName:@"price"])
+            {
+                restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
+                
+                //Select the appropriate image and $$$ representation to show for price
+                NSString *priceLevelImageName = [[NSString alloc]init];
+                NSString *priceLevelDisplay = [[NSString alloc]init];
+                switch (restaurantObject.priceLevel) {
+                    case 1:
+                        priceLevelImageName = @"dollar.png";
+                        priceLevelDisplay = @"$";
+                        break;
+                    case 2:
+                        priceLevelImageName = @"dollar2.png";
+                        priceLevelDisplay = @"$$";                        
+                        break;
+                    case 3:
+                        priceLevelImageName = @"dollar3.png";
+                        priceLevelDisplay = @"$$$";                        
+                        break;
+                    case 4:
+                        priceLevelImageName = @"dollar4.png";
+                        priceLevelDisplay = @"$$$$";                        
+                        break;
+                    case 5:
+                        priceLevelImageName = @"dollar5.png";
+                        priceLevelDisplay = @"$$$$$";                        
+                        break;
+                    default:
+                        //to-do: image for no pricing info available
+                        priceLevelImageName = @"";
+                        priceLevelDisplay = @"";                        
+                        break;
+                }
+                restaurantObject.priceIcon = [UIImage imageNamed:priceLevelImageName];
+                restaurantObject.priceLevelDisplay = priceLevelDisplay;
+            }
+            
             if ([row valueForName:@"tel"])
             {
                 NSString *phoneNumber = [row valueForName:@"tel"];

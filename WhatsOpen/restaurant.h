@@ -21,6 +21,8 @@
 @property (strong, nonatomic) NSString *ratingSort;
 @property (strong, nonatomic) UIImage *ratingImage;
 @property (assign, nonatomic) int priceLevel;
+@property (strong, nonatomic) NSString *priceLevelDisplay;
+@property (strong, nonatomic) UIImage *priceIcon;
 @property (strong, nonatomic) NSString *phone;
 @property (strong, nonatomic) NSString *parking;
 @property (strong, nonatomic) NSString *attire;

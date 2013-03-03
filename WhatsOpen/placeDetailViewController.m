@@ -93,30 +93,7 @@
         //to-do: make it possible to tap this textView to push modal view of full listing of hours
     }
     
-    //Select the appropriate image to show for price
-    NSString *priceLevelString = [[NSString alloc]init];
-    switch (restaurantObject.priceLevel) {
-        case 1:
-            priceLevelString = @"dollar.png";
-            break;
-        case 2:
-            priceLevelString = @"dollar2.png";
-            break;
-        case 3:
-            priceLevelString = @"dollar3.png";
-            break;
-        case 4:
-            priceLevelString = @"dollar4.png";
-            break;
-        case 5:
-            priceLevelString = @"dollar5.png";
-            break;
-        default:
-            //to-do: image for no pricing info available
-            priceLevelString = @"";
-            break;
-    }
-    priceIcon.image = [UIImage imageNamed:priceLevelString];
+    priceIcon.image = restaurantObject.priceIcon;
 
     ratingIcon.image = restaurantObject.ratingImage;
     
