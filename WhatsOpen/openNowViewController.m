@@ -262,8 +262,8 @@
         UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
         cuisine.text = restaurantObject.cuisineLabel;
         
-        UILabel *address = (UILabel *)[cell viewWithTag:3];
-        address.text = restaurantObject.address;
+        UILabel *closingTime = (UILabel *)[cell viewWithTag:3];
+        closingTime.text = restaurantObject.closingNextDisplay;
         
         UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
         ratingView.image = restaurantObject.ratingImage;

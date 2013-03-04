@@ -155,18 +155,34 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"placeCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"openLaterCell"];
 
     if (_openLater.count > 0)
     {
         restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
-        cell.textLabel.text = restaurantObject.name;
-        //        cell.detailTextLabel.text = [[_openLater objectAtIndex:indexPath.row] objectForKey:@"proximity"];
-        cell.detailTextLabel.text = restaurantObject.openNextDisplay;
         
-        //remove halo effect in background color
-        cell.textLabel.backgroundColor = [UIColor clearColor];
-        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
+        nameLabel.text = restaurantObject.name;
+        nameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:15.5];
+        nameLabel.numberOfLines = 2;
+        nameLabel.backgroundColor = [UIColor clearColor];
+        
+        UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
+        cuisine.text = restaurantObject.cuisineLabel;
+        
+        UILabel *openNext = (UILabel *)[cell viewWithTag:3];
+        openNext.text = restaurantObject.openNextDisplay;
+        
+        UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
+        ratingView.image = restaurantObject.ratingImage;
+        
+        UILabel *distance = (UILabel *)[cell viewWithTag:5];
+        distance.text = restaurantObject.proximity;
+        
+        UILabel *price = (UILabel *)[cell viewWithTag:6];
+        price.text = restaurantObject.priceLevelDisplay;
+        
+        //Make cell dark blue when selecting it
         UIView *selectionColor = [[UIView alloc] init];
         selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
         cell.selectedBackgroundView = selectionColor;
