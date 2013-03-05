@@ -24,7 +24,8 @@
 @property (nonatomic, strong) NSMutableArray *hoursUnknown;
 @property (nonatomic, strong) NSString *farthestPlaceString;
 @property (nonatomic, strong) restaurant *detailRestaurant;
-@property (nonatomic) BOOL lastResultWasNull;
+//@property (nonatomic) BOOL lastResultWasNull;
+@property (nonatomic) BOOL noMoreResults;
 
 -(void)refreshRestaurants;
 -(void)appendNewRestaurants;

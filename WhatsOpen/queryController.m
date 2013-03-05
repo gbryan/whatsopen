@@ -89,14 +89,17 @@
 @synthesize hoursUnknown;
 @synthesize farthestPlaceString;
 @synthesize detailRestaurant;
-@synthesize lastResultWasNull;
+//@synthesize lastResultWasNull;
+@synthesize noMoreResults;
 
 -(id)init
 {
     NSLog(@"initializing queryController");
     _locationService = [[locationServices alloc]init];
     _restaurants = [[NSMutableArray alloc]init];
-    lastResultWasNull = FALSE;
+    noMoreResults = FALSE;
+//    lastResultWasNull = FALSE;
+    
     
     //We initialize these only on queryController init (not with each run of a query) so that we can append newly acquired results to these arrays when running the arrays subsequent times.  Since queryController is re-initialized each time I click a different listView tab, arrays will be cleaned out when switching from one tab to the other, but scrolling to the bottom of the list in one tab will trigger a query for more results in queryController, which will APPEND new results to the already initialized arrays.
     openNow = [[NSMutableArray alloc]init];
@@ -565,13 +568,15 @@
     _queryResult = queryResultObj;
     
     NSLog(@"row count: %i", _queryResult.rowCount);
-    if (_queryResult.rowCount < 1)
+    if (_queryResult.rowCount < 50)
     {
-        lastResultWasNull = TRUE;
+//        lastResultWasNull = TRUE;
+        noMoreResults = TRUE;
     }
     else
     {
-        lastResultWasNull = FALSE;
+//        lastResultWasNull = FALSE;
+        noMoreResults = FALSE;
     }
     
     //check each restaurant retrieved from Factual

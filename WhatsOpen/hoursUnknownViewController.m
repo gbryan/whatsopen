@@ -17,7 +17,7 @@
     NSMutableArray *_hoursUnknown;
     BOOL isInitialLoad;
     BOOL internationalQuery;
-    BOOL _lastResultWasNull;
+//    BOOL _lastResultWasNull;
     BOOL _isListening;
 }
 @end
@@ -31,7 +31,7 @@
     [super viewDidLoad];
     
     isInitialLoad = TRUE;
-    _lastResultWasNull = FALSE;
+//    _lastResultWasNull = FALSE;
     _isListening = FALSE;
     
     //Set title
@@ -77,14 +77,14 @@
 - (void)loadRestaurantList
 {
     //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
-    if (_isListening == FALSE)
-    {
-        [self startListeningForCompletedQuery];
-    }
-    
-    if (_lastResultWasNull == FALSE)
+    if ([[UMAAppDelegate queryControllerShared]noMoreResults] == FALSE)
     {
         [_spinner startAnimating];
+        
+        if (_isListening == FALSE)
+        {
+            [self startListeningForCompletedQuery];
+        }
         [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
@@ -118,7 +118,7 @@
         //display Factual attribution (if required)
     }
     
-    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
+//    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
     _hoursUnknown = [[NSMutableArray alloc]
                 initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     

@@ -23,7 +23,7 @@
     NSMutableArray *_openNow;
     BOOL isInitialLoad;
     BOOL internationalQuery;
-    BOOL _lastResultWasNull;
+//    BOOL _lastResultWasNull;
     BOOL _isListening;
 }
 
@@ -39,7 +39,7 @@
     [super viewDidLoad];
 
     isInitialLoad = TRUE;
-    _lastResultWasNull = FALSE;  
+//    _lastResultWasNull = FALSE;  
     _isListening = FALSE;
     
     //Set title
@@ -102,7 +102,7 @@
 - (void) loadRestaurantList
 {
     //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
-    if (_lastResultWasNull == FALSE)
+    if ([[UMAAppDelegate queryControllerShared]noMoreResults] == FALSE)
     {
         if (_isListening == FALSE)
         {
@@ -145,7 +145,6 @@
         //to-do: display Factual attribution (if required)
     }
     
-    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
     [_openNow removeAllObjects];
     _openNow = [[NSMutableArray alloc]initWithArray:[UMAAppDelegate queryControllerShared].openNow];
     
