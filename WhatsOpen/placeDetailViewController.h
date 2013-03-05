@@ -14,6 +14,8 @@
 #import "websiteViewController.h"
 #import "hoursViewController.h"
 #import "queryController.h"
+#import "selectProblemViewController.h"
+#import "moreDetailsViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
@@ -29,6 +31,7 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) IBOutlet UITableView *contactInfoTableView;
 @property (weak, nonatomic) IBOutlet UIView *topView;
+- (IBAction)flagButtonPressed:(id)sender;
 
 
 @end

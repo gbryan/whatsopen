@@ -39,7 +39,7 @@
     [[self.contactInfoTableView layer] setCornerRadius:5.0];
     [[self.contactInfoTableView layer] setMasksToBounds:TRUE];
     
-    NSLog(@"restaurant passed: %@", restaurantObject);
+    NSLog(@"restaurant Factual id: %@", restaurantObject.factualID);
     NSLog(@"opennext: %@      closeNext: %@", restaurantObject.openNextDisplay, restaurantObject.closingNextDisplay);
     NSLog(@"open now? %i", restaurantObject.isOpenNow);
     
@@ -84,14 +84,11 @@
     {
         openNowOrLater.text = @"OPEN NOW";
         openNowOrLater.textColor = [UIColor colorWithRed:.314 green:.604 blue:.067 alpha:1];
-        //to-do: make it possible to tap this textView (or something) to push modal view of full listing of hours
     }
     else
     {
         openNowOrLater.text = restaurantObject.openNextDisplay;
         openNowOrLater.textColor = darkBlue;
-        
-        //to-do: make it possible to tap this textView to push modal view of full listing of hours
     }
     
     priceIcon.image = restaurantObject.priceIcon;
@@ -129,6 +126,7 @@
     NSLog(@"LISTENING!!!!");
     
     [self.loadingIndicator startAnimating];
+    
     //placeDetailViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(restaurantDetailsAcquired)
@@ -145,7 +143,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 
-    return 4;
+    return 5;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -177,6 +175,12 @@
             cell.detailTextLabel.text = hoursDetail;
             cell.imageView.image = [UIImage imageNamed:@"clock.png"];
             break;
+        case 4:
+            cell.textLabel.text = @"More Details";
+            cell.imageView.image = [UIImage imageNamed:@"moredetails.png"];
+            break;
+            
+            //to-do: add menu if I can get access to Locu and have time
     }
     UIView *selectionColor = [[UIView alloc] init];
     selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
@@ -219,10 +223,13 @@
             break;
         case 2:
             //website
-            [self pushWebModalViewController];
+            [self viewWebsite];
             break;
         case 3:
             [self viewHours];
+            break;
+        case 4:
+            [self viewMoreDetails];
             break;
     }
     [tableView deselectRowAtIndexPath:indexPath animated:TRUE];
@@ -230,7 +237,6 @@
 
 -(void)viewHours
 {
-    //to-do: write this to display modal view with neatly organized hours for the whole week
     hoursViewController *hoursVC = [self.storyboard instantiateViewControllerWithIdentifier:@"hoursView"];
     hoursVC.restaurantObject = self.restaurantObject;
     [self presentViewController:hoursVC animated:TRUE completion:nil];
@@ -243,10 +249,29 @@
     [[UIApplication sharedApplication] openURL:URL];
 }
 
--(void)pushWebModalViewController
+-(void)viewWebsite
 {
     websiteViewController *webVC = [self.storyboard instantiateViewControllerWithIdentifier:@"webView"];
     webVC.restaurantObject = self.restaurantObject;
     [self presentViewController:webVC animated:TRUE completion:nil];
+}
+
+-(void)viewMoreDetails
+{
+    moreDetailsViewController *moreDetailsVC = [self.storyboard instantiateViewControllerWithIdentifier:@"moreDetails"];
+    moreDetailsVC.restaurantObject = self.restaurantObject;
+    [self presentViewController:moreDetailsVC animated:TRUE completion:nil];
+}
+
+-(void)submitCorrections
+{
+    selectProblemViewController *selectProblemVC = [self.storyboard instantiateViewControllerWithIdentifier:@"selectProblem"];
+    selectProblemVC.restaurantObject = self.restaurantObject;
+    [self presentViewController:selectProblemVC animated:TRUE completion:nil];
+}
+
+- (IBAction)flagButtonPressed:(id)sender
+{
+    [self submitCorrections];
 }
 @end

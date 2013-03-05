@@ -49,11 +49,16 @@
 		93973D2016D84FF1006C2B94 /* queryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D1F16D84FF1006C2B94 /* queryController.m */; };
 		93973D2316D86862006C2B94 /* locationServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2216D86862006C2B94 /* locationServices.m */; };
 		93973D2716D87385006C2B94 /* restaurant.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2616D87385006C2B94 /* restaurant.m */; };
+		93A8173416E689E100C1CAFB /* flagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93A8173316E689E100C1CAFB /* flagViewController.m */; };
+		93A8173716E68A1800C1CAFB /* submitToFactualViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93A8173616E68A1800C1CAFB /* submitToFactualViewController.m */; };
+		93A8173916E68D7A00C1CAFB /* moredetails.png in Resources */ = {isa = PBXBuildFile; fileRef = 93A8173816E68D7A00C1CAFB /* moredetails.png */; };
 		93D04F9416A0721B00FD3B43 /* whatsopen.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9316A0721B00FD3B43 /* whatsopen.png */; };
 		93D04F9616A0725400FD3B43 /* whatsopen_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9516A0725400FD3B43 /* whatsopen_retina.png */; };
 		93DA345D16CCB32700CC6C59 /* FactualSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DA345C16CCB32700CC6C59 /* FactualSDK.framework */; };
 		93EB0B8A16E579B2007A7021 /* flag.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EB0B8916E579B2007A7021 /* flag.png */; };
 		93EB0B8C16E57C34007A7021 /* clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EB0B8B16E57C34007A7021 /* clock.png */; };
+		93EB0B9C16E67FF1007A7021 /* selectProblemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93EB0B9B16E67FF1007A7021 /* selectProblemViewController.m */; };
+		93EB0B9F16E686C8007A7021 /* moreDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93EB0B9E16E686C8007A7021 /* moreDetailsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -113,11 +118,20 @@
 		93973D2216D86862006C2B94 /* locationServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationServices.m; sourceTree = "<group>"; };
 		93973D2516D87385006C2B94 /* restaurant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = restaurant.h; sourceTree = "<group>"; };
 		93973D2616D87385006C2B94 /* restaurant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = restaurant.m; sourceTree = "<group>"; };
+		93A8173216E689E100C1CAFB /* flagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flagViewController.h; sourceTree = "<group>"; };
+		93A8173316E689E100C1CAFB /* flagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = flagViewController.m; sourceTree = "<group>"; };
+		93A8173516E68A1800C1CAFB /* submitToFactualViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = submitToFactualViewController.h; sourceTree = "<group>"; };
+		93A8173616E68A1800C1CAFB /* submitToFactualViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = submitToFactualViewController.m; sourceTree = "<group>"; };
+		93A8173816E68D7A00C1CAFB /* moredetails.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = moredetails.png; sourceTree = "<group>"; };
 		93D04F9316A0721B00FD3B43 /* whatsopen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whatsopen.png; path = ../whatsopen.png; sourceTree = "<group>"; };
 		93D04F9516A0725400FD3B43 /* whatsopen_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whatsopen_retina.png; path = ../whatsopen_retina.png; sourceTree = "<group>"; };
 		93DA345C16CCB32700CC6C59 /* FactualSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FactualSDK.framework; path = WhatsOpen/FactualSDK.framework; sourceTree = "<group>"; };
 		93EB0B8916E579B2007A7021 /* flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flag.png; sourceTree = "<group>"; };
 		93EB0B8B16E57C34007A7021 /* clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clock.png; sourceTree = "<group>"; };
+		93EB0B9A16E67FF1007A7021 /* selectProblemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = selectProblemViewController.h; sourceTree = "<group>"; };
+		93EB0B9B16E67FF1007A7021 /* selectProblemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = selectProblemViewController.m; sourceTree = "<group>"; };
+		93EB0B9D16E686C8007A7021 /* moreDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = moreDetailsViewController.h; sourceTree = "<group>"; };
+		93EB0B9E16E686C8007A7021 /* moreDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = moreDetailsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +190,7 @@
 				93408E76168EAA76004124BE /* Storyboard */,
 				93408E75168EAA5E004124BE /* List Views */,
 				93408E77168EAAA0004124BE /* Detail Views */,
+				93EB0B9916E67FBF007A7021 /* Flag or Correct */,
 				93408E74168EAA53004124BE /* App Delegate */,
 				93408E53168EA828004124BE /* Supporting Files */,
 			);
@@ -185,6 +200,7 @@
 		93408E53168EA828004124BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				93A8173816E68D7A00C1CAFB /* moredetails.png */,
 				93EB0B8B16E57C34007A7021 /* clock.png */,
 				93EB0B8916E579B2007A7021 /* flag.png */,
 				934E257A16E3F27F00036258 /* ratingnone.png */,
@@ -261,6 +277,8 @@
 				9375F7B216DD2A1800337A47 /* websiteViewController.m */,
 				9324AB5116E14B0E0076E8BA /* hoursViewController.h */,
 				9324AB5216E14B0E0076E8BA /* hoursViewController.m */,
+				93EB0B9D16E686C8007A7021 /* moreDetailsViewController.h */,
+				93EB0B9E16E686C8007A7021 /* moreDetailsViewController.m */,
 			);
 			name = "Detail Views";
 			sourceTree = "<group>";
@@ -290,6 +308,19 @@
 				93973D2216D86862006C2B94 /* locationServices.m */,
 			);
 			name = "Location Services";
+			sourceTree = "<group>";
+		};
+		93EB0B9916E67FBF007A7021 /* Flag or Correct */ = {
+			isa = PBXGroup;
+			children = (
+				93EB0B9A16E67FF1007A7021 /* selectProblemViewController.h */,
+				93EB0B9B16E67FF1007A7021 /* selectProblemViewController.m */,
+				93A8173216E689E100C1CAFB /* flagViewController.h */,
+				93A8173316E689E100C1CAFB /* flagViewController.m */,
+				93A8173516E68A1800C1CAFB /* submitToFactualViewController.h */,
+				93A8173616E68A1800C1CAFB /* submitToFactualViewController.m */,
+			);
+			name = "Flag or Correct";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -374,6 +405,7 @@
 				934E257B16E3F27F00036258 /* ratingnone.png in Resources */,
 				93EB0B8A16E579B2007A7021 /* flag.png in Resources */,
 				93EB0B8C16E57C34007A7021 /* clock.png in Resources */,
+				93A8173916E68D7A00C1CAFB /* moredetails.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,6 +427,10 @@
 				9324AB4D16E12BB00076E8BA /* openLaterViewController.m in Sources */,
 				9324AB5016E12BCD0076E8BA /* hoursUnknownViewController.m in Sources */,
 				9324AB5316E14B0F0076E8BA /* hoursViewController.m in Sources */,
+				93EB0B9C16E67FF1007A7021 /* selectProblemViewController.m in Sources */,
+				93EB0B9F16E686C8007A7021 /* moreDetailsViewController.m in Sources */,
+				93A8173416E689E100C1CAFB /* flagViewController.m in Sources */,
+				93A8173716E68A1800C1CAFB /* submitToFactualViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
