@@ -52,6 +52,8 @@
 		93D04F9416A0721B00FD3B43 /* whatsopen.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9316A0721B00FD3B43 /* whatsopen.png */; };
 		93D04F9616A0725400FD3B43 /* whatsopen_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9516A0725400FD3B43 /* whatsopen_retina.png */; };
 		93DA345D16CCB32700CC6C59 /* FactualSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93DA345C16CCB32700CC6C59 /* FactualSDK.framework */; };
+		93EB0B8A16E579B2007A7021 /* flag.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EB0B8916E579B2007A7021 /* flag.png */; };
+		93EB0B8C16E57C34007A7021 /* clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EB0B8B16E57C34007A7021 /* clock.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -114,6 +116,8 @@
 		93D04F9316A0721B00FD3B43 /* whatsopen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whatsopen.png; path = ../whatsopen.png; sourceTree = "<group>"; };
 		93D04F9516A0725400FD3B43 /* whatsopen_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whatsopen_retina.png; path = ../whatsopen_retina.png; sourceTree = "<group>"; };
 		93DA345C16CCB32700CC6C59 /* FactualSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FactualSDK.framework; path = WhatsOpen/FactualSDK.framework; sourceTree = "<group>"; };
+		93EB0B8916E579B2007A7021 /* flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flag.png; sourceTree = "<group>"; };
+		93EB0B8B16E57C34007A7021 /* clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clock.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +185,8 @@
 		93408E53168EA828004124BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				93EB0B8B16E57C34007A7021 /* clock.png */,
+				93EB0B8916E579B2007A7021 /* flag.png */,
 				934E257A16E3F27F00036258 /* ratingnone.png */,
 				9324AB1916DF6E9F0076E8BA /* rating0.png */,
 				9324AB1A16DF6E9F0076E8BA /* rating1.png */,
@@ -366,6 +372,8 @@
 				9324AB4916DF911B0076E8BA /* dollar4.png in Resources */,
 				9324AB4A16DF911B0076E8BA /* dollar5.png in Resources */,
 				934E257B16E3F27F00036258 /* ratingnone.png in Resources */,
+				93EB0B8A16E579B2007A7021 /* flag.png in Resources */,
+				93EB0B8C16E57C34007A7021 /* clock.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

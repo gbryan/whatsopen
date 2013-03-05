@@ -30,6 +30,15 @@
     isInitialLoad = TRUE;
     _lastResultWasNull = FALSE;
     
+    //Set title
+    UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
+    navBarTitle.textAlignment = NSTextAlignmentLeft;
+    navBarTitle.text = @"Open Later Today";
+    navBarTitle.backgroundColor = [UIColor clearColor];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:25];
+    navBarTitle.textColor = [UIColor whiteColor];
+    _navBar.titleView = navBarTitle;
+    
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
                 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -38,14 +47,15 @@
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
     
-    //set tint color of section headers
-    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
+//    //set tint color of section headers
+//    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
+    [_spinner startAnimating];
     [self startListeningForCompletedQuery];
     [self loadRestaurantList];
 
@@ -56,7 +66,6 @@
 {
     NSLog(@"LISTENING!!!!");
     
-    [_spinner startAnimating];
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(restaurantsAcquired:)
@@ -77,7 +86,6 @@
 - (void)refreshRestaurantList
 {
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
-    [_spinner startAnimating];
     [_queryController refreshRestaurants];
 }
 
@@ -105,18 +113,6 @@
     
     NSLog(@"Restaurants acquired:  openLater: %i", [_openLater count]);
     
-    //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
-    //to-do: is this the right size for iPhone 5 screen also?
-    NSString *farthestPlaceString = _queryController.farthestPlaceString;
-    UIFont *font = [UIFont boldSystemFontOfSize:18.0];
-    CGRect frame = CGRectMake(0, 0, [farthestPlaceString sizeWithFont:font].width, 44);
-    UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.font = font;
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text = farthestPlaceString;
-    _navBar.titleView = titleLabel;
-    
     if (isInitialLoad == TRUE)
     {
         isInitialLoad = FALSE;
@@ -142,10 +138,10 @@
     return 1;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return @"Open Later Today";
-}
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    return @"Open Later Today";
+//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -156,36 +152,53 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"openLaterCell"];
+    UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
+    nameLabel.text = nil;
+    UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
+    cuisine.text = nil;
+    UILabel *openNext = (UILabel *)[cell viewWithTag:3];
+    openNext.text = nil;
+    UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
+    ratingView.image = nil;
+    UILabel *distance = (UILabel *)[cell viewWithTag:5];
+    distance.text = nil;
+    UILabel *price = (UILabel *)[cell viewWithTag:6];
+    price.text = nil;
+    
+    //Make cell dark blue when selecting it
+    UIView *selectionColor = [[UIView alloc] init];
+    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+    cell.selectedBackgroundView = selectionColor;
 
     if (_openLater.count > 0)
     {
         restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
         
-        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
+//        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
         nameLabel.text = restaurantObject.name;
         nameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:15.5];
         nameLabel.numberOfLines = 2;
         nameLabel.backgroundColor = [UIColor clearColor];
         
-        UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
+//        UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
         cuisine.text = restaurantObject.cuisineLabel;
         
-        UILabel *openNext = (UILabel *)[cell viewWithTag:3];
+//        UILabel *openNext = (UILabel *)[cell viewWithTag:3];
         openNext.text = restaurantObject.openNextDisplay;
         
-        UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
+//        UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
         ratingView.image = restaurantObject.ratingImage;
         
-        UILabel *distance = (UILabel *)[cell viewWithTag:5];
+//        UILabel *distance = (UILabel *)[cell viewWithTag:5];
         distance.text = restaurantObject.proximity;
         
-        UILabel *price = (UILabel *)[cell viewWithTag:6];
+//        UILabel *price = (UILabel *)[cell viewWithTag:6];
         price.text = restaurantObject.priceLevelDisplay;
         
-        //Make cell dark blue when selecting it
-        UIView *selectionColor = [[UIView alloc] init];
-        selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
-        cell.selectedBackgroundView = selectionColor;
+//        //Make cell dark blue when selecting it
+//        UIView *selectionColor = [[UIView alloc] init];
+//        selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+//        cell.selectedBackgroundView = selectionColor;
     }
     else
     {
@@ -203,10 +216,12 @@
     
     NSInteger currentOffset = scrollView.contentOffset.y;
     NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
-    
-    if (currentOffset >= maximumOffset) {
+    NSLog(@"current: %i    max:%i", currentOffset, maximumOffset);
+    //to-do: this has issues with < 5 cells filled
+    if (currentOffset >= (maximumOffset + 40))
+    {
         NSLog(@"adding more restaurants to the list");
-        _spinner.center = CGPointMake(160, currentOffset+100);
+        _spinner.center = CGPointMake(160, currentOffset+150);
         [self loadRestaurantList];
     }
 }
@@ -226,7 +241,7 @@
         restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
         if (restaurantObject.openingSoon == TRUE)
         {
-            cell.backgroundColor = [UIColor colorWithRed:0 green:.7 blue:.1 alpha:1];
+            cell.backgroundColor = [UIColor colorWithRed:.05 green:1 blue:.05 alpha:.1];
             cell.detailTextLabel.textColor = [UIColor whiteColor];
         }
     }

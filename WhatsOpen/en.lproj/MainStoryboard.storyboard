@@ -144,7 +144,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="t9h-0e-m37">
-                        <barButtonItem key="rightBarButtonItem" title="Item" id="6Y3-ji-BKp"/>
+                        <barButtonItem key="rightBarButtonItem" image="flag.png" id="6Y3-ji-BKp"/>
                     </navigationItem>
                     <connections>
                         <outlet property="contactInfoTableView" destination="dpR-Hy-0dW" id="51H-m3-8Xt"/>
@@ -178,7 +178,7 @@
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S70-xO-4kF">
                                 <items>
                                     <navigationItem title="Hours" id="f2k-Zu-6Zn">
-                                        <barButtonItem key="rightBarButtonItem" title="Close" id="zOl-2c-RQJ">
+                                        <barButtonItem key="leftBarButtonItem" title="Close" id="zOl-2c-RQJ">
                                             <connections>
                                                 <action selector="closeHoursView:" destination="qQH-PP-zXu" id="JWa-z2-dMH"/>
                                             </connections>
@@ -556,7 +556,7 @@
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QB6-tx-3lU">
                                 <items>
                                     <navigationItem title="Title" id="AAO-aZ-ncb">
-                                        <barButtonItem key="rightBarButtonItem" title="Close" style="done" id="p4L-uS-KNT">
+                                        <barButtonItem key="leftBarButtonItem" title="Close" id="p4L-uS-KNT">
                                             <connections>
                                                 <action selector="closeWebView:" destination="XEx-lQ-kbl" id="kit-gv-58K"/>
                                             </connections>
@@ -628,6 +628,68 @@
             <point key="canvasLocation" x="268" y="1282"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="flag.png" width="32" height="32"/>
+    </resources>
+    <classes>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="hoursUnknownViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/hoursUnknownViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="hoursViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/hoursViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeHoursView:"/>
+                <relationship kind="outlet" name="hoursTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+            </relationships>
+        </class>
+        <class className="openLaterViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/openLaterViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="openNowViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/openNowViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="placeDetailViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/placeDetailViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="contactInfoTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="distanceLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="loadingIndicator" candidateClass="UIActivityIndicatorView"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="openNowOrLater" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="priceIcon" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="ratingIcon" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="restaurantImage" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="topView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="websiteViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/websiteViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeWebView:"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="webView" candidateClass="UIWebView"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

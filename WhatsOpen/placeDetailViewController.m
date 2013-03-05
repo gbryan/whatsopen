@@ -75,6 +75,7 @@
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
      to-do: visit website icon attribution: "Uses icons from Project Icons by Mihaiciuc Bogdan." The text Mihaiciuc Bogdan should link to http://bogo-d.deviantart.com
      to-do: if I add icons other than his, I need to provide attribution
+     to-do: flag icon by Kuswanto
      */
     restaurantImage.image = restaurantObject.image;
     
@@ -174,8 +175,7 @@
         case 3:
             cell.textLabel.text = @"Hours";
             cell.detailTextLabel.text = hoursDetail;
-            //to-do: show nextOpen if closed or nextClose if open??
-            //to-do: find icon to represent hours
+            cell.imageView.image = [UIImage imageNamed:@"clock.png"];
             break;
     }
     UIView *selectionColor = [[UIView alloc] init];
@@ -189,11 +189,12 @@
     _deviceLocation = [_locationService getCurrentLocation];
     
     //to-do: it would be preferable to pass the address city, state instead of coords
-    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
+//    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
     NSString *deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
+    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-    NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, placeLatLngString]];
-    NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, placeLatLngString]];
+    NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, restaurantAddress]];
+    NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, restaurantAddress]];
 
     //try to open in Google Maps app but open in Apple maps if user doesn't have GM installed
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"comgooglemaps://"]]) {

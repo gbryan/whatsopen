@@ -42,6 +42,15 @@
     isInitialLoad = TRUE;
     _lastResultWasNull = FALSE;  
     
+    //Set title
+    UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
+    navBarTitle.textAlignment = NSTextAlignmentLeft;
+    navBarTitle.text = @"Open Now";
+    navBarTitle.backgroundColor = [UIColor clearColor];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:25];
+    navBarTitle.textColor = [UIColor whiteColor];
+    _navBar.titleView = navBarTitle;
+    
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -129,18 +138,6 @@
     _openNow = [[NSMutableArray alloc]initWithArray:_queryController.openNow];
     
     NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
-    
-    //set message to farthest place distance. Example: "Within 1.24 miles:"
-    //to-do: is this the right size for iPhone 5 screen also?
-    UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
-    navBarTitle.textAlignment = NSTextAlignmentLeft;
-    navBarTitle.text = @"Open Now";
-    navBarTitle.backgroundColor = [UIColor clearColor];
-    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:25];
-    navBarTitle.textColor = [UIColor whiteColor];
-    _navBar.titleView = navBarTitle;
-    
-
 
     if (isInitialLoad == TRUE)
     {
@@ -234,7 +231,7 @@
         restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
         if (restaurantObject.closingSoon == TRUE)
         {
-            cell.backgroundColor = [UIColor colorWithRed:.7 green:0 blue:.1 alpha:1];
+            cell.backgroundColor = [UIColor colorWithRed:.7 green:0 blue:.1 alpha:.3];
             cell.detailTextLabel.textColor = [UIColor whiteColor];
         }
         else
@@ -298,9 +295,9 @@
     NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
     NSLog(@"current:%i  max:%i", currentOffset, maximumOffset);
     
-    if (currentOffset >= (maximumOffset + 350)) {
+    if (currentOffset >= (maximumOffset + 40)) {
         NSLog(@"adding more restaurants to the list");
-        _spinner.center = CGPointMake(160, currentOffset+100);
+        _spinner.center = CGPointMake(160, currentOffset+150);
         [self loadRestaurantList];
     }
 }

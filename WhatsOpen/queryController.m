@@ -68,6 +68,8 @@
  
  With each Factual query, save included_rows value and check if it is < 50.  If < 50, there is not another set of results to acquire.
  
+ to-do: check for restaurants open 24 hours. They will erroneously show up as "closing soon" or "opening soon," and they will display incorrect "opening next" and "closing next" information unless I check whether or not they are open 24 hours before calculating other hours info.
+ 
  */
 
 

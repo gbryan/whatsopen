@@ -34,6 +34,15 @@
     isInitialLoad = TRUE;
     _lastResultWasNull = FALSE;
     
+    //Set title
+    UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
+    navBarTitle.textAlignment = NSTextAlignmentLeft;
+    navBarTitle.text = @"Restaurants with Unknown Hours";
+    navBarTitle.backgroundColor = [UIColor clearColor];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:16.5];
+    navBarTitle.textColor = [UIColor whiteColor];
+    _navBar.titleView = navBarTitle;
+    
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
                 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -42,8 +51,8 @@
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
     
-    //set tint color of section headers
-    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
+//    //set tint color of section headers
+//    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
@@ -107,20 +116,6 @@
     
     NSLog(@"Restaurants acquired:  hoursUnknown: %i", [_hoursUnknown count]);
     
-    //set message to farthest place distance. Example: "Open restaurants within 1.24 miles:"
-    //to-do: is this the right size for iPhone 5 screen also?
-    NSString *farthestPlaceString = _queryController.farthestPlaceString;
-    UIFont *font = [UIFont boldSystemFontOfSize:18.0];
-    CGRect frame = CGRectMake(0, 0, [farthestPlaceString sizeWithFont:font].width, 44);
-    UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.font = font;
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text = farthestPlaceString;
-    
-    //to-do: Does this reflect the farthest restaurant for only unknown hours? It should!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-    _navBar.titleView = titleLabel;
-    
     //Since reloadSections withRowAnimation will crash the app if there are < 1 array items, we run reloadData the first time and then subsequent times ensure that there is at least 1 restaurant in the array before reloadingSections.
     if (isInitialLoad == TRUE)
     {
@@ -146,10 +141,10 @@
     return 1;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return @"Restaurants with Unknown Hours";
-}
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    return @"Restaurants with Unknown Hours";
+//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
