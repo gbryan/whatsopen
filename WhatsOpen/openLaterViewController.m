@@ -11,10 +11,10 @@
 @interface openLaterViewController ()
 {
     NSMutableArray *_openLater;
-    queryController *_queryController;
     BOOL isInitialLoad;
     BOOL internationalQuery;
     BOOL _lastResultWasNull;
+    BOOL _isListening;
 }
 @end
 
@@ -26,9 +26,10 @@
 {
     [super viewDidLoad];
 
-    _queryController = [[queryController alloc]init];
+//    _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
     _lastResultWasNull = FALSE;
+    _isListening = FALSE;
     
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
@@ -54,10 +55,15 @@
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
+
+    //to-do: I commented this out bc restaurants will already be loaded from when app first loads on openNow and query is issued.
+//    [_spinner startAnimating];
+//    [self startListeningForCompletedQuery];
+    //    [self loadRestaurantList];
     
-    [_spinner startAnimating];
-    [self startListeningForCompletedQuery];
-    [self loadRestaurantList];
+    _openLater = [[NSMutableArray alloc]
+                  initWithArray:[UMAAppDelegate queryControllerShared].openLater];
+    [_restaurantTableView reloadData];
 
 
 }
@@ -65,6 +71,8 @@
 - (void)startListeningForCompletedQuery
 {
     NSLog(@"LISTENING!!!!");
+    
+    _isListening = TRUE;
     
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -79,14 +87,24 @@
     if (_lastResultWasNull == FALSE)
     {
         [_spinner startAnimating];
-        [_queryController appendNewRestaurants];
+        
+        if (_isListening == FALSE)
+        {
+            [self startListeningForCompletedQuery];
+        }
+
+        [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
 
 - (void)refreshRestaurantList
 {
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
-    [_queryController refreshRestaurants];
+    if (_isListening == FALSE)
+    {
+        [self startListeningForCompletedQuery];
+    }
+    [[UMAAppDelegate queryControllerShared] refreshRestaurants];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
@@ -107,9 +125,9 @@
         //display Factual attribution (if required)
     }
     
-    _lastResultWasNull = [_queryController lastResultWasNull];
+    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
     _openLater = [[NSMutableArray alloc]
-                  initWithArray:_queryController.openLater];
+                  initWithArray:[UMAAppDelegate queryControllerShared].openLater];
     
     NSLog(@"Restaurants acquired:  openLater: %i", [_openLater count]);
     

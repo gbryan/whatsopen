@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "UMAAppDelegate.h"
-#import "queryController.h"
 #import "placeDetailViewController.h"
 
 @interface openNowViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>

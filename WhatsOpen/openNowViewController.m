@@ -21,10 +21,10 @@
 @interface openNowViewController ()
 {
     NSMutableArray *_openNow;
-    queryController *_queryController;
     BOOL isInitialLoad;
     BOOL internationalQuery;
     BOOL _lastResultWasNull;
+    BOOL _isListening;
 }
 
 @end
@@ -38,9 +38,9 @@
 {
     [super viewDidLoad];
 
-    _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
     _lastResultWasNull = FALSE;  
+    _isListening = FALSE;
     
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
@@ -89,6 +89,8 @@
 
 - (void)startListeningForCompletedQuery
 {
+    _isListening = TRUE;
+    
     NSLog(@"LISTENING!!!!");
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -102,16 +104,26 @@
     //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
     if (_lastResultWasNull == FALSE)
     {
+        if (_isListening == FALSE)
+        {
+            [self startListeningForCompletedQuery];
+        }
+        
         [_spinner startAnimating];
-        [_queryController appendNewRestaurants];
+        [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
 
 - (void)refreshRestaurantList
 {
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
-    [_spinner startAnimating];    
-    [_queryController refreshRestaurants];
+    if (_isListening == FALSE)
+    {
+        [self startListeningForCompletedQuery];
+    }
+    
+    [_spinner startAnimating];
+    [[UMAAppDelegate queryControllerShared] refreshRestaurants];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
@@ -133,9 +145,9 @@
         //to-do: display Factual attribution (if required)
     }
     
-    _lastResultWasNull = [_queryController lastResultWasNull];
+    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
     [_openNow removeAllObjects];
-    _openNow = [[NSMutableArray alloc]initWithArray:_queryController.openNow];
+    _openNow = [[NSMutableArray alloc]initWithArray:[UMAAppDelegate queryControllerShared].openNow];
     
     NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
 

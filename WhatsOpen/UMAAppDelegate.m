@@ -10,7 +10,8 @@
 
 @implementation UMAAppDelegate
 
-@synthesize apiObject=_apiObject;
+@synthesize apiObject = _apiObject;
+@synthesize queryControllerShared = _queryControllerShared;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -18,19 +19,28 @@
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
+    _queryControllerShared = [[queryController alloc]init];
     
     // Override point for customization after application launch.
     return YES;
 }
 
-+(FactualAPI*) getAPIObject {
++(FactualAPI*) getAPIObject
+{
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate*)app.delegate).apiObject;
 }
 
-+(UMAAppDelegate*) getDelegate {
++(UMAAppDelegate*) getDelegate
+{
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate*)app.delegate);
+}
+
++(queryController *)queryControllerShared
+{
+    UIApplication* app = [UIApplication sharedApplication];
+    return ((UMAAppDelegate*)app.delegate).queryControllerShared;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

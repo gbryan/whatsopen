@@ -15,10 +15,10 @@
 @interface hoursUnknownViewController ()
 {
     NSMutableArray *_hoursUnknown;
-    queryController *_queryController;
     BOOL isInitialLoad;
     BOOL internationalQuery;
     BOOL _lastResultWasNull;
+    BOOL _isListening;
 }
 @end
 
@@ -30,9 +30,9 @@
 {
     [super viewDidLoad];
     
-    _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
     _lastResultWasNull = FALSE;
+    _isListening = FALSE;
     
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
@@ -51,22 +51,21 @@
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
     
-//    //set tint color of section headers
-//    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
-    
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
-    
-    [_spinner startAnimating];    
-    [self startListeningForCompletedQuery];
-    [self loadRestaurantList];
+
+    _hoursUnknown = [[NSMutableArray alloc]
+                     initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
+    [_restaurantTableView reloadData];
 
 }
 
 - (void)startListeningForCompletedQuery
 {
+    _isListening = TRUE;
+    
     NSLog(@"LISTENING!!!!");
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -78,18 +77,27 @@
 - (void)loadRestaurantList
 {
     //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
+    if (_isListening == FALSE)
+    {
+        [self startListeningForCompletedQuery];
+    }
+    
     if (_lastResultWasNull == FALSE)
     {
         [_spinner startAnimating];
-        [_queryController appendNewRestaurants];
+        [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
 
 - (void)refreshRestaurantList
 {
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
+    if (_isListening == FALSE)
+    {
+        [self startListeningForCompletedQuery];
+    }
     [_spinner startAnimating];
-    [_queryController refreshRestaurants];
+    [[UMAAppDelegate queryControllerShared] refreshRestaurants];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
@@ -110,13 +118,15 @@
         //display Factual attribution (if required)
     }
     
-    _lastResultWasNull = [_queryController lastResultWasNull];
+    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
     _hoursUnknown = [[NSMutableArray alloc]
-                initWithArray:_queryController.hoursUnknown];
+                initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     
     NSLog(@"Restaurants acquired:  hoursUnknown: %i", [_hoursUnknown count]);
     
     //Since reloadSections withRowAnimation will crash the app if there are < 1 array items, we run reloadData the first time and then subsequent times ensure that there is at least 1 restaurant in the array before reloadingSections.
+    
+    //to-do: am I using this anymore? if not, remove on all 3 tableview controllers
     if (isInitialLoad == TRUE)
     {
         isInitialLoad = FALSE;

@@ -8,18 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import <FactualSDK/FactualAPI.h>
+#import "queryController.h"
 #import "keys.h"
 
 @class queryController;
-@class listViewController;
 @interface UMAAppDelegate : UIResponder <UIApplicationDelegate>
 {
     FactualAPI *_apiObject;
-//    listViewController *_listView;
 }
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic, readonly) FactualAPI *apiObject;
+@property (nonatomic, readonly) queryController *queryControllerShared;
 
 +(FactualAPI *) getAPIObject;
 +(UMAAppDelegate *) getDelegate;
++(queryController *)queryControllerShared;
 @end

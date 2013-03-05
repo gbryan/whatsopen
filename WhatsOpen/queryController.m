@@ -155,6 +155,7 @@
     return queryString;
 }
 
+//This clears out existing restaurants in the arrays and issues a new query.
 -(void)refreshRestaurants
 {
     _deviceLocation = [_locationService getCurrentLocation];
@@ -162,10 +163,27 @@
     //these categories are for Google
 //    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
-    _restaurants = [[NSMutableArray alloc]init];
-    openNow = [[NSMutableArray alloc]init];
-    openLater = [[NSMutableArray alloc]init];
-    hoursUnknown = [[NSMutableArray alloc]init];
+    
+    if (_restaurants.count > 0)
+    {
+        [_restaurants removeAllObjects];
+    }
+    if (openNow.count >0)
+    {
+        [openNow removeAllObjects];
+    }
+    if (openLater.count >0)
+    {
+        [openLater removeAllObjects];
+    }
+    if (hoursUnknown.count >0)
+    {
+        [hoursUnknown removeAllObjects];
+    }
+//    _restaurants = [[NSMutableArray alloc]init];
+//    openNow = [[NSMutableArray alloc]init];
+//    openLater = [[NSMutableArray alloc]init];
+//    hoursUnknown = [[NSMutableArray alloc]init];
     
     //set pg to 1 since initial Google Places query will pull the 1st page of results
 //    _pageNum = 1;
