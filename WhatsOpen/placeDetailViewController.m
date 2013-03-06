@@ -39,9 +39,10 @@
     [[self.contactInfoTableView layer] setCornerRadius:5.0];
     [[self.contactInfoTableView layer] setMasksToBounds:TRUE];
     
-    NSLog(@"restaurant Factual id: %@", restaurantObject.factualID);
+    NSLog(@"restaurant Factual id %@: %@", restaurantObject.name, restaurantObject.factualID);
     NSLog(@"opennext: %@      closeNext: %@", restaurantObject.openNextDisplay, restaurantObject.closingNextDisplay);
     NSLog(@"open now? %i", restaurantObject.isOpenNow);
+    
     
     [self startListeningForCompletedQuery];
     _locationService = [[locationServices alloc]init];
@@ -192,7 +193,7 @@
 {
     _deviceLocation = [_locationService getCurrentLocation];
     
-    //to-do: it would be preferable to pass the address city, state instead of coords
+    //to-do: this is terrible in Apple Maps bc it doesn't find the right place with just street address and city
 //    NSString *placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
     NSString *deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
     NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];

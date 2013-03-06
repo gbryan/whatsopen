@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <FactualSDK/FactualAPI.h>
-#import <FactualSDK/FactualQuery.h>
 #import "keys.h"
 #import "locationServices.h"
 #import "restaurant.h"
@@ -30,4 +29,5 @@
 -(void)refreshRestaurants;
 -(void)appendNewRestaurants;
 -(void)getRestaurantDetail:(restaurant *)restaurantObject;
++(void)flagRestaurant:(restaurant *)restaurantObject withComment:(NSString *)comment reference:(NSString *)reference;
 @end

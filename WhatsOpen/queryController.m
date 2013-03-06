@@ -81,7 +81,9 @@
     FactualQuery *_queryObject;
     NSInteger _pageNum;
     CLLocationCoordinate2D _deviceLocation;
-    NSMutableArray *_restaurants;
+//    NSMutableArray *_restaurants;
+    NSInteger _totalResults;
+    NSInteger _numFailedGoogleQueries;
 }
 @synthesize queryCategories;
 @synthesize openNow;
@@ -94,9 +96,14 @@
 
 -(id)init
 {
+    _totalResults = 0;
+    _numFailedGoogleQueries = 0;
+    [self flagRestaurant];
+    
+    
     NSLog(@"initializing queryController");
     _locationService = [[locationServices alloc]init];
-    _restaurants = [[NSMutableArray alloc]init];
+//    _restaurants = [[NSMutableArray alloc]init];
     noMoreResults = FALSE;
 //    lastResultWasNull = FALSE;
     
@@ -108,6 +115,94 @@
     
     return self;
 }
+
+
+
+
+
+
+
+
+
+
+/*
+ JUST FOR TESTING
+ 
+- (void)queryGooglePlaces:(NSString *)placeReferenceString {
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?reference=%@&sensor=true&key=%@", placeReferenceString, GOOGLE_API_KEY];
+    
+    NSURL *googleRequestURL=[NSURL URLWithString:url];
+    
+    // Retrieve the results of the URL.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
+        [self performSelectorOnMainThread:@selector(gotTestData:) withObject:data waitUntilDone:YES];
+    });
+}
+
+- (void)gotTestData:(NSData *)responseData {
+    //parse out the json data
+    NSError* error;
+    NSDictionary* json = [NSJSONSerialization
+                          JSONObjectWithData:responseData
+                          
+                          options:kNilOptions
+                          error:&error];
+    
+    //The results from Google will be an array obtained from the NSDictionary object with the key "results".
+    NSDictionary *placeDetailsDictionary = [json objectForKey:@"result"];
+    NSLog(@"Google test results: %@", placeDetailsDictionary);
+}
+*/
+
+
+
+
+
+//-(void)flagRestaurant:(restaurant *)restaurantObject withComment:(NSString *)comment reference:(NSString *)reference
+-(void)flagRestaurant
+{
+    FactualAPI *_apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
+
+    
+    
+    
+    
+    
+    
+    
+    NSLog(@"begin submitting correction");
+    
+
+
+    
+    
+//    FactualRowMetadata* metadata = [FactualRowMetadata metadata:@"gbryan"];
+//    metadata.comment = @"Hours are 11am to 4am every day of the week";
+//    metadata.reference = @"http://www.cosmiccantina.com/contact/p7669";
+//    
+//    NSString *factualId = @"e16ef265-b9be-437f-b7e2-ded852e3920e";
+//    NSMutableDictionary* hoursToSubmit  = [[NSMutableDictionary alloc]init];
+//    NSMutableDictionary *days = [[NSMutableDictionary alloc]init];
+//    NSArray *hours = [[NSArray alloc]initWithObjects:@"11:00", @"4:00", nil];
+//    [days setValue:hours forKey:@"monday"];
+//    [days setValue:hours forKey:@"tuesday"];
+//    [days setValue:hours forKey:@"wednesday"];
+//    [days setValue:hours forKey:@"thursday"];
+//    [days setValue:hours forKey:@"friday"];
+//    [hoursToSubmit setValue:days forKey:@"hours"];
+//    _activeRequest = [[UMAAppDelegate getAPIObject] submitRowWithId:@"e0bf05bb-5391-4519-96d5-4a72c1224e61" tableId:@"us-sandbox" withValues:hoursToSubmit withMetadata:metadata withDelegate:self];    
+    
+    
+//    [[UMAAppDelegate getAPIObject] flagProblem:FactualFlagType_Inaccurate tableId:@"us-sandbox" factualId:factualId metadata:metadata withDelegate:self];
+}
+
+
+
+
+
+
+
 
 -(restaurant *)matchRestaurantWithName:(NSString *)fullName streetAddress:(NSString *)address
 {
@@ -167,10 +262,12 @@
 //    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
     //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
     
-    if (_restaurants.count > 0)
-    {
-        [_restaurants removeAllObjects];
-    }
+    _totalResults = 0;
+    
+//    if (_restaurants.count > 0)
+//    {
+//        [_restaurants removeAllObjects];
+//    }
     if (openNow.count >0)
     {
         [openNow removeAllObjects];
@@ -210,12 +307,20 @@
     //We will not re-initialize the arrays becuase we want to just add more restaurants to the lists
     _deviceLocation = [_locationService getCurrentLocation];
     
-    NSInteger offset = [_restaurants count];
+//    NSInteger offset = [_restaurants count];
+    
+    NSInteger offset = _totalResults;
     
     //Don't run the query if there are already 500 restaurants acquired because Factual provides a max of 500, and the query will return an error.
-    if (offset < 500)
+    if (_totalResults < 500)
     {
         [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude withOffset:offset];
+    }
+    else
+    {
+        //Even if we don't run the query, we have to notify the VC to stop spinning the uiactivityindicator
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
+                                                            object:nil];
     }
     //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
 }
@@ -239,6 +344,13 @@
         //just start the query over again if data is nil for some reason
 //        [self getRestaurants];
         NSLog(@"googleQueryData was invalid for some reason. Oops.");
+        
+        _numFailedGoogleQueries++;
+        
+        if (_numFailedGoogleQueries < 2)
+        {
+            [self fetchedGoogleRestaurantDetails:googleQueryData];
+        }
     }
     else
     {
@@ -256,7 +368,7 @@
 {
     NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=130&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
     
-    NSLog(@"photo request: %@", url);
+//    NSLog(@"photo request: %@", url);
     NSURL *googleRequestURL=[NSURL URLWithString:url];
     NSData* restaurantImageRequestData = [NSData dataWithContentsOfURL: googleRequestURL];
     if (!restaurantImageRequestData)
@@ -265,6 +377,13 @@
         //just start the query over again if data is nil for some reason
         //        [self getRestaurants];
         NSLog(@"googleQueryData was invalid for some reason. Oops.");
+        
+        _numFailedGoogleQueries++;
+        
+        if (_numFailedGoogleQueries < 2)
+        {
+            [self getGoogleImageForRestaurantWithReference:photoReference];
+        }
     }
     else
     {
@@ -274,6 +393,9 @@
 
 -(void)acquiredGoogleRestaurantImage:(NSData *)responseData
 {
+    //reset this since we successfully completed this query
+    _numFailedGoogleQueries = 0;
+    
     UIImage *restaurantImage = [UIImage imageWithData:(NSData *)responseData];
     detailRestaurant.image = restaurantImage;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
@@ -282,6 +404,9 @@
 
 - (void)fetchedGoogleRestaurantDetails:(NSData *)responseData
 {
+    //reset this since we successfully completed this query    
+    _numFailedGoogleQueries = 0;
+    
     //parse out the json data
     NSError* error;
     NSDictionary* json = [NSJSONSerialization
@@ -301,6 +426,10 @@
         //to-do: need to provide attribution to Google on placeDetailVC if I do this
         detailRestaurant.address = [restaurantDetails objectForKey:@"vicinity"];
         detailRestaurant.googleID = [restaurantDetails objectForKey:@"reference"];
+        
+        
+        //to-do: remove this and the test stuff at line 120ish
+//        [self queryGooglePlaces:detailRestaurant.googleID];
         
         if ([restaurantDetails objectForKey:@"photos"] &&
             [[[restaurantDetails objectForKey:@"photos"]objectAtIndex:0]objectForKey:@"photo_reference"])
@@ -324,222 +453,11 @@
     }
 }
 
-//#pragma mark - Google Places Query
-//-(void)queryGooglePlacesWithTypes:(NSArray *)googleTypes nextPageToken:(NSString *)nextPageToken
-//{
-//    _deviceLocation = [_locationService getCurrentLocation];
-//    
-//    /* queryGooglePlaces is potentially called multiple times with different
-//     pageTokens for a full refresh of the restaurant data in the table. Here, I test whether
-//     this is the initial query in a full refresh of the data or part way through a refresh.
-//     */
-//    if (nextPageToken.length < 1)
-//    {        
-//        _pageNum = 1;
-//        
-//        //If queryGooglePlaces is called multiple times with nextPageToken of nil, then stop attempting the query because there are no nearby open restaurants (or the device cannot get a valid location).
-//        _nullQueryAttempts++;
-//        
-//        if ([openNow count] > 0)
-//        {
-//            [openNow removeAllObjects];
-//        }
-//        if ([openLater count] > 0)
-//        {
-//            [openLater removeAllObjects];
-//        }
-//    }
-//    
-//    NSLog(@"query executing");
-//    
-//    //Google Places API allows searching by "types," which we specify in the queryCategories array in this app.
-//    //Here, we build a string of all categories ("types") we want to search with Google Places API.
-//    NSString *googleTypesString = [[NSString alloc]initWithString:[googleTypes objectAtIndex:0]];
-//    
-//    //if more than 1 type is supplied
-//    if ([googleTypes count] >1 )
-//    {
-//        googleTypesString = [googleTypesString stringByAppendingString:@"%7C"];
-//        
-//        for (int i=1; i<[googleTypes count]; i++)
-//        {
-//            googleTypesString = [googleTypesString stringByAppendingString:[googleTypes objectAtIndex:i]];
-//            
-//            //add | character to end of googleTypesString if this is not the last string in the googleTypes array
-//            if (i!=[googleTypes count]-1)
-//            {
-//                googleTypesString = [googleTypesString stringByAppendingString:@"%7C"];
-//            }
-//        }
-//    }
-//    
-//    NSString *url = [[NSString alloc]init];
-//    
-//    //Google Places will return up to 3 pages of results.
-//    if ( [nextPageToken length] == 0)
-//    {
-//        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true", _deviceLocation.latitude, _deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY];
-//    }
-//    else
-//    {
-//        url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&types=%@&rankby=distance&sensor=true&key=%@&hasNextPage=true&nextPage()=true&pagetoken=%@", _deviceLocation.latitude, _deviceLocation.longitude, googleTypesString, GOOGLE_API_KEY, nextPageToken];
-//    }
-//    
-//    NSURL *googleRequestURL=[NSURL URLWithString:url];
-//    
-//    
-//    /* to-do: remove this
-//     // Retrieve the results of the query
-//     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//     NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
-//     [self performSelectorOnMainThread:@selector(fetchedGoogleData:) withObject:data waitUntilDone:YES];
-//     });
-//     */
-//    NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
-//    
-//    if (!data)
-//    {
-//        //occasionally, data is nil, and the app crashes if I don't check !data
-//        //just start the query over again if data is nil for some reason
-//        [self getRestaurants];
-//    }
-//    else
-//    {
-//        [self fetchedGoogleData:data];
-//    }
-//
-//}
-//
-//
-//- (void)fetchedGoogleData:(NSData *)responseData
-//{
-//    NSError* error;
-//    NSDictionary* json = [NSJSONSerialization
-//                          JSONObjectWithData:responseData
-//                          options:kNilOptions
-//                          error:&error];
-//    NSString *nextPageToken = [json objectForKey:@"next_page_token"];
-//    
-//    NSMutableArray *placesArray = [json objectForKey:@"results"];
-//    
-//    NSLog(@"all Google results: %@", placesArray);
-//    
-//    //get the number of results so that we can check whether we've looked at the hours for all of them
-//    _numberOfResultsToCheck = _numberOfResultsToCheck + placesArray.count;
-//    
-//    //to-do: if < 1 open place, set value for "name" key for object 0 of openNow to @"None open within %@", farthestPlaceString
-//    // to-do: if all places are open, there are none "open later today", so check for count of 0
-//    
-//    int numOpenNow = 0;
-//    
-//    /*Look at each restaurant from Google to see if it's open. If open, add to openNow, which displays in the table
-//     under the section "Open Now".  If not currently open (or if Google doesn't make it clear whether or not it's open),
-//     find the restaurant in Factual's database to see if it's open (or open later today, in which case we'll add it to
-//     the openLater array to display under the section "Open Later Today.")
-//     */
-//    for (int i=0; i<placesArray.count; i++)
-//    {
-//        NSDictionary *place = [[NSDictionary alloc]initWithDictionary:[placesArray objectAtIndex:i]];
-//        
-//        restaurant *restaurantObject = [[restaurant alloc]init];
-//        
-//        //to-do: in factual query, don't reset lat/lng if already set by Google (make sure whichever one used for detailview.text is same as the one in the details page for the restaurant
-//        
-//        restaurantObject.name = [place objectForKey:@"name"];
-//        restaurantObject.googleID = [place objectForKey:@"reference"];
-//        restaurantObject.latitude = [[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lat"];
-//        restaurantObject.longitude = [[[place objectForKey:@"geometry"]objectForKey:@"location"]objectForKey:@"lng"];
-//        
-//        //calculate the proximity of the mobile device to the establishment
-//        float placeLat = [restaurantObject.latitude floatValue];
-//        float placeLng = [restaurantObject.longitude floatValue];
-//        float deviceLatitude = [[NSString stringWithFormat:@"%f", _deviceLocation.latitude]floatValue];
-//        float deviceLongitude = [[NSString stringWithFormat:@"%f", _deviceLocation.longitude]floatValue];
-//        NSString *distanceString = [NSString stringWithFormat:@"%.2f miles",
-//                               [self calculateDistanceFromDeviceLatitudeInMiles:deviceLatitude
-//                                                                deviceLongitude:deviceLongitude
-//                                                                toPlaceLatitude:placeLat
-//                                                                 placeLongitude:placeLng]];
-//        NSString *proximity = [@"Distance: " stringByAppendingString:distanceString];
-//        restaurantObject.proximity = proximity;
-//        //to-do: make sure I don't set proximity elsewhere, too
-//        
-//        //to-do: set other info that Google acquired about the restaurant
-//        
-//        //Get distance of farthest place in the results. Since results are ordered by distance, we'll look at the last result.
-//        if (i == (placesArray.count - 1))
-//        {
-//            farthestPlaceString = [NSString stringWithFormat:@"Restaurants within %@:",distanceString];
-//        }
-//        
-//        restaurantObject.isOpenNow = FALSE;
-//        
-//        //make sure opening_hours key and open_now key exist for this restaurant, and then put currently open restaurants into openNow array
-//        if ([place objectForKey:@"opening_hours"])
-//        {
-//            if ([[place objectForKey:@"opening_hours"] objectForKey:@"open_now"])
-//            {
-//                BOOL isOpen = [[[place objectForKey:@"opening_hours"] objectForKey:@"open_now"]boolValue];
-//                
-//                if (isOpen == TRUE)
-//                {
-//                    //to-do: increment this also based on results from Factual
-//                    numOpenNow++;
-//                    restaurantObject.isOpenNow = TRUE;
-//                }
-//            }
-//        }
-//        
-//        [_restaurants addObject:restaurantObject];
-//        [self queryFactualWithRestaurantName:[place objectForKey:@"name"]
-//                               streetAddress:[place objectForKey:@"vicinity"]
-//                                    latitude:placeLat
-//                                   longitude:placeLng];    
-//    }//end for loop
-//    
-//    //to-do: move this elsewhere so that we can take into account the number of open places that Factual finds, too
-//    //if <9 restaurants are currently open, get next 20 results (unless we've already fetched page 3 of 3)
-//    //to-do: change to <9 becuase 9 is the max number that can be displayed in one screen on iPhone 4
-//    //to-do: make sure there aren't strange duplicate cell issues after changing it to <9
-//    if ((numOpenNow <20) &&
-//        (_pageNum <3) &&
-//        (_nullQueryAttempts < 3))
-//    {
-//        _waitForMoreResults = TRUE;
-//        
-//        
-//        NSLog(@"getting more results");
-//        
-//        
-//        
-//        //to-do: need to pause notifications so that listVC cannot be notified that the query is finished until the entire set of pages (1, 2, or 3) has been acquired
-//        
-//        //to-do: Factual burst limit is 300 queries per minute.  Not reasonable to check each 
-//        
-//        
-//        
-////        [_listView startListeningForCompletedQuery];
-//        
-//        //the Google pageToken doesn't become valid for some unspecified period of time after requesting the first page, so we have to delay the next request
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nextPageToken];
-//        });
-//        
-//        //increment with each new set of 20 results fetched from Google
-//        _pageNum++;
-//    }
-//    else
-//    {
-//        _waitForMoreResults = FALSE;
-//    }
-//    
-//    //to-do: add a listener for _nullQueryAttempts being > 2 and then notify the user that there are no open restaurants nearby
-//    
-//} //end fetchedGoogleData
-
 #pragma mark - Factual Query
 - (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng withOffset:(NSInteger)offset
-{        
+{
+    //categoryID 347 is restaurants
+    
         _queryObject = [FactualQuery query];
         
         _queryObject.limit = 50;
@@ -551,23 +469,48 @@
                                               sortOrder:FactualSortOrder_Ascending];
         [_queryObject setPrimarySortCriteria:proximitySort];
     
-//        [queryObject addRowFilter:[FactualRowFilter fieldName:@"category" search:@"bar"]];
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" equalTo:@"347"]];
     
         CLLocationCoordinate2D geoFilterCoords = {
             lat, lng
         };
-        [_queryObject setGeoFilter:geoFilterCoords radiusInMeters:500.0];
+        [_queryObject setGeoFilter:geoFilterCoords radiusInMeters:500000.0];
         
         //execute the Factual request
         _activeRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:_queryObject withDelegate:self];
     }
 
 # pragma mark - Factual request complete
+
+//The result of a correction submission comes here.
+-(void)requestComplete:(FactualAPIRequest *)request receivedRawResult:(NSDictionary *)result
+{
+    NSLog(@"requestComplete:receivedRawResult type:%d    result: %@", request.requestType, result);
+}
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
+    /*
+     If I need to test the type of query (whether this is a crosswalk vs read vs match query), use request.requestType (enum).
+     
+     Here are the request types (starting from 0): 
+     FactualRequestType_RowQuery,
+     FactualRequestType_RowUpdate,
+     FactualRequestType_SchemaQuery,
+     FactualRequestType_PlacesQuery,
+     FactualRequestType_ResolveQuery,
+     FactualRequestType_MatchQuery,
+     FactualRequestType_RawRequest,
+     FactualRequestType_FacetQuery,
+     FactualRequestType_FlagBadRowRequest
+     */
+    
+//    NSLog(@"result: %@", queryResultObj.rows);
+    
     _queryResult = queryResultObj;
     
-    NSLog(@"row count: %i", _queryResult.rowCount);
+    _totalResults = _totalResults + _queryResult.rowCount;
+    
+//    NSLog(@"row count: %i", _queryResult.rowCount);
     if (_queryResult.rowCount < 50)
     {
 //        lastResultWasNull = TRUE;
@@ -589,7 +532,17 @@
         if ((_queryResult != nil) &&
             ([_queryResult.rows objectAtIndex:i] != nil))
         {
-            FactualRow *row = [_queryResult.rows objectAtIndex:i];
+            FactualRow *row = [_queryResult.rows objectAtIndex:i];           
+            
+            //The "status" key tells whether or not the restaurant has gone out of business.
+            if ([row valueForName:@"status"])
+            {
+                if ([@"0" isEqualToString:[NSString stringWithFormat:@"%@", [row valueForName:@"status"]]])
+                {
+                    NSLog(@"restaurant skipped: %@", [row valueForName:@"name"]);
+                    continue;
+                }
+            }
             
             //calculate proximity of mobile device to the restaurant
             float lat = [[row valueForName:@"latitude"]floatValue];
@@ -746,6 +699,20 @@
                     restaurantObject.cuisineLabel = [restaurantObject.cuisine objectAtIndex:0];
                 }
             }
+            if ([row valueForName:@"open_24hrs"])
+            {
+                restaurantObject.open24Hours = [[row valueForName:@"open_24hrs"]stringValue];
+                if ([restaurantObject.open24Hours isEqualToString:@"1"])
+                {
+                    restaurantObject.isOpenNow = TRUE;
+                    restaurantObject.openHours = @"Open 24 hours :)";
+                    restaurantObject.openingSoon = FALSE;
+                    restaurantObject.openNextDisplay = @"Open 24 Hours";
+                    restaurantObject.closingNextDisplay = @"Open 24 Hours";
+                    [openNow addObject:restaurantObject];
+                    continue;
+                }
+            }
             if ([row valueForName:@"hours"])
             {   
                 NSData *hoursData = [[row valueForName:@"hours"] dataUsingEncoding:NSUTF8StringEncoding];
@@ -846,11 +813,11 @@
                             if (diff <= abs(1800)) restaurantObject.closingSoon = TRUE;
                             
                             restaurantObject.isOpenNow = TRUE;
-                            NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);                         
+//                            NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);                         
                             restaurantObject.closingNextSort = yesterdayLastCloseTimeDate;
                             restaurantObject.closingNextDisplay = [NSString stringWithFormat:@"Closing at %@", closeTimeDisplay];
                             [openNow addObject:restaurantObject];
-                            [_restaurants addObject:restaurantObject];                            
+//                            [_restaurants addObject:restaurantObject];                            
                             addedAlready = TRUE;
                             //Don't check any more hours for this restaurant becuase we already know that it's open from last night
                             continue;
@@ -896,12 +863,12 @@
                                     
                                     NSTimeInterval diff = [closeTimeDate timeIntervalSinceDate:dateTimeInSystemLocalTimezone];
                                     if (diff <= abs(1800)) restaurantObject.closingSoon = TRUE;
-                                    NSLog(@"%@ closing soon? %d   diff: %f", restaurantObject.name, restaurantObject.closingSoon, diff);
+//                                    NSLog(@"%@ closing soon? %d   diff: %f", restaurantObject.name, restaurantObject.closingSoon, diff);
                                     restaurantObject.isOpenNow = TRUE;
                                     restaurantObject.closingNextSort = closeTimeDate;
                                     restaurantObject.closingNextDisplay = [NSString stringWithFormat:@"Closing at %@", closeTimeDisplay];
                                     [openNow addObject:restaurantObject];
-                                    [_restaurants addObject:restaurantObject];
+//                                    [_restaurants addObject:restaurantObject];
                                     addedAlready = TRUE;
                                     //move on to the next restaurant because we know this one is open
                                     break;
@@ -936,7 +903,7 @@
                                     NSString *openNextString = [openNextFormatter stringFromDate:openTimeDate];
                                     
                                     restaurantObject.isOpenNow = FALSE;
-                                    NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);
+//                                    NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);
                                     restaurantObject.openNextDisplay = [NSString stringWithFormat:@"Opens %@", openNextString];
                                     restaurantObject.openNextSort = openTimeDate;
                                     [openLater addObject:restaurantObject];
@@ -957,7 +924,7 @@
             }
             if (addedAlready == FALSE)
             {
-                [_restaurants addObject:restaurantObject];
+//                [_restaurants addObject:restaurantObject];
             }
         } //end if !empty query result
     } //end for loop to check each restaurant result
@@ -975,7 +942,9 @@
                                                             object:nil];
     NSLog(@"number open now: %i", [openNow count]);
     NSLog(@"number open later: %i", [openLater count]);
-    NSLog(@"number of _restaurants: %i", [_restaurants count]);
+    NSLog(@"number unknown hours: %i", [hoursUnknown count]);
+    NSLog(@"total acquired: %i", _totalResults);
+//    NSLog(@"number of _restaurants: %i", [_restaurants count]);
 }
 
 
@@ -1123,7 +1092,7 @@
 
 -(void)requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
     NSLog(@"Factual request FAILED with error: ");
-    NSLog(@"%@", error);
+    NSLog(@"%@", [error localizedDescription]);
 }
 
 -(float)calculateDistanceFromDeviceLatitudeInMiles:(float)deviceLatitude deviceLongitude:(float)deviceLongitude toPlaceLatitude:(float)placeLat placeLongitude:(float)placeLng
@@ -1142,12 +1111,12 @@
     //Find farthest restaurant to display message to user: "Restaurants within x.x miles"
     
     //Re-sort _restaurants, which has all restaurants in query results (even those not open).
-    NSSortDescriptor *sortByDistance = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
-    [_restaurants sortUsingDescriptors:[NSArray arrayWithObject:sortByDistance]];
+//    NSSortDescriptor *sortByDistance = [NSSortDescriptor sortDescriptorWithKey:@"proximity" ascending:YES];
+//    [_restaurants sortUsingDescriptors:[NSArray arrayWithObject:sortByDistance]];
     
-    //Currently in this format: x.xx miles
-    NSString *farthest = [[_restaurants lastObject] proximity];
-    
-    farthestPlaceString = [NSString stringWithFormat:@"Within %@", farthest];
+//    //Currently in this format: x.xx miles
+//    NSString *farthest = [[_restaurants lastObject] proximity];
+//    
+//    farthestPlaceString = [NSString stringWithFormat:@"Within %@", farthest];
 }
 @end

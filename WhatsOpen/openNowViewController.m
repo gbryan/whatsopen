@@ -304,7 +304,7 @@
     
     NSInteger currentOffset = scrollView.contentOffset.y;
     NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
-    NSLog(@"current:%i  max:%i", currentOffset, maximumOffset);
+//    NSLog(@"current:%i  max:%i", currentOffset, maximumOffset);
     
     if (currentOffset >= (maximumOffset + 40)) {
         NSLog(@"adding more restaurants to the list");
