@@ -162,25 +162,13 @@
 //-(void)flagRestaurant:(restaurant *)restaurantObject withComment:(NSString *)comment reference:(NSString *)reference
 -(void)flagRestaurant
 {
-    FactualAPI *_apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
-
+    NSLog(@"begin submitting correction");    
+    FactualAPIRequest *request = [[FactualAPIRequest alloc]init];
     
-    
-    
-    
-    
-    
-    
-    NSLog(@"begin submitting correction");
-    
-
-
-    
-    
-//    FactualRowMetadata* metadata = [FactualRowMetadata metadata:@"gbryan"];
+    FactualRowMetadata* metadata = [FactualRowMetadata metadata:@"gbryan"];
 //    metadata.comment = @"Hours are 11am to 4am every day of the week";
 //    metadata.reference = @"http://www.cosmiccantina.com/contact/p7669";
-//    
+    
 //    NSString *factualId = @"e16ef265-b9be-437f-b7e2-ded852e3920e";
 //    NSMutableDictionary* hoursToSubmit  = [[NSMutableDictionary alloc]init];
 //    NSMutableDictionary *days = [[NSMutableDictionary alloc]init];
@@ -194,7 +182,8 @@
 //    _activeRequest = [[UMAAppDelegate getAPIObject] submitRowWithId:@"e0bf05bb-5391-4519-96d5-4a72c1224e61" tableId:@"us-sandbox" withValues:hoursToSubmit withMetadata:metadata withDelegate:self];    
     
     
-//    [[UMAAppDelegate getAPIObject] flagProblem:FactualFlagType_Inaccurate tableId:@"us-sandbox" factualId:factualId metadata:metadata withDelegate:self];
+    
+    request = [[UMAAppDelegate getAPIObject] flagProblem:FactualFlagType_Inaccurate tableId:@"us-sandbox" factualId:@"e16ef265-b9be-437f-b7e2-ded852e3920e" metadata:metadata withDelegate:self];
 }
 
 

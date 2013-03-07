@@ -49,8 +49,6 @@
 		93973D2016D84FF1006C2B94 /* queryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D1F16D84FF1006C2B94 /* queryController.m */; };
 		93973D2316D86862006C2B94 /* locationServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2216D86862006C2B94 /* locationServices.m */; };
 		93973D2716D87385006C2B94 /* restaurant.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2616D87385006C2B94 /* restaurant.m */; };
-		93A8173416E689E100C1CAFB /* flagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93A8173316E689E100C1CAFB /* flagViewController.m */; };
-		93A8173716E68A1800C1CAFB /* submitToFactualViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93A8173616E68A1800C1CAFB /* submitToFactualViewController.m */; };
 		93A8173916E68D7A00C1CAFB /* moredetails.png in Resources */ = {isa = PBXBuildFile; fileRef = 93A8173816E68D7A00C1CAFB /* moredetails.png */; };
 		93D04F9416A0721B00FD3B43 /* whatsopen.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9316A0721B00FD3B43 /* whatsopen.png */; };
 		93D04F9616A0725400FD3B43 /* whatsopen_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 93D04F9516A0725400FD3B43 /* whatsopen_retina.png */; };
@@ -118,10 +116,6 @@
 		93973D2216D86862006C2B94 /* locationServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationServices.m; sourceTree = "<group>"; };
 		93973D2516D87385006C2B94 /* restaurant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = restaurant.h; sourceTree = "<group>"; };
 		93973D2616D87385006C2B94 /* restaurant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = restaurant.m; sourceTree = "<group>"; };
-		93A8173216E689E100C1CAFB /* flagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flagViewController.h; sourceTree = "<group>"; };
-		93A8173316E689E100C1CAFB /* flagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = flagViewController.m; sourceTree = "<group>"; };
-		93A8173516E68A1800C1CAFB /* submitToFactualViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = submitToFactualViewController.h; sourceTree = "<group>"; };
-		93A8173616E68A1800C1CAFB /* submitToFactualViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = submitToFactualViewController.m; sourceTree = "<group>"; };
 		93A8173816E68D7A00C1CAFB /* moredetails.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = moredetails.png; sourceTree = "<group>"; };
 		93D04F9316A0721B00FD3B43 /* whatsopen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whatsopen.png; path = ../whatsopen.png; sourceTree = "<group>"; };
 		93D04F9516A0725400FD3B43 /* whatsopen_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whatsopen_retina.png; path = ../whatsopen_retina.png; sourceTree = "<group>"; };
@@ -190,7 +184,7 @@
 				93408E76168EAA76004124BE /* Storyboard */,
 				93408E75168EAA5E004124BE /* List Views */,
 				93408E77168EAAA0004124BE /* Detail Views */,
-				93EB0B9916E67FBF007A7021 /* Flag or Correct */,
+				93EB0B9916E67FBF007A7021 /* Flagger */,
 				93408E74168EAA53004124BE /* App Delegate */,
 				93408E53168EA828004124BE /* Supporting Files */,
 			);
@@ -310,17 +304,13 @@
 			name = "Location Services";
 			sourceTree = "<group>";
 		};
-		93EB0B9916E67FBF007A7021 /* Flag or Correct */ = {
+		93EB0B9916E67FBF007A7021 /* Flagger */ = {
 			isa = PBXGroup;
 			children = (
 				93EB0B9A16E67FF1007A7021 /* selectProblemViewController.h */,
 				93EB0B9B16E67FF1007A7021 /* selectProblemViewController.m */,
-				93A8173216E689E100C1CAFB /* flagViewController.h */,
-				93A8173316E689E100C1CAFB /* flagViewController.m */,
-				93A8173516E68A1800C1CAFB /* submitToFactualViewController.h */,
-				93A8173616E68A1800C1CAFB /* submitToFactualViewController.m */,
 			);
-			name = "Flag or Correct";
+			name = Flagger;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -429,8 +419,6 @@
 				9324AB5316E14B0F0076E8BA /* hoursViewController.m in Sources */,
 				93EB0B9C16E67FF1007A7021 /* selectProblemViewController.m in Sources */,
 				93EB0B9F16E686C8007A7021 /* moreDetailsViewController.m in Sources */,
-				93A8173416E689E100C1CAFB /* flagViewController.m in Sources */,
-				93A8173716E68A1800C1CAFB /* submitToFactualViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,17 +9,23 @@
 #import "selectProblemViewController.h"
 
 @interface selectProblemViewController ()
-
+{
+    CGPoint originalViewCenter;
+}
 @end
 
 @implementation selectProblemViewController
 @synthesize restaurantObject;
+@synthesize problemExplanation;
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    originalViewCenter = self.view.center;
+
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -63,9 +69,35 @@
     }
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    //Dismiss keyboard when user touches anywhere outside of text field
+    [self.problemExplanation resignFirstResponder];
+    [self.problemReference resignFirstResponder];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    //Dismiss keyboard when user presses done/return key on keyboard
+    [textField resignFirstResponder];
+    return FALSE;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    //move view up so that keyboard doesn't hide it
+    self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y - 250);
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    //move view back down to original point (but account for navbar with 44)
+    self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y - 44);
+}
+
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    
+        //to-do: implement this
 }
 
 - (void)didReceiveMemoryWarning
@@ -77,5 +109,11 @@
 - (IBAction)closeButtonPressed:(id)sender
 {
     [self dismissViewControllerAnimated:TRUE completion:nil];
+}
+
+
+- (IBAction)submitButtonPressed:(id)sender
+{
+    //to-do: call queryController to submit flag request
 }
 @end
