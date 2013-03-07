@@ -180,7 +180,7 @@
                                     <constraint firstAttribute="height" constant="64" id="3pQ-bS-vKm"/>
                                     <constraint firstAttribute="width" constant="300" id="lb4-vC-fqz"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="20"/>
+                                <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="19"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -227,16 +227,16 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="ifx-kE-AMM" secondAttribute="bottom" constant="63" id="1So-7q-9Fk"/>
-                            <constraint firstAttribute="bottom" secondItem="4oV-cs-O7w" secondAttribute="bottom" constant="4" id="7aZ-Ib-uvJ"/>
+                            <constraint firstItem="54c-qi-heL" firstAttribute="centerX" secondItem="ReN-X4-tFg" secondAttribute="centerX" type="default" id="3c7-T9-ohs"/>
+                            <constraint firstAttribute="bottom" secondItem="4oV-cs-O7w" secondAttribute="bottom" constant="3" id="6wH-O7-SJG"/>
+                            <constraint firstAttribute="bottom" secondItem="54c-qi-heL" secondAttribute="bottom" constant="104" id="931-Yw-KO3"/>
+                            <constraint firstItem="p87-4f-cIf" firstAttribute="top" secondItem="ReN-X4-tFg" secondAttribute="top" constant="-6" id="IOF-J8-eHi"/>
+                            <constraint firstAttribute="bottom" secondItem="ifx-kE-AMM" secondAttribute="bottom" constant="59" id="MMy-V7-dtZ"/>
+                            <constraint firstItem="5J1-sf-wNd" firstAttribute="top" secondItem="ReN-X4-tFg" secondAttribute="top" constant="52" id="RKl-cD-KVI"/>
                             <constraint firstItem="ifx-kE-AMM" firstAttribute="leading" secondItem="54c-qi-heL" secondAttribute="leading" type="default" id="Zix-hU-BcI"/>
                             <constraint firstItem="4oV-cs-O7w" firstAttribute="centerX" secondItem="p87-4f-cIf" secondAttribute="centerX" type="default" id="ZjY-ia-Tsk"/>
                             <constraint firstItem="54c-qi-heL" firstAttribute="leading" secondItem="p87-4f-cIf" secondAttribute="leading" type="default" id="bc3-pH-NWY"/>
-                            <constraint firstAttribute="bottom" secondItem="54c-qi-heL" secondAttribute="bottom" constant="108" id="nUS-z2-zrh"/>
-                            <constraint firstItem="ifx-kE-AMM" firstAttribute="centerX" secondItem="ReN-X4-tFg" secondAttribute="centerX" type="default" id="p4v-pF-u2j"/>
-                            <constraint firstItem="p87-4f-cIf" firstAttribute="top" secondItem="ReN-X4-tFg" secondAttribute="top" constant="-8" id="tY3-E7-BfX"/>
                             <constraint firstItem="ifx-kE-AMM" firstAttribute="trailing" secondItem="54c-qi-heL" secondAttribute="trailing" type="default" id="xRH-eK-b5f"/>
-                            <constraint firstItem="5J1-sf-wNd" firstAttribute="top" secondItem="ReN-X4-tFg" secondAttribute="top" constant="50" id="z4o-f6-6nD"/>
                             <constraint firstItem="5J1-sf-wNd" firstAttribute="leading" secondItem="ReN-X4-tFg" secondAttribute="leading" type="default" id="znC-td-8eF"/>
                         </constraints>
                     </view>

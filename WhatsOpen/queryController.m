@@ -98,7 +98,7 @@
 {
     _totalResults = 0;
     _numFailedGoogleQueries = 0;
-    [self flagRestaurant];
+//    [self flagRestaurant];
     
     
     NSLog(@"initializing queryController");
@@ -338,7 +338,7 @@
         
         if (_numFailedGoogleQueries < 2)
         {
-            [self fetchedGoogleRestaurantDetails:googleQueryData];
+            [self getGoogleMatchForRestaurant:restaurantObject];
         }
     }
     else
