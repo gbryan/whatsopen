@@ -264,15 +264,10 @@
     [self presentViewController:moreDetailsVC animated:TRUE completion:nil];
 }
 
--(void)submitCorrections
+- (IBAction)flagButtonPressed:(id)sender
 {
     selectProblemViewController *selectProblemVC = [self.storyboard instantiateViewControllerWithIdentifier:@"selectProblem"];
     selectProblemVC.restaurantObject = self.restaurantObject;
     [self presentViewController:selectProblemVC animated:TRUE completion:nil];
-}
-
-- (IBAction)flagButtonPressed:(id)sender
-{
-    [self submitCorrections];
 }
 @end

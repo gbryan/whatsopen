@@ -38,4 +38,10 @@
     [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 
+- (IBAction)flagButtonPressed:(id)sender
+{
+    selectProblemViewController *selectProblemVC = [self.storyboard instantiateViewControllerWithIdentifier:@"selectProblem"];
+    selectProblemVC.restaurantObject = self.restaurantObject;
+    [self presentViewController:selectProblemVC animated:TRUE completion:nil];
+}
 @end

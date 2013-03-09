@@ -15,4 +15,5 @@
 @property (strong, nonatomic) restaurant *restaurantObject;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
 - (IBAction)closeHoursView:(id)sender;
+- (IBAction)flagButtonPressed:(id)sender;
 @end

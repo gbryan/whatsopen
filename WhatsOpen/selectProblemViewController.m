@@ -11,20 +11,25 @@
 @interface selectProblemViewController ()
 {
     CGPoint originalViewCenter;
+    UIView *grayOverlay;
 }
 @end
 
 @implementation selectProblemViewController
 @synthesize restaurantObject;
 @synthesize problemExplanation;
-
+@synthesize problemPicker;
+@synthesize problemReference;
+@synthesize navBar;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
     
+    //Get center point of view when it loads so we know where to put it back later when we move it
     originalViewCenter = self.view.center;
+    
+    NSLog(@"retaurant: %@", restaurantObject.name);
 
 }
 
@@ -35,38 +40,14 @@
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-    return 7;
+    factualCorrectionsController *controller = [[factualCorrectionsController alloc]init];
+    return [[controller problemTypeRowLabels]count];
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    switch (row) {
-        case 0:
-            //closed businesses should not be flagged as nonexistent, but rather users should submit that the place's status=0 (closed).
-            return @"Out of Business";
-            break;
-        case 1:
-            return @"Duplicate Entry";
-            break;
-        case 2:
-            //problem=inappropriate if it is inappropriate for the entity to be included within the dataset it is currently included in
-            return @"Classified Wrong";
-            break;
-        case 3:
-            //problem=nonexistent if it is a person, place, or thing that does not exist.  For example, a fictitious place
-            return @"Fictitious Restaurant";
-            break;
-        case 4:
-            return @"Spam";
-            break;
-        case 5:
-            //problem=inaccurate if some attribute of the data is inaccurate, and you do not have the accurate data to correct it with
-            return @"Inaccurate Information";
-            break;
-        case 6:
-            return @"Other";
-            break;
-    }
+    factualCorrectionsController *controller = [[factualCorrectionsController alloc]init];
+    return [[controller problemTypeRowLabels]objectAtIndex:row];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -86,13 +67,13 @@
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     //move view up so that keyboard doesn't hide it
-    self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y - 250);
+    self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y - 216);
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    //move view back down to original point (but account for navbar with 44)
-    self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y - 44);
+    //move view back down to original point
+    self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y);
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
@@ -113,7 +94,31 @@
 
 
 - (IBAction)submitButtonPressed:(id)sender
-{
-    //to-do: call queryController to submit flag request
+{   
+    NSInteger selectedRow = [problemPicker selectedRowInComponent:0];
+    factualCorrectionsController *controller = [[factualCorrectionsController alloc]init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(correctionSubmitted)
+                                                 name:@"correctionSubmitted"
+                                               object:nil];
+
+    [controller flagRestaurantWithID:restaurantObject.factualID
+                                                    problemType:selectedRow
+                                                        comment:problemExplanation.text
+                                                      reference:problemReference.text];
 }
+
+- (void)correctionSubmitted
+{
+    UIAlertView *submitted = [[UIAlertView alloc]
+                              initWithTitle:@"Correction Submitted"
+                              message:@"Thanks for taking the time to submit a correction! It may take a couple weeks before the correction is made."
+                              delegate:self
+                              cancelButtonTitle:@"OK!"
+                              otherButtonTitles:nil];
+    [submitted show];
+    [self dismissViewControllerAnimated:self completion:nil];
+}
+
 @end

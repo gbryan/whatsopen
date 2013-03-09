@@ -46,6 +46,9 @@
 @property (assign, nonatomic) BOOL openingSoon;
 @property (assign, nonatomic) BOOL closingSoon;
 @property (strong, nonatomic) UIImage *image;
+@property (strong, nonatomic) NSString *locality; //=city in U.S.
+@property (strong, nonatomic) NSString *region; //=state in U.S.
+@property (strong, nonatomic) NSString *country;
 //@property (strong, nonatomic) NSString *requestId;
 
 @end

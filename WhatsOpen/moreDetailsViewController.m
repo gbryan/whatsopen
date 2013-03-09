@@ -27,8 +27,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-//to-do: remove if I use segue instead of manual
-- (IBAction)flagButtonPressed:(id)sender {
+- (IBAction)flagButtonPressed:(id)sender
+{
+    selectProblemViewController *selectProblemVC = [self.storyboard instantiateViewControllerWithIdentifier:@"selectProblem"];
+    selectProblemVC.restaurantObject = self.restaurantObject;
+    [self presentViewController:selectProblemVC animated:TRUE completion:nil];
 }
 
 - (IBAction)closeButtonPressed:(id)sender {

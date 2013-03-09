@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "restaurant.h"
-#import "queryController.h"
+#import "factualCorrectionsController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface selectProblemViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
@@ -18,6 +18,7 @@
 - (IBAction)submitButtonPressed:(id)sender;
 @property (weak, nonatomic) IBOutlet UITextField *problemExplanation;
 @property (weak, nonatomic) IBOutlet UITextField *problemReference;
-@property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
+@property (weak, nonatomic) IBOutlet UIPickerView *problemPicker;
+@property (weak, nonatomic) IBOutlet UIToolbar *navBar;
 
 @end
