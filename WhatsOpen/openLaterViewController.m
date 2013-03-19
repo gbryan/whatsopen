@@ -10,7 +10,7 @@
 
 @interface openLaterViewController ()
 {
-    NSMutableArray *_openLater;
+    NSMutableArray* _openLater;
     BOOL isInitialLoad;
     BOOL internationalQuery;
 //    BOOL _lastResultWasNull;
@@ -155,7 +155,7 @@
     return 1;
 }
 
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//- (NSString* )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 //{
 //    return @"Open Later Today";
 //}
@@ -189,7 +189,7 @@
 
     if (_openLater.count > 0)
     {
-        restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        restaurant* restaurantObject = [_openLater objectAtIndex:indexPath.row];
         
 //        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
         nameLabel.text = restaurantObject.name;
@@ -255,7 +255,7 @@
     //Use green background to indicate that the restaurant is opening soon
     if (_openLater.count > 0)
     {
-        restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        restaurant* restaurantObject = [_openLater objectAtIndex:indexPath.row];
         if (restaurantObject.openingSoon == TRUE)
         {
             cell.backgroundColor = [UIColor colorWithRed:.05 green:1 blue:.05 alpha:.1];

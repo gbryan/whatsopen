@@ -12,7 +12,7 @@
 @interface websiteViewController : UIViewController <UIWebViewDelegate, NSURLConnectionDelegate>
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
-@property (strong, nonatomic) restaurant *restaurantObject;
+@property (strong, nonatomic) restaurant* restaurantObject;
 - (IBAction)closeWebView:(id)sender;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
 @end

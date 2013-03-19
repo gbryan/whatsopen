@@ -8,22 +8,19 @@
 
 
 /*
- to-do: set color when selecting row (needs to match dark blue color scheme)
  //to-do: will queries fail gracefully if there's no location found?
 //to-do: what happens if there are none open now in 3 pages?
 //to-do: what if there are none open later today?
 //to-do: what if factual returns null result? will it crash?
- to-do: comment out test location code
 */
  
 #import "openNowViewController.h"
 
 @interface openNowViewController ()
 {
-    NSMutableArray *_openNow;
+    NSMutableArray* _openNow;
     BOOL isInitialLoad;
     BOOL internationalQuery;
-//    BOOL _lastResultWasNull;
     BOOL _isListening;
 }
 
@@ -39,7 +36,6 @@
     [super viewDidLoad];
 
     isInitialLoad = TRUE;
-//    _lastResultWasNull = FALSE;  
     _isListening = FALSE;
     
     //Set title
@@ -67,23 +63,7 @@
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
-    [self startListeningForCompletedQuery];
-    [self loadRestaurantList];
-//    [_queryController getGeocode];
-
-    
-/*
-    //set up device location manager and get current location
-    locationManager = [[CLLocationManager alloc] init];
-    [locationManager setDelegate:self];
-    //Restaurant list will update only if user pulls down to refresh. I'm setting the
-    //distance filter to an arbitrarily high number to ensure that didUpdateToLocation is
-    //called only once each time I want to get an updated location. When it was set to none,
-    //I wasn't always able to stopUpdatingLocation before the location was detected more than
-    //once, triggering multiple calls to queryGooglePlaces.
-    [locationManager setDistanceFilter:500.0f];
-    [locationManager startUpdatingLocation];
-*/    
+    [self refreshRestaurantList];
     
 }
 
@@ -101,7 +81,9 @@
 
 - (void) loadRestaurantList
 {
-    //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
+    NSLog(@"user requested additional restaurants");
+    
+    //This runs when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
     if ([[UMAAppDelegate queryControllerShared]noMoreResults] == FALSE)
     {
         if (_isListening == FALSE)
@@ -116,6 +98,8 @@
 
 - (void)refreshRestaurantList
 {
+    NSLog(@"1 user refreshed list");
+    
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
     if (_isListening == FALSE)
     {
@@ -127,7 +111,7 @@
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
-{    
+{
     //to-do: set internationalQuery based on value pulled from queryController
     //to-do: if I use Google results for something other than just international queries, I need to display attribution then
     internationalQuery = FALSE;
@@ -145,11 +129,18 @@
         //to-do: display Factual attribution (if required)
     }
     
+    NSLog(@"openNowVC: # openNow before removeAll:%d", _openNow.count);
+    
     [_openNow removeAllObjects];
+    
+    NSLog(@"openNowVC: # openNow after removeAll:%d", _openNow.count);
+    
     _openNow = [[NSMutableArray alloc]initWithArray:[UMAAppDelegate queryControllerShared].openNow];
     
     NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
+    NSLog(@"# openNow in queryC: %d", [UMAAppDelegate queryControllerShared].openNow.count);
 
+    NSLog(@"10 openNowVC: update private arrays and reload table");
     if (isInitialLoad == TRUE)
     {
         isInitialLoad = FALSE;
@@ -206,7 +197,7 @@
     return 1;
 }
 
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//- (NSString* )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 //{
 //    //such as "Within 1.25 miles"
 //    return [_queryController farthestPlaceString];
@@ -239,7 +230,7 @@
     //Use red background to indicate that the restaurant is closing soon
     if (_openNow.count > 0)
     {
-        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        restaurant* restaurantObject = [_openNow objectAtIndex:indexPath.row];
         if (restaurantObject.closingSoon == TRUE)
         {
             cell.backgroundColor = [UIColor colorWithRed:.7 green:0 blue:.1 alpha:.3];
@@ -257,35 +248,38 @@
     //to-do: once I update tableViewCell with custom design, I need to use separate identifier for cell showing no results
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"openNowCell"];
     
+    UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
+    nameLabel.text = nil;
+    UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
+    cuisine.text = nil;
+    UILabel *closingTime = (UILabel *)[cell viewWithTag:3];
+    closingTime.text = nil;
+    UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
+    ratingView.image = nil;
+    UILabel *distance = (UILabel *)[cell viewWithTag:5];
+    distance.text = nil;
+    UILabel *price = (UILabel *)[cell viewWithTag:6];
+    price.text = nil;
+    
+    //Make cell dark blue when selecting it
+    UIView *selectionColor = [[UIView alloc] init];
+    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+    cell.selectedBackgroundView = selectionColor;
+    
     if (_openNow.count > 0)
     {
-        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        restaurant* restaurantObject = [_openNow objectAtIndex:indexPath.row];
         
-        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
-        nameLabel.text = restaurantObject.name;
         nameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:15.5];
         nameLabel.numberOfLines = 2;
         nameLabel.backgroundColor = [UIColor clearColor];
         
-        UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
+        nameLabel.text = restaurantObject.name;
         cuisine.text = restaurantObject.cuisineLabel;
-        
-        UILabel *closingTime = (UILabel *)[cell viewWithTag:3];
         closingTime.text = restaurantObject.closingNextDisplay;
-        
-        UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
         ratingView.image = restaurantObject.ratingImage;
-        
-        UILabel *distance = (UILabel *)[cell viewWithTag:5];
         distance.text = restaurantObject.proximity;
-        
-        UILabel *price = (UILabel *)[cell viewWithTag:6];
         price.text = restaurantObject.priceLevelDisplay;
-        
-        //Make cell dark blue when selecting it
-        UIView *selectionColor = [[UIView alloc] init];
-        selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
-        cell.selectedBackgroundView = selectionColor;
     }
     else
     {
@@ -300,6 +294,7 @@
 
 //Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 //This loads more restaurants if user scrolls to the end of the existing results.
+//to-do:if there are < a few restaurants, it will append when you pull down to refresh
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     
     NSInteger currentOffset = scrollView.contentOffset.y;

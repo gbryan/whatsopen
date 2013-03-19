@@ -14,7 +14,7 @@
 
 @interface hoursUnknownViewController ()
 {
-    NSMutableArray *_hoursUnknown;
+    NSMutableArray* _hoursUnknown;
     BOOL isInitialLoad;
     BOOL internationalQuery;
 //    BOOL _lastResultWasNull;
@@ -151,7 +151,7 @@
     return 1;
 }
 
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//- (NSString* )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 //{
 //    return @"Restaurants with Unknown Hours";
 //}
@@ -168,7 +168,7 @@
 
     if (_hoursUnknown.count > 0)
     {
-        restaurant *restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
+        restaurant* restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
         
         UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
         nameLabel.text = restaurantObject.name;

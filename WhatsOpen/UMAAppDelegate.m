@@ -9,39 +9,51 @@
 #import "UMAAppDelegate.h"
 
 @implementation UMAAppDelegate
-
+{
+    NSInteger _numTimesAppWasActive;
+}
 @synthesize apiObject = _apiObject;
 @synthesize queryControllerShared = _queryControllerShared;
+@synthesize locationServiceShared = _locationServiceShared;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    _numTimesAppWasActive = 1;
+    
     //set navigation bar and toolbar tint to dark blue
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     [[UIToolbar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
     _queryControllerShared = [[queryController alloc]init];
+    _locationServiceShared = [[locationServices alloc]init];
     
     // Override point for customization after application launch.
     return YES;
 }
 
-+(FactualAPI*) getAPIObject
++(FactualAPI *) getAPIObject
 {
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate*)app.delegate).apiObject;
 }
 
-+(UMAAppDelegate*) getDelegate
++(UMAAppDelegate *) getDelegate
 {
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate*)app.delegate);
 }
 
 +(queryController *)queryControllerShared
+{    
+    UIApplication* app = [UIApplication sharedApplication];
+    return ((UMAAppDelegate *)app.delegate).queryControllerShared;
+}
+
++(locationServices *)locationServiceShared
 {
     UIApplication* app = [UIApplication sharedApplication];
-    return ((UMAAppDelegate*)app.delegate).queryControllerShared;
+    return ((UMAAppDelegate *)app.delegate).locationServiceShared;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -64,6 +76,17 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    //to-do: this runs twice, producing duplicate results upon first ever app load (when user allows location first time)
+    //to-do: make spinner animate when refreshing upon becoming active again
+    //Reload restaurants list (do not run if this is initial app load)
+    if (_numTimesAppWasActive > 1)
+    {
+        NSLog(@"refreshRestaurants called from app delegate");
+        [[self queryControllerShared]refreshRestaurants];
+    }
+    
+    _numTimesAppWasActive++;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

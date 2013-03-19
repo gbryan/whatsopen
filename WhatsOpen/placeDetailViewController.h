@@ -21,9 +21,9 @@
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *priceIcon;
-@property (nonatomic, strong) NSString *deviceLat;
-@property (nonatomic, strong) NSString *deviceLng;
-@property (nonatomic, strong) restaurant *restaurantObject;
+@property (nonatomic, strong) NSString* deviceLat;
+@property (nonatomic, strong) NSString* deviceLng;
+@property (nonatomic, strong) restaurant* restaurantObject;
 @property (weak, nonatomic) IBOutlet UIImageView *restaurantImage;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
 @property (weak, nonatomic) IBOutlet UILabel *distanceLabel;

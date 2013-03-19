@@ -44,7 +44,7 @@
     return [[controller problemTypeRowLabels]count];
 }
 
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+- (NSString* )pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
     factualCorrectionsController *controller = [[factualCorrectionsController alloc]init];
     return [[controller problemTypeRowLabels]objectAtIndex:row];

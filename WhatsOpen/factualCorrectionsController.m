@@ -10,8 +10,8 @@
 
 @implementation factualCorrectionsController
 {
-    NSString *username;
-    NSString *table;
+    NSString* username;
+    NSString* table;
 }
 
 @synthesize problemTypeRowLabels;
@@ -35,7 +35,7 @@
     return self;
 }
 
--(void)flagRestaurantWithID:(NSString *)factualID problemType:(NSInteger)problemType comment:(NSString *)comment reference:(NSString *)reference
+-(void)flagRestaurantWithID:(NSString* )factualID problemType:(NSInteger)problemType comment:(NSString* )comment reference:(NSString* )reference
 {
     NSLog(@"begin submitting correction");
     NSLog(@"--------------------------");
@@ -87,7 +87,7 @@
 
 //Some problem types can be submitted to Factual as flags, but if a business is closed/out of business,
 //you must submit it to Factual as status=0 instead of flagging it.
--(void)submitClosedRestaurantWithID:(NSString *)factualId comment:(NSString *)comment reference:(NSString *)reference
+-(void)submitClosedRestaurantWithID:(NSString* )factualId comment:(NSString* )comment reference:(NSString* )reference
 {
     FactualRowMetadata *metadata = [FactualRowMetadata metadata:username];
     if ([comment length] > 0) metadata.comment = comment;

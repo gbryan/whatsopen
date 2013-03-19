@@ -11,12 +11,10 @@
 #import "UMAAppDelegate.h"
 
 @interface locationServices : NSObject <CLLocationManagerDelegate>
-{
-    CLLocationManager *locationManager;
-    CLLocationCoordinate2D deviceLocation;
-}
 
-@property (nonatomic, strong) CLLocationManager *locationManager;
--(CLLocationCoordinate2D) getCurrentLocation;
+@property (nonatomic, strong) CLLocationManager* locationManager;
+@property (nonatomic) CLLocationCoordinate2D deviceLocation;
+@property (nonatomic) BOOL getLocationCalled;
 
+-(void)getLocation;
 @end

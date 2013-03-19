@@ -26,12 +26,13 @@
 
 @implementation queryController
 {
-    locationServices *_locationService;
-    FactualQuery *_queryObject;
+    FactualQuery* _queryObject;
+//    locationServices* locationService;
     NSInteger _pageNum;
-    CLLocationCoordinate2D _deviceLocation;
     NSInteger _totalResults;
     NSInteger _numFailedGoogleQueries;
+    CLLocationCoordinate2D _deviceLocation;
+    NSString* _queryPurpose;
 }
 @synthesize apiRequest;
 @synthesize queryCategories;
@@ -45,10 +46,12 @@
 -(id)init
 {
     _totalResults = 0;
-    _numFailedGoogleQueries = 0;    
+    _numFailedGoogleQueries = 0;
+    _deviceLocation = CLLocationCoordinate2DMake(0.0, 0.0);
+    _queryPurpose = @"";
+//    locationService = [[locationServices alloc]init];
     
     NSLog(@"initializing queryController");
-    _locationService = [[locationServices alloc]init];
     noMoreResults = FALSE;
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
@@ -58,15 +61,15 @@
 }
 
 
--(NSString *)getFirstSignificantWordInRestaurantName:(NSString *)restaurantName
+-(NSString* )getFirstSignificantWordInRestaurantName:(NSString* )restaurantName
 {
     //clean restaurant name from Google before using the name to search Factual
-    NSString *queryString = restaurantName;
+    NSString* queryString = restaurantName;
     queryString = [queryString lowercaseString];
 //    queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
     queryString = [queryString stringByReplacingOccurrencesOfString:@"-" withString:@" "];
     queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
-    NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
+    NSArray* restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
     
     //use the first non "a", "an", or "the" word of the restaurant full name (from Google) to search Factual
     if (!([[restaurantNameExploded objectAtIndex:0] isEqualToString:@"a"] ||
@@ -86,58 +89,29 @@
 //This clears out existing restaurants in the arrays and issues a new query.
 -(void)refreshRestaurants
 {
-    _deviceLocation = [_locationService getCurrentLocation];
-    
-    //these categories are for Google
-//    queryCategories = [NSArray arrayWithObjects:@"cafe", @"restaurant", @"bakery", nil];
-    //    queryCategories = [NSArray arrayWithObjects:@"bar", nil];
-    
-    _totalResults = 0;
-    
-//    if (_restaurants.count > 0)
-//    {
-//        [_restaurants removeAllObjects];
-//    }
-    if (openNow.count >0)
-    {
-        [openNow removeAllObjects];
-    }
-    if (openLater.count >0)
-    {
-        [openLater removeAllObjects];
-    }
-    if (hoursUnknown.count >0)
-    {
-        [hoursUnknown removeAllObjects];
-    }
-//    _restaurants = [[NSMutableArray alloc]init];
-//    openNow = [[NSMutableArray alloc]init];
-//    openLater = [[NSMutableArray alloc]init];
-//    hoursUnknown = [[NSMutableArray alloc]init];
-    
-    //set pg to 1 since initial Google Places query will pull the 1st page of results
-//    _pageNum = 1;
-    
-//    _numberOfResultsToCheck = 0;
-//    _waitForMoreResults = FALSE;
-    
-    [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude withOffset:0];
+    NSLog(@"2 queryC: refreshRestaurants");
 
-//    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
+    
+//    NSLog(@"num in arrays: %d, %d, %d", openNow.count, openLater.count, hoursUnknown.count);
+    
+    //Get notification when device location has been acquired
+    _queryPurpose = @"refresh";
+    locationServices* locationService = [UMAAppDelegate locationServiceShared];
+    [locationService addObserver:self forKeyPath: @"deviceLocation"
+                         options:NSKeyValueObservingOptionNew
+                         context:nil];
+    [locationService getLocation];
 }
 
 -(void)appendNewRestaurants
 {
+    NSLog(@"append called");
     //to-do: make sure that when restaurants are appended to bottom of list in any tab, the data source array is sorted such that
     //all new results are added to the bottom of the list instead of somewhere else in the list in the listView
     
-    //If the last Factual query had 50 results, we can assume it's safe to query for the next set of 50. If < 50 returned last time, then there are no more results to acquire.
-    //to-do: what if Factual has exactly some multiple of 50 # of results? This will eval to true, but there are still no results to get.  Do I really need to check this, or can I just run the query anyway and then let it return 0 rows?
+//    _deviceLocation = locationService.deviceLocation;
     
-    //We will not re-initialize the arrays becuase we want to just add more restaurants to the lists
-    _deviceLocation = [_locationService getCurrentLocation];
-    
-//    NSInteger offset = [_restaurants count];
+    //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
     
     NSInteger offset = _totalResults;
     
@@ -152,23 +126,60 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
                                                             object:nil];
     }
-    //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{    
+    if ([keyPath isEqualToString:@"deviceLocation"] &&
+             [_queryPurpose isEqualToString:@"refresh"])
+    {
+        locationServices* locationService = [UMAAppDelegate locationServiceShared];
+        [locationService removeObserver:self forKeyPath:@"deviceLocation"];
+        _deviceLocation = [UMAAppDelegate locationServiceShared].deviceLocation;
+        
+        _totalResults = 0;
+        
+        if (self.openNow.count > 0)
+        {
+            [self.openNow removeAllObjects];
+        }
+        if (self.openLater.count > 0)
+        {
+            [self.openLater removeAllObjects];
+        }
+        if (self.hoursUnknown.count > 0)
+        {
+            [self.hoursUnknown removeAllObjects];
+        }
+        
+        [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude withOffset:0];
+        
+    }
+    else if ([keyPath isEqualToString:@"deviceLocation"] &&
+             [_queryPurpose isEqualToString:@"append"])
+    {
+        // intentially blank
+    }
+    else
+    {
+        NSLog(@"observeValueForKeyPath: invalid query purpose given");
+    }
 }
 
 //Called by placeDetailVC when tapping a specific restaurant
--(void)getRestaurantDetail:(restaurant *)restaurantObject
+-(void)getRestaurantDetail:(restaurant* )restaurantObject
 {
     detailRestaurant = restaurantObject;
     [self getGoogleMatchForRestaurant:restaurantObject];
 }
 
--(void)getGoogleMatchForRestaurant:(restaurant *)restaurantObject
+-(void)getGoogleMatchForRestaurant:(restaurant* )restaurantObject
 {
-    NSString *restaurantQueryName = [self getFirstSignificantWordInRestaurantName:restaurantObject.name];
-    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSString *restaurantAddress = [@"125 W Franklin St" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString* restaurantQueryName = [self getFirstSignificantWordInRestaurantName:restaurantObject.name];
+    NSString* restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    NSString* restaurantAddress = [@"125 W Franklin St" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
-    NSString *googleURLString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%@,%@&radius=110&name=%@&vicinity=%@&sensor=true&key=%@",
+    NSString* googleURLString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%@,%@&radius=110&name=%@&vicinity=%@&sensor=true&key=%@",
                                  restaurantObject.latitude,
                                  restaurantObject.longitude,
                                  restaurantQueryName,
@@ -210,7 +221,7 @@
                           options:kNilOptions
                           error:&error];
     
-    NSArray *restaurantResults = [json objectForKey:@"results"];
+    NSArray* restaurantResults = [json objectForKey:@"results"];
     
 //    NSLog(@"Google results: %@", restaurantResults);
     
@@ -252,9 +263,9 @@
     }
 }
 
--(void)getGoogleImageForRestaurantWithReference:(NSString *)photoReference
+-(void)getGoogleImageForRestaurantWithReference:(NSString* )photoReference
 {
-    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=130&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
+    NSString* url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=130&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
     
 //    NSLog(@"photo request: %@", url);
     NSURL *googleRequestURL=[NSURL URLWithString:url];
@@ -294,6 +305,7 @@
 #pragma mark - Factual Query
 - (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng withOffset:(NSInteger)offset
 {
+    NSLog(@"7 queryC: set up Factual query params and execute query");
     //categoryID 347 is restaurants
     
         _queryObject = [FactualQuery query];
@@ -327,6 +339,9 @@
 }
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
+    NSLog(@"8 queryC: got results from Factual - %@", request.requestId);
+    NSLog(@"array count totals: %d, %d, %d", openNow.count, openLater.count, hoursUnknown.count);
+    
     /*
      If I need to test the type of query (whether this is a crosswalk vs read vs match query), use request.requestType (enum).
      
@@ -363,7 +378,7 @@
     //check each restaurant retrieved from Factual
     for (int i=0; i < _queryResult.rowCount; i++)
     {
-        restaurant *restaurantObject = [[restaurant alloc]init];
+        restaurant* restaurantObject = [[restaurant alloc]init];
         BOOL addedAlready = FALSE;
         
         //run only if we have a valid response from Factual
@@ -384,7 +399,7 @@
             //calculate proximity of mobile device to the restaurant
             float lat = [[row valueForName:@"latitude"]floatValue];
             float lng = [[row valueForName:@"longitude"]floatValue];
-            NSString *proximity = [NSString stringWithFormat:@"%.2f miles",
+            NSString* proximity = [NSString stringWithFormat:@"%.2f miles",
                                    [self calculateDistanceFromDeviceLatitudeInMiles:_deviceLocation.latitude
                                                                     deviceLongitude:_deviceLocation.longitude
                                                                     toPlaceLatitude:lat placeLongitude:lng]];
@@ -454,8 +469,8 @@
                 restaurantObject.priceLevel = [[row valueForName:@"price"]integerValue];
                 
                 //Select the appropriate image and $$$ representation to show for price
-                NSString *priceLevelImageName = [[NSString alloc]init];
-                NSString *priceLevelDisplay = [[NSString alloc]init];
+                NSString* priceLevelImageName = [[NSString alloc]init];
+                NSString* priceLevelDisplay = [[NSString alloc]init];
                 switch (restaurantObject.priceLevel) {
                     case 1:
                         priceLevelImageName = @"dollar.png";
@@ -491,8 +506,8 @@
             if ([row valueForName:@"locality"]) restaurantObject.locality = [row valueForName:@"locality"];
             if ([row valueForName:@"tel"])
             {
-                NSString *phoneNumber = [row valueForName:@"tel"];
-                NSString *numbersOnly = [[phoneNumber componentsSeparatedByCharactersInSet:
+                NSString* phoneNumber = [row valueForName:@"tel"];
+                NSString* numbersOnly = [[phoneNumber componentsSeparatedByCharactersInSet:
                                         [[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
                                        componentsJoinedByString:@""];
                 restaurantObject.phone = numbersOnly;
@@ -522,7 +537,7 @@
             {
                 restaurantObject.cuisine = [row valueForName:@"cuisine"];
                 
-                NSArray *cuisineItems = [[NSArray alloc]init];
+                NSArray* cuisineItems = [[NSArray alloc]init];
                 if ([restaurantObject.cuisine count] > 2)
                 {
                     cuisineItems = [NSArray arrayWithObjects:[restaurantObject.cuisine objectAtIndex:0], [restaurantObject.cuisine objectAtIndex:1], [restaurantObject.cuisine objectAtIndex:2], nil];
@@ -582,7 +597,7 @@
                     NSDateFormatter *dayOfWeekFormatter = [[NSDateFormatter alloc]init];
                     [dayOfWeekFormatter setDateFormat:@"EEEE"];
                     [dayOfWeekFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-                    NSString *dayToday = [[dayOfWeekFormatter stringFromDate:[NSDate date]]lowercaseString];
+                    NSString* dayToday = [[dayOfWeekFormatter stringFromDate:[NSDate date]]lowercaseString];
                     
                     //to-do: will this work with [self getDate....]?
                     //get previous day
@@ -593,17 +608,17 @@
                                              dateByAddingComponents:yesterdayComponents
                                              toDate:dateTimeInSystemLocalTimezone
                                              options:0];
-                    NSString *dayYesterday = [[dayOfWeekFormatter stringFromDate:yesterdayDate]lowercaseString];
+                    NSString* dayYesterday = [[dayOfWeekFormatter stringFromDate:yesterdayDate]lowercaseString];
                     
 //                    NSLog(@"yesterday date: %@         %@", dayYesterday, yesterdayDate);
                     
 //                    NSLog(@"checking if %@ is open", restaurantObject.name);
                     //Is restaurant still open within last night's hour range?
-                    NSArray *yesterdayHours = [hours objectForKey:dayYesterday];
+                    NSArray* yesterdayHours = [hours objectForKey:dayYesterday];
                     
                     if (yesterdayHours.count > 0)
                     {
-                        NSArray *lastHourRangeFromYesterday = [yesterdayHours lastObject];
+                        NSArray* lastHourRangeFromYesterday = [yesterdayHours lastObject];
                         
 //                        NSLog(@"last yesterday hours: %@", lastHourRangeFromYesterday);
 //                        NSLog(@"current time is %@", dateTimeInSystemLocalTimezone);
@@ -623,10 +638,10 @@
                         
                         //Get opening hours of restaurant
                         //Example open time: "10:00"     Example close time: "2:00"
-                        NSString *yesterdayLastOpenTimeString = [lastHourRangeFromYesterday objectAtIndex:0];
-                        NSString *yesterdayLastCloseTimeString = [lastHourRangeFromYesterday objectAtIndex:1];
+                        NSString* yesterdayLastOpenTimeString = [lastHourRangeFromYesterday objectAtIndex:0];
+                        NSString* yesterdayLastCloseTimeString = [lastHourRangeFromYesterday objectAtIndex:1];
                         
-                        //Get date objects for open and close times
+                        //Get date objects for yesterday's last open and close times 
                         NSDate *yesterdayLastOpenTimeDate = [[self getHoursWithOpenTime:yesterdayLastOpenTimeString
                                                                  closeTime:yesterdayLastCloseTimeString
                                                                     onDate:yesterdayDate]
@@ -640,7 +655,7 @@
                         NSDateFormatter *df = [[NSDateFormatter alloc]init];
                         [df setDateFormat:@"hh:mm a"];
                         [df setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-                        NSString *closeTimeDisplay = [df stringFromDate:yesterdayLastCloseTimeDate];
+                        NSString* closeTimeDisplay = [df stringFromDate:yesterdayLastCloseTimeDate];
                         
                         //Is the restaurant still open now (hasn't closed since it opened yesterday)?
                         if (([dateTimeInSystemLocalTimezone compare:yesterdayLastCloseTimeDate] == NSOrderedAscending) &&
@@ -664,7 +679,7 @@
                     } //end if open yesterday
                     
                     // Is the restaurant open today? (not just from yesterday's hours carrying over to today)
-                    NSArray *todayHours = [hours objectForKey:dayToday];
+                    NSArray* todayHours = [hours objectForKey:dayToday];
                     
                     if (todayHours.count > 0)
                     {
@@ -675,8 +690,8 @@
                             
                             //Get opening hours of restaurant
                             //Example open time: "10:00"     Example close time: "2:00"
-                            NSString *openTimeString = [[todayHours objectAtIndex:i] objectAtIndex:0];
-                            NSString *closeTimeString = [[todayHours objectAtIndex:i] objectAtIndex:1];
+                            NSString* openTimeString = [[todayHours objectAtIndex:i] objectAtIndex:0];
+                            NSString* closeTimeString = [[todayHours objectAtIndex:i] objectAtIndex:1];
                             
                             //Get date objects for open and close times
                             NSDate *openTimeDate = [[self getHoursWithOpenTime:openTimeString
@@ -691,7 +706,7 @@
                             NSDateFormatter *df = [[NSDateFormatter alloc]init];
                             [df setDateFormat:@"hh:mm a"];
                             [df setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-                            NSString *closeTimeDisplay = [df stringFromDate:closeTimeDate];
+                            NSString* closeTimeDisplay = [df stringFromDate:closeTimeDate];
                             
                             //Is the restaurant open now?
                             if (([dateTimeInSystemLocalTimezone compare:closeTimeDate] == NSOrderedAscending) &&
@@ -718,8 +733,8 @@
 //                                NSLog(@"%@ is CLOSED. Hours:%@", restaurantObject.name, todayHours);
                                 
                                 //get date objects for when restaurant is open and closed
-                                NSString *openTimeString = [[todayHours objectAtIndex:i]objectAtIndex:0];
-                                NSString *closeTimeString = [[todayHours objectAtIndex:i]objectAtIndex:1];
+                                NSString* openTimeString = [[todayHours objectAtIndex:i]objectAtIndex:0];
+                                NSString* closeTimeString = [[todayHours objectAtIndex:i]objectAtIndex:1];
                                 NSDate *openTimeDate = [[self getHoursWithOpenTime:openTimeString
                                                                          closeTime:closeTimeString
                                                                             onDate:dateTimeInSystemLocalTimezone]objectAtIndex:0];
@@ -739,7 +754,7 @@
                                     NSDateFormatter *openNextFormatter = [[NSDateFormatter alloc]init];
                                     [openNextFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
                                     [openNextFormatter setDateFormat:@"h:mm a"];
-                                    NSString *openNextString = [openNextFormatter stringFromDate:openTimeDate];
+                                    NSString* openNextString = [openNextFormatter stringFromDate:openTimeDate];
                                     
                                     restaurantObject.isOpenNow = FALSE;
 //                                    NSLog(@"%@ open? %d", restaurantObject.name, restaurantObject.isOpenNow);
@@ -777,6 +792,8 @@
     [openLater sortUsingDescriptors:[NSArray arrayWithObject:sortByOpeningSoonest]];
 
     [self calculateFarthestRestaurant];
+    
+    NSLog(@"9 queryC: send notification to openNowVC that restaurants were acquired \n");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
                                                             object:nil];
     NSLog(@"number open now: %i", [openNow count]);
@@ -787,22 +804,22 @@
 }
 
 
-- (NSString *)getStringFromFacualHoursFormat:(NSDictionary *)hours
+- (NSString* )getStringFromFacualHoursFormat:(NSDictionary *)hours
 {
-    NSArray *daysOfWeek = [NSArray arrayWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
-    NSString *hoursFormattedForTextView = [[NSString alloc]init];
-    for (NSString *day in daysOfWeek)
+    NSArray* daysOfWeek = [NSArray arrayWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
+    NSString* hoursFormattedForTextView = [[NSString alloc]init];
+    for (NSString* day in daysOfWeek)
     {
-        NSString *hoursStringForDay = [[NSString alloc]init];
+        NSString* hoursStringForDay = [[NSString alloc]init];
         
-        NSString *dayToSearch = [day lowercaseString];
+        NSString* dayToSearch = [day lowercaseString];
         if ([hours objectForKey:dayToSearch])
         {
-            NSString *dayInfoToAdd = [NSString stringWithFormat:@"%@:\r",[day capitalizedString]];
-            NSString *allOpenTimes = [[NSString alloc]init];
-            NSArray *hoursArraysThisDay = [hours objectForKey:dayToSearch];
+            NSString* dayInfoToAdd = [NSString stringWithFormat:@"%@:\r",[day capitalizedString]];
+            NSString* allOpenTimes = [[NSString alloc]init];
+            NSArray* hoursArraysThisDay = [hours objectForKey:dayToSearch];
             // hoursArray is something like ["10:00","14:00", "BRUNCH"]
-            for (NSArray *hoursArray in hoursArraysThisDay)
+            for (NSArray* hoursArray in hoursArraysThisDay)
             {
                 NSDateFormatter *dateFormatterOriginal = [[NSDateFormatter alloc]init];
                 [dateFormatterOriginal setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
@@ -813,14 +830,14 @@
                 NSDateFormatter *dateFormatterDisplay = [[NSDateFormatter alloc]init];
                 [dateFormatterDisplay setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
                 [dateFormatterDisplay setDateFormat:@"hh:mm a"];
-                NSString *open = [dateFormatterDisplay stringFromDate:openTimeDate];
-                NSString *close = [dateFormatterDisplay stringFromDate:closeTimeDate];
-                NSString *openTimes = [NSString stringWithFormat:@"\t %@ - %@", open, close];
+                NSString* open = [dateFormatterDisplay stringFromDate:openTimeDate];
+                NSString* close = [dateFormatterDisplay stringFromDate:closeTimeDate];
+                NSString* openTimes = [NSString stringWithFormat:@"\t %@ - %@", open, close];
                 
                 //If there's a comment such as "BRUNCH" above
                 if (hoursArray.count > 2)
                 {
-                    NSString *comment = [[hoursArray objectAtIndex:2]capitalizedString];
+                    NSString* comment = [[hoursArray objectAtIndex:2]capitalizedString];
                     openTimes = [NSString stringWithFormat:@"%@ (%@)\r", openTimes, comment];
                 }
                 else
@@ -866,7 +883,7 @@
 }
 
 //Returns an array with two elements: open time date object and a close time date object
--(NSArray *) getHoursWithOpenTime:(NSString *)openTimeString closeTime:(NSString *)closeTimeString onDate:(NSDate *)date
+-(NSArray* ) getHoursWithOpenTime:(NSString* )openTimeString closeTime:(NSString* )closeTimeString onDate:(NSDate *)date
 {
     //Get integer values for the opening and closing hour/minute of the restaurant
     NSInteger openHour;
@@ -924,7 +941,7 @@
                                 withDayOffset:1];
     }
     
-    NSArray *openAndCloseHours = [NSArray arrayWithObjects:openTimeDate, closeTimeDate, nil];
+    NSArray* openAndCloseHours = [NSArray arrayWithObjects:openTimeDate, closeTimeDate, nil];
     
     return openAndCloseHours;
 }
@@ -954,7 +971,7 @@
 //    [_restaurants sortUsingDescriptors:[NSArray arrayWithObject:sortByDistance]];
     
 //    //Currently in this format: x.xx miles
-//    NSString *farthest = [[_restaurants lastObject] proximity];
+//    NSString* farthest = [[_restaurants lastObject] proximity];
 //    
 //    farthestPlaceString = [NSString stringWithFormat:@"Within %@", farthest];
 }
