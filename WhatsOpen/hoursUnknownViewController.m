@@ -46,7 +46,7 @@
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
                 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    _spinner.center = CGPointMake(160, 200);
+    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.center.y) - 44);
     _spinner.hidesWhenStopped = YES;
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
@@ -60,6 +60,21 @@
                      initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     [_restaurantTableView reloadData];
 
+    //Wait until app becomes active again after a period of inactivity, and when it
+    //becomes active, app delegate will refresh the tableview and notify openNowVC to
+    //start the spinner animation.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startSpinner)
+                                                 name:@"startSpinner"
+                                               object:nil];
+    
+}
+
+- (void)startSpinner
+{
+    //Ensure that spinner is centered wherever user has scrolled in tableView
+    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.contentOffset.y)+(self.view.center.y));
+    [_spinner startAnimating];
 }
 
 - (void)startListeningForCompletedQuery
@@ -122,7 +137,7 @@
     _hoursUnknown = [[NSMutableArray alloc]
                 initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     
-    NSLog(@"Restaurants acquired:  hoursUnknown: %i", [_hoursUnknown count]);
+    NSLog(@"hoursUnknownVC: Restaurants acquired:  hoursUnknown: %i", [_hoursUnknown count]);
     
     //Since reloadSections withRowAnimation will crash the app if there are < 1 array items, we run reloadData the first time and then subsequent times ensure that there is at least 1 restaurant in the array before reloadingSections.
     

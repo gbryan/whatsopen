@@ -83,6 +83,8 @@
     if (_numTimesAppWasActive > 1)
     {
         NSLog(@"refreshRestaurants called from app delegate");
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
+                                                            object:nil];
         [[self queryControllerShared]refreshRestaurants];
     }
     

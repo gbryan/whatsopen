@@ -50,7 +50,7 @@
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    _spinner.center = CGPointMake(160, 200);
+    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.center.y) - 44);
     _spinner.hidesWhenStopped = YES;
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
@@ -65,6 +65,21 @@
     
     [self refreshRestaurantList];
     
+    //Wait until app becomes active again after a period of inactivity, and when it
+    //becomes active, app delegate will refresh the tableview and notify openNowVC to
+    //start the spinner animation.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startSpinner)
+                                                 name:@"startSpinner"
+                                               object:nil];
+    
+}
+
+- (void)startSpinner
+{
+    //Ensure that spinner is centered wherever user has scrolled in tableView
+    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.contentOffset.y)+(self.view.center.y));
+    [_spinner startAnimating];
 }
 
 - (void)startListeningForCompletedQuery
@@ -147,6 +162,9 @@
     }
     
     [_restaurantTableView reloadData];
+    
+    NSLog(@"openNowVC: restaurantsAcquired");
+    
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
 }
