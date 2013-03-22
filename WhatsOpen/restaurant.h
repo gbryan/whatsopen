@@ -49,5 +49,6 @@
 @property (strong, nonatomic) NSString* locality; //=city in U.S.
 @property (strong, nonatomic) NSString* region; //=state in U.S.
 @property (strong, nonatomic) NSString* country;
+@property (strong, nonatomic) NSString* whichTab;
 
 @end
