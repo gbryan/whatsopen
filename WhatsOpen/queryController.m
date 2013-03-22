@@ -305,6 +305,8 @@
     NSLog(@"7 queryC: set up Factual query params and execute query");
     //categoryID 347 is restaurants
     
+    
+    NSLog(@"lat/lng: %f,%f", lat, lng);
         _queryObject = [FactualQuery query];
         
         _queryObject.limit = 50;

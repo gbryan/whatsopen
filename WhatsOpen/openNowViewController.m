@@ -63,7 +63,8 @@
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
-    [self refreshRestaurantList];
+    //Load the list of restaurants
+//    [self refreshRestaurantList];
     
     //Wait until app becomes active again after a period of inactivity, and when it
     //becomes active, app delegate will refresh the tableview and notify openNowVC to
@@ -72,6 +73,7 @@
                                              selector:@selector(startSpinner)
                                                  name:@"startSpinner"
                                                object:nil];
+    [self startListeningForCompletedQuery];
     
 }
 

@@ -9,17 +9,12 @@
 #import "UMAAppDelegate.h"
 
 @implementation UMAAppDelegate
-{
-    NSInteger _numTimesAppWasActive;
-}
 @synthesize apiObject = _apiObject;
 @synthesize queryControllerShared = _queryControllerShared;
 @synthesize locationServiceShared = _locationServiceShared;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    _numTimesAppWasActive = 1;
-    
+{    
     //set navigation bar and toolbar tint to dark blue
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     [[UIToolbar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
@@ -77,18 +72,20 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
-    //to-do: this runs twice, producing duplicate results upon first ever app load (when user allows location first time)
-    //to-do: make spinner animate when refreshing upon becoming active again
-    //Reload restaurants list (do not run if this is initial app load)
-    if (_numTimesAppWasActive > 1)
+    //App will appear to become active more than once on initial load when user is prompted to allow location services, but
+        //we don't want to run the query twice, so we check whehter or not user has allowed location services already.
+        //If loc services not allowed for this app, we attempt to get location, which causes the app
+        //to prompt the user to allow location services (unless they already said they don't want to allow them).
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
     {
-        NSLog(@"refreshRestaurants called from app delegate");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
                                                             object:nil];
         [[self queryControllerShared]refreshRestaurants];
     }
-    
-    _numTimesAppWasActive++;
+    else
+    {
+        [[self locationServiceShared]getLocation];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

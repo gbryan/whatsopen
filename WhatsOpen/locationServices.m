@@ -9,9 +9,6 @@
 #import "locationServices.h"
 
 @implementation locationServices
-{
-    BOOL isFirstTimeLocationServicesEnabled;
-}
 @synthesize locationManager;
 @synthesize deviceLocation;
 @synthesize getLocationCalled;
@@ -65,7 +62,7 @@
             NSLog(@"accuracy: %f", newLocation.horizontalAccuracy);
             
             //Sometimes, new location updates come in without explicity calls from getLocation, and
-            //I want the location to be updated only if I explicitly call this method. Prevents unnecessary queries.
+            //I want the location to be updated only if I explicitly call this method.
             //Also, two duplicate lat/lng come in at same time, triggering 2 queries. This prevents duplicate queries.
             if (getLocationCalled == TRUE)
             {
@@ -79,12 +76,11 @@
 
 -(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    UIAlertView *locationDisabled = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled" message:@"You have chosen to disable location services for WhatsUp, but the app cannot run without knowing your current location. Please enable location services for WhatsUp in the Settings menu, force the app to quit, and reopen it." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    UIAlertView *locationDisabled = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled" message:@"You have chosen to disable location services for \"What's Open\", but the app cannot run without knowing your current location. Please enable location services for \"What's Open\" in the iPhone Settings -> Privacy -> Location Services and reopen the app." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
     
     switch (status)
     {
         case kCLAuthorizationStatusNotDetermined:
-            isFirstTimeLocationServicesEnabled = TRUE;
             break;
         case kCLAuthorizationStatusDenied:
             [locationDisabled show];
@@ -93,11 +89,6 @@
             [locationDisabled show];
             break;
         case kCLAuthorizationStatusAuthorized:
-            if (isFirstTimeLocationServicesEnabled == TRUE)
-            {
-                //to-do: check how this works now
-//                [queryControl getRestaurants];
-            }
             break;
     }
 }
