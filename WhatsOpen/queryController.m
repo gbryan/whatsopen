@@ -650,6 +650,12 @@
                 NSDate *openTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:0]];
                 NSDate *closeTimeDate = [dateFormatterOriginal dateFromString:[hoursArray objectAtIndex:1]];
                 
+                //Factual uses 24:00 for midnight, but I need it to be 00:00 instead.
+                if ([[hoursArray objectAtIndex:1] isEqualToString:@"24:00"])
+                {
+                    closeTimeDate = [dateFormatterOriginal dateFromString:@"00:00"];
+                }
+                
                 NSDateFormatter *dateFormatterDisplay = [[NSDateFormatter alloc]init];
                 [dateFormatterDisplay setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
                 [dateFormatterDisplay setDateFormat:@"hh:mm a"];

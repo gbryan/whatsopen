@@ -37,14 +37,11 @@
     self.locationManager = [[CLLocationManager alloc]init];
     self.locationManager.delegate = self;
     self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
     [self.locationManager startUpdatingLocation];
     
     //    UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
     //    self.deviceLocation = CLLocationCoordinate2DMake(35.913164,-79.055765);
-    //    Belmopan, Belize
-    //    self.deviceLocation = CLLocationCoordinate2DMake(17.2511,-88.7676);
-    //    London, England
-    //    self.deviceLocation = CLLocationCoordinate2DMake(51.516607,-0.143207);
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray* )locations
