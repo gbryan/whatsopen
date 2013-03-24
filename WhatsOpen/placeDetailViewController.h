@@ -17,6 +17,7 @@
 #import "selectProblemViewController.h"
 #import "moreDetailsViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "mapViewController.h"
 
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;
@@ -31,6 +32,8 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) IBOutlet UITableView *contactInfoTableView;
 @property (weak, nonatomic) IBOutlet UIView *topView;
+@property (weak, nonatomic) IBOutlet UIView *googleMapView;
+
 - (IBAction)flagButtonPressed:(id)sender;
 
 

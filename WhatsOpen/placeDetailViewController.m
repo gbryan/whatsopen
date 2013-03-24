@@ -38,6 +38,9 @@
     [[self.topView layer] setMasksToBounds:TRUE];
     [[self.contactInfoTableView layer] setCornerRadius:5.0];
     [[self.contactInfoTableView layer] setMasksToBounds:TRUE];
+    [[self.googleMapView layer] setCornerRadius:5.0];
+    [[self.googleMapView layer] setMasksToBounds:TRUE];
+    
     
     NSLog(@"restaurant Factual id %@: %@", restaurantObject.name, restaurantObject.factualID);
     NSLog(@"opennext: %@      closeNext: %@", restaurantObject.openNextDisplay, restaurantObject.closingNextDisplay);
@@ -58,7 +61,19 @@
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text = restaurantObject.name;
     self.navBar.titleView = titleLabel;
+    
+    //Load Google Map
+    mapViewController *mapVC = [self.storyboard instantiateViewControllerWithIdentifier:@"map"];
+    mapVC.restaurantCoordinates = CLLocationCoordinate2DMake([restaurantObject.latitude floatValue], [restaurantObject.longitude floatValue]);
+    mapVC.markerTitle = restaurantObject.name;
+    mapVC.markerSnippet = restaurantObject.cuisineLabel;
+    [self.googleMapView addSubview:mapVC.view];
+    
+    
 
+    
+    
+    
 //to-do: hide all these until 1) location is acquired, 2) detail query is completed, and 3) Google map loads
     
 }

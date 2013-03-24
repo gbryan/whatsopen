@@ -27,6 +27,7 @@
 @implementation queryController
 {
     FactualQuery* _queryObject;
+    locationServices* locationService;
     NSInteger _pageNum;
     NSInteger _totalResults;
     NSInteger _numFailedGoogleQueries;
@@ -44,6 +45,8 @@
 
 -(id)init
 {
+    locationService = [[locationServices alloc]init];
+    
     _totalResults = 0;
     _numFailedGoogleQueries = 0;
     _deviceLocation = CLLocationCoordinate2DMake(0.0, 0.0);
@@ -92,7 +95,6 @@
     
     //Get notification when device location has been acquired
     _queryPurpose = @"refresh";
-    locationServices* locationService = [UMAAppDelegate locationServiceShared];
     [locationService addObserver:self forKeyPath: @"deviceLocation"
                          options:NSKeyValueObservingOptionNew
                          context:nil];
@@ -130,9 +132,10 @@
     if ([keyPath isEqualToString:@"deviceLocation"] &&
              [_queryPurpose isEqualToString:@"refresh"])
     {
-        locationServices* locationService = [UMAAppDelegate locationServiceShared];
+        NSLog(@"value changed");
+        
         [locationService removeObserver:self forKeyPath:@"deviceLocation"];
-        _deviceLocation = [UMAAppDelegate locationServiceShared].deviceLocation;
+        _deviceLocation = locationService.deviceLocation;
         
         _totalResults = 0;
         
@@ -308,7 +311,7 @@
     
     NSLog(@"lat/lng: %f,%f", lat, lng);
         _queryObject = [FactualQuery query];
-        
+    
         _queryObject.limit = 50;
     
         if (offset > 0) _queryObject.offset = offset;
@@ -323,6 +326,7 @@
         CLLocationCoordinate2D geoFilterCoords = {
             lat, lng
         };
+    
         [_queryObject setGeoFilter:geoFilterCoords radiusInMeters:500000.0];
         
         //execute the Factual request

@@ -11,7 +11,7 @@
 @implementation UMAAppDelegate
 @synthesize apiObject = _apiObject;
 @synthesize queryControllerShared = _queryControllerShared;
-@synthesize locationServiceShared = _locationServiceShared;
+//@synthesize locationServiceShared = _locationServiceShared;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {    
@@ -19,9 +19,10 @@
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     [[UIToolbar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
+    [GMSServices provideAPIKey:GOOGLE_API_KEY];
     _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
     _queryControllerShared = [[queryController alloc]init];
-    _locationServiceShared = [[locationServices alloc]init];
+//    _locationServiceShared = [[locationServices alloc]init];
     
     // Override point for customization after application launch.
     return YES;
@@ -44,13 +45,13 @@
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate *)app.delegate).queryControllerShared;
 }
-
+/*
 +(locationServices *)locationServiceShared
 {
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate *)app.delegate).locationServiceShared;
 }
-
+*/
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -84,7 +85,9 @@
     }
     else
     {
-        [[self locationServiceShared]getLocation];
+        NSLog(@"UMAAppDelegate: calling getLocation");
+        locationServices *locationService = [[locationServices alloc]init];
+        [locationService getLocation];
     }
 }
 
