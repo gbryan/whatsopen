@@ -52,7 +52,6 @@
     _deviceLocation = CLLocationCoordinate2DMake(0.0, 0.0);
     _queryPurpose = @"";
     
-    NSLog(@"initializing queryController");
     noMoreResults = FALSE;
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
@@ -90,9 +89,6 @@
 //This clears out existing restaurants in the arrays and issues a new query.
 -(void)refreshRestaurants
 {
-
-    NSLog(@"queryC: refreshRestaurants");
-    
     //Get notification when device location has been acquired
     _queryPurpose = @"refresh";
     [locationService addObserver:self forKeyPath: @"deviceLocation"
@@ -103,7 +99,6 @@
 
 -(void)appendNewRestaurants
 {
-    NSLog(@"append called");
     //to-do: make sure that when restaurants are appended to bottom of list in any tab, the data source array is sorted such that
     //all new results are added to the bottom of the list instead of somewhere else in the list in the listView
     
@@ -223,8 +218,6 @@
     
     NSArray* restaurantResults = [json objectForKey:@"results"];
     
-//    NSLog(@"Google results: %@", restaurantResults);
-    
     //if Google returned a result
     if ([restaurantResults count] > 0)
     {
@@ -267,14 +260,12 @@
 {
     NSString* url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/photo?maxwidth=130&photoreference=%@&sensor=true&key=%@", photoReference, GOOGLE_API_KEY];
     
-//    NSLog(@"photo request: %@", url);
     NSURL *googleRequestURL=[NSURL URLWithString:url];
     NSData* restaurantImageRequestData = [NSData dataWithContentsOfURL: googleRequestURL];
     if (!restaurantImageRequestData)
     {
         //occasionally, data is nil, and the app crashes if I don't check !data
         //just start the query over again if data is nil for some reason
-        //        [self getRestaurants];
         NSLog(@"googleQueryData was invalid for some reason. Oops.");
         
         _numFailedGoogleQueries++;
@@ -305,11 +296,6 @@
 #pragma mark - Factual Query
 - (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng withOffset:(NSInteger)offset
 {
-    NSLog(@"7 queryC: set up Factual query params and execute query");
-    //categoryID 347 is restaurants
-    
-    
-    NSLog(@"lat/lng: %f,%f", lat, lng);
         _queryObject = [FactualQuery query];
     
         _queryObject.limit = 50;
@@ -321,7 +307,19 @@
                                               sortOrder:FactualSortOrder_Ascending];
         [_queryObject setPrimarySortCriteria:proximitySort];
     
-        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" equalTo:@"347"]];
+    /* Factual Category IDs:
+      339: Bagels and Donuts
+      340: Bakeries
+      342: Cafes, Coffee and Tea Houses
+      345: Internet Cafes
+      346: Juice Bars and Smoothies
+      347: Restaurants
+     */
+        NSArray *categories = [[NSArray alloc]initWithObjects:@"339", @"340", @"342", @"345", @"346", @"347", nil];
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" InArray:categories]];
+    
+        //Do not include any results that are ONLY catering venues.
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notEqualTo:@"Catering"]];
     
         CLLocationCoordinate2D geoFilterCoords = {
             lat, lng
@@ -692,7 +690,6 @@
 
 -(NSDate *) getDateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second onDate:(NSDate *)date withDayOffset:(NSInteger)dayOffset
 {
-//    NSLog(@"date passed in %@", date);
     NSCalendar *calendar = [NSCalendar currentCalendar];
     [calendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
     NSDateComponents *timeComponents = [calendar components:NSUIntegerMax fromDate:date];
@@ -802,8 +799,6 @@
     NSInteger deviceGMTOffset = [systemTimeZone secondsFromGMTForDate:GMTDate];
     NSDate* now = [[NSDate alloc]initWithTimeInterval:deviceGMTOffset
                                              sinceDate:GMTDate];
-    
-    NSLog(@"now: %@", now);
     
     //Get today's name (e.g. "monday")
     NSDateFormatter* dayFormatter = [[NSDateFormatter alloc]init];
