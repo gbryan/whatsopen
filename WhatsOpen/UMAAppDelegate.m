@@ -24,7 +24,6 @@
     _queryControllerShared = [[queryController alloc]init];
 //    _locationServiceShared = [[locationServices alloc]init];
     
-    // Override point for customization after application launch.
     return YES;
 }
 
@@ -79,9 +78,10 @@
         //to prompt the user to allow location services (unless they already said they don't want to allow them).
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
     {
+        NSLog(@"UMAAppDelegate: refreshing restaurants");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
                                                             object:nil];
-        [[self queryControllerShared]refreshRestaurants];
+        [_queryControllerShared refreshRestaurants];
     }
     else
     {

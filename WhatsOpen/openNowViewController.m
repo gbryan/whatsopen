@@ -171,40 +171,6 @@
     [self.refreshControl endRefreshing];
 }
 
-/*
-//to-do: update to non-deprecated method (only 12.4% of iPhone users have iOS < 6 as of Feb 2013)
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
-{    
-//    NSLog(@"got a location: %f,%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
-
-    //to-do: is the location accurate? How to make it more accurate? If I set desiredAccuracy, how do I get the app to wait to perform the query until after obtaining sufficient accuracy?
-    
-    //ensure that this measurement isn't cached (> 2 seconds old)
-    [locationMeasurements addObject:newLocation];
-    NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
-    if (locationAge > 2.0) return;
-
-    // test that the horizontal accuracy does not indicate an invalid measurement
-    if (newLocation.horizontalAccuracy < 0) return;
-    
-    // ensure measurement is at least as accurate as previous measurement
-    if (bestEffortAtLocation == nil || (bestEffortAtLocation.horizontalAccuracy >= newLocation.horizontalAccuracy))
-    {
-        self.bestEffortAtLocation = newLocation;
-        deviceLocation = bestEffortAtLocation.coordinate;
-        
-//        UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
-        deviceLocation = CLLocationCoordinate2DMake(35.913164,-79.055765);
-        
-        [locationManager stopUpdatingLocation];
-        
-        NSLog(@"location: %f,%f", deviceLocation.latitude, deviceLocation.longitude);
-        
-        //find restaurants based on the new location
-        [self queryGooglePlaces:queryCategories nextPageToken:nil];
-    }
-}
-*/
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -216,17 +182,6 @@
 {
     return 1;
 }
-
-//- (NSString* )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    //such as "Within 1.25 miles"
-//    return [_queryController farthestPlaceString];
-//}
-//
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    
-//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {

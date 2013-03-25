@@ -12,9 +12,7 @@
 
 @interface locationServices : NSObject <CLLocationManagerDelegate>
 
-@property (nonatomic, strong) CLLocationManager* locationManager;
 @property (nonatomic) CLLocationCoordinate2D deviceLocation;
-//@property (nonatomic) BOOL getLocationCalled;
 
 -(void)getLocation;
 @end

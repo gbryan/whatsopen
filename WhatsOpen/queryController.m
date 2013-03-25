@@ -89,6 +89,8 @@
 //This clears out existing restaurants in the arrays and issues a new query.
 -(void)refreshRestaurants
 {
+    NSLog(@"queryC: refreshRestaurants");
+    
     //Get notification when device location has been acquired
     _queryPurpose = @"refresh";
     [locationService addObserver:self forKeyPath: @"deviceLocation"
@@ -321,7 +323,7 @@
         //Do not include any results that are ONLY catering venues.
 //        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notBeginsWithAnyArray:[[NSArray alloc]initWithObjects:@"Catering", nil]]];
     
-        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notEqualTo:@"Catering"]];
+//        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notEqualTo:@"Catering"]];
     
         CLLocationCoordinate2D geoFilterCoords = {
             lat, lng

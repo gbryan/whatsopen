@@ -14,7 +14,7 @@
 #import "keys.h"
 
 @class queryController;
-@class locationServices;
+//@class locationServices;
 @interface UMAAppDelegate : UIResponder <UIApplicationDelegate>
 {
     FactualAPI* _apiObject;

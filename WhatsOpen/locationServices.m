@@ -9,29 +9,24 @@
 #import "locationServices.h"
 
 @implementation locationServices
-@synthesize locationManager;
-@synthesize deviceLocation;
-
-- (id)init
 {
-    NSLog(@"locationServices: init");
-    
-    self = [super init];
-    
-    if (self)
-    {
-        self.locationManager = [[CLLocationManager alloc]init];
-        self.locationManager.delegate = self;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    }
-    return self;
+    CLLocationManager *locationMgr;
 }
 
+@synthesize deviceLocation;
+ 
 -(void)getLocation
 {
     NSLog(@"locationServices: get location called");    
 
-    [self.locationManager startUpdatingLocation];
+    if (locationMgr == nil)
+    {
+        locationMgr = [[CLLocationManager alloc]init];
+    }
+    locationMgr.delegate = self;
+    locationMgr.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    locationMgr.distanceFilter = kCLDistanceFilterNone;    
+    [locationMgr startUpdatingLocation];
     
     //    UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
     //    self.deviceLocation = CLLocationCoordinate2DMake(35.913164,-79.055765);
@@ -41,8 +36,8 @@
 {   
     CLLocation *newLocation = [locations lastObject];
     NSLog(@"got a location");
-    NSLog(@"intermediate: %f,%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
-    
+    NSLog(@"intermediate: %f,%f  accuracy:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude, newLocation.horizontalAccuracy);
+    NSLog(@"desired accuracy: %f", manager.desiredAccuracy);
     //Make sure we're using a location acquired in the last 15 seconds
     NSDate *updateDate = newLocation.timestamp;
     NSTimeInterval age = fabs([updateDate timeIntervalSinceNow]);
@@ -53,10 +48,10 @@
         //Make sure acquired location meets our accuracy requirements of ~10 meters
         if(newLocation.horizontalAccuracy <= manager.desiredAccuracy)
         {
-            [self.locationManager stopUpdatingLocation];
+            [locationMgr stopUpdatingLocation];
             
             NSLog(@"real lat lng: %f,%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
-            NSLog(@"accuracy: %f", newLocation.horizontalAccuracy);
+            NSLog(@"accuracy: %f    age: %f", newLocation.horizontalAccuracy, age);
             
             self.deviceLocation = newLocation.coordinate;
         }
