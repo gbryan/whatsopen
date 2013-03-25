@@ -47,6 +47,11 @@
 		93408E73168EAA35004124BE /* placeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93408E72168EAA35004124BE /* placeDetailViewController.m */; };
 		934E257516E2A56500036258 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934E257416E2A56500036258 /* QuartzCore.framework */; };
 		934E257B16E3F27F00036258 /* ratingnone.png in Resources */ = {isa = PBXBuildFile; fileRef = 934E257A16E3F27F00036258 /* ratingnone.png */; };
+		93559C331700033700A976DA /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93559C321700033700A976DA /* MessageUI.framework */; };
+		93559C411700042300A976DA /* SVWebViewController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 93559C351700042300A976DA /* SVWebViewController.strings */; };
+		93559C421700042300A976DA /* SVModalWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C3B1700042300A976DA /* SVModalWebViewController.m */; };
+		93559C431700042300A976DA /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 93559C3C1700042300A976DA /* SVWebViewController.bundle */; };
+		93559C441700042300A976DA /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C3E1700042300A976DA /* SVWebViewController.m */; };
 		9375E27416FE8A1A005980F2 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E27316FE8A1A005980F2 /* GoogleMaps.framework */; };
 		9375E27616FE8B19005980F2 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9375E27516FE8B19005980F2 /* GoogleMaps.bundle */; };
 		9375E27816FE8B4D005980F2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E27716FE8B4D005980F2 /* AVFoundation.framework */; };
@@ -58,7 +63,6 @@
 		9375E28416FE8B88005980F2 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E28316FE8B88005980F2 /* libstdc++.dylib */; };
 		9375E28616FE8B90005980F2 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E28516FE8B90005980F2 /* OpenGLES.framework */; };
 		9375E28816FE8B99005980F2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E28716FE8B99005980F2 /* SystemConfiguration.framework */; };
-		9375F7B316DD2A1800337A47 /* websiteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9375F7B216DD2A1800337A47 /* websiteViewController.m */; };
 		93973D2016D84FF1006C2B94 /* queryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D1F16D84FF1006C2B94 /* queryController.m */; };
 		93973D2316D86862006C2B94 /* locationServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2216D86862006C2B94 /* locationServices.m */; };
 		93973D2716D87385006C2B94 /* restaurant.m in Sources */ = {isa = PBXBuildFile; fileRef = 93973D2616D87385006C2B94 /* restaurant.m */; };
@@ -125,6 +129,18 @@
 		9343DD4E16B340720095F9BD /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keys.h; sourceTree = "<group>"; };
 		934E257416E2A56500036258 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		934E257A16E3F27F00036258 /* ratingnone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ratingnone.png; sourceTree = "<group>"; };
+		93559C321700033700A976DA /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		93559C361700042300A976DA /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/SVWebViewController.strings; sourceTree = "<group>"; };
+		93559C371700042300A976DA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SVWebViewController.strings; sourceTree = "<group>"; };
+		93559C381700042300A976DA /* es-ES */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-ES"; path = "es-ES.lproj/SVWebViewController.strings"; sourceTree = "<group>"; };
+		93559C391700042300A976DA /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SVWebViewController.strings; sourceTree = "<group>"; };
+		93559C3A1700042300A976DA /* SVModalWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVModalWebViewController.h; sourceTree = "<group>"; };
+		93559C3B1700042300A976DA /* SVModalWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVModalWebViewController.m; sourceTree = "<group>"; };
+		93559C3C1700042300A976DA /* SVWebViewController.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVWebViewController.bundle; sourceTree = "<group>"; };
+		93559C3D1700042300A976DA /* SVWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVWebViewController.h; sourceTree = "<group>"; };
+		93559C3E1700042300A976DA /* SVWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVWebViewController.m; sourceTree = "<group>"; };
+		93559C3F1700042300A976DA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SVWebViewController.strings"; sourceTree = "<group>"; };
+		93559C401700042300A976DA /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/SVWebViewController.strings"; sourceTree = "<group>"; };
 		9375E27316FE8A1A005980F2 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		9375E27516FE8B19005980F2 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../../../Downloads/GoogleMaps-iOS-1.1.1/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		9375E27716FE8B4D005980F2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -136,8 +152,6 @@
 		9375E28316FE8B88005980F2 /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		9375E28516FE8B90005980F2 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		9375E28716FE8B99005980F2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		9375F7B116DD2A1800337A47 /* websiteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = websiteViewController.h; sourceTree = "<group>"; };
-		9375F7B216DD2A1800337A47 /* websiteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = websiteViewController.m; sourceTree = "<group>"; };
 		93973D1E16D84FF1006C2B94 /* queryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queryController.h; sourceTree = "<group>"; };
 		93973D1F16D84FF1006C2B94 /* queryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = queryController.m; sourceTree = "<group>"; };
 		93973D2116D86862006C2B94 /* locationServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locationServices.h; sourceTree = "<group>"; };
@@ -163,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93559C331700033700A976DA /* MessageUI.framework in Frameworks */,
 				9325C8D916FE9118000D3DBD /* libz.dylib in Frameworks */,
 				9375E28816FE8B99005980F2 /* SystemConfiguration.framework in Frameworks */,
 				9375E28616FE8B90005980F2 /* OpenGLES.framework in Frameworks */,
@@ -206,6 +221,7 @@
 		93408E4B168EA828004124BE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				93559C321700033700A976DA /* MessageUI.framework */,
 				9325C8D816FE9118000D3DBD /* libz.dylib */,
 				9375E28716FE8B99005980F2 /* SystemConfiguration.framework */,
 				9375E28516FE8B90005980F2 /* OpenGLES.framework */,
@@ -239,6 +255,7 @@
 				93408E77168EAAA0004124BE /* Detail Views */,
 				93EB0B9916E67FBF007A7021 /* Flagger */,
 				93408E74168EAA53004124BE /* App Delegate */,
+				93559C341700042300A976DA /* SVWebViewController */,
 				93408E53168EA828004124BE /* Supporting Files */,
 			);
 			path = WhatsOpen;
@@ -322,14 +339,25 @@
 				9305B2FA16FEB20300B6E1C4 /* mapViewController.m */,
 				93408E71168EAA35004124BE /* placeDetailViewController.h */,
 				93408E72168EAA35004124BE /* placeDetailViewController.m */,
-				9375F7B116DD2A1800337A47 /* websiteViewController.h */,
-				9375F7B216DD2A1800337A47 /* websiteViewController.m */,
 				9324AB5116E14B0E0076E8BA /* hoursViewController.h */,
 				9324AB5216E14B0E0076E8BA /* hoursViewController.m */,
 				93EB0B9D16E686C8007A7021 /* moreDetailsViewController.h */,
 				93EB0B9E16E686C8007A7021 /* moreDetailsViewController.m */,
 			);
 			name = "Detail Views";
+			sourceTree = "<group>";
+		};
+		93559C341700042300A976DA /* SVWebViewController */ = {
+			isa = PBXGroup;
+			children = (
+				93559C351700042300A976DA /* SVWebViewController.strings */,
+				93559C3A1700042300A976DA /* SVModalWebViewController.h */,
+				93559C3B1700042300A976DA /* SVModalWebViewController.m */,
+				93559C3C1700042300A976DA /* SVWebViewController.bundle */,
+				93559C3D1700042300A976DA /* SVWebViewController.h */,
+				93559C3E1700042300A976DA /* SVWebViewController.m */,
+			);
+			path = SVWebViewController;
 			sourceTree = "<group>";
 		};
 		93973D2416D87364006C2B94 /* Restaurants */ = {
@@ -406,6 +434,11 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				da,
+				"es-ES",
+				es,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 93408E3D168EA828004124BE;
 			productRefGroup = 93408E49168EA828004124BE /* Products */;
@@ -454,6 +487,8 @@
 				93EB0B8C16E57C34007A7021 /* clock.png in Resources */,
 				93A8173916E68D7A00C1CAFB /* moredetails.png in Resources */,
 				9375E27616FE8B19005980F2 /* GoogleMaps.bundle in Resources */,
+				93559C411700042300A976DA /* SVWebViewController.strings in Resources */,
+				93559C431700042300A976DA /* SVWebViewController.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -471,7 +506,6 @@
 				93973D2016D84FF1006C2B94 /* queryController.m in Sources */,
 				93973D2316D86862006C2B94 /* locationServices.m in Sources */,
 				93973D2716D87385006C2B94 /* restaurant.m in Sources */,
-				9375F7B316DD2A1800337A47 /* websiteViewController.m in Sources */,
 				9324AB4D16E12BB00076E8BA /* openLaterViewController.m in Sources */,
 				9324AB5016E12BCD0076E8BA /* hoursUnknownViewController.m in Sources */,
 				9324AB5316E14B0F0076E8BA /* hoursViewController.m in Sources */,
@@ -479,6 +513,8 @@
 				93EB0B9F16E686C8007A7021 /* moreDetailsViewController.m in Sources */,
 				93A842B516EBD0590030C98B /* factualCorrectionsController.m in Sources */,
 				9305B2FB16FEB20300B6E1C4 /* mapViewController.m in Sources */,
+				93559C421700042300A976DA /* SVModalWebViewController.m in Sources */,
+				93559C441700042300A976DA /* SVWebViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +535,19 @@
 				93408E65168EA828004124BE /* en */,
 			);
 			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+		93559C351700042300A976DA /* SVWebViewController.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				93559C361700042300A976DA /* da */,
+				93559C371700042300A976DA /* en */,
+				93559C381700042300A976DA /* es-ES */,
+				93559C391700042300A976DA /* es */,
+				93559C3F1700042300A976DA /* zh-Hans */,
+				93559C401700042300A976DA /* zh-Hant */,
+			);
+			name = SVWebViewController.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

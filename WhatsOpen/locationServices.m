@@ -11,9 +11,7 @@
 @implementation locationServices
 @synthesize locationManager;
 @synthesize deviceLocation;
-//@synthesize getLocationCalled;
 
-/*
 - (id)init
 {
     NSLog(@"locationServices: init");
@@ -22,22 +20,17 @@
     
     if (self)
     {
-//        getLocationCalled = FALSE;
-
+        self.locationManager = [[CLLocationManager alloc]init];
+        self.locationManager.delegate = self;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     }
     return self;
 }
- */
 
 -(void)getLocation
 {
-    NSLog(@"locationServices: get location called");
-//    getLocationCalled = TRUE;
-    
-    self.locationManager = [[CLLocationManager alloc]init];
-    self.locationManager.delegate = self;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    NSLog(@"locationServices: get location called");    
+
     [self.locationManager startUpdatingLocation];
     
     //    UNCOMMENT THIS CODE TO TEST THE APP WITH A CHAPEL HILL, NC LOCATION
@@ -65,15 +58,7 @@
             NSLog(@"real lat lng: %f,%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
             NSLog(@"accuracy: %f", newLocation.horizontalAccuracy);
             
-            //Sometimes, new location updates come in without explicity calls from getLocation, and
-            //I want the location to be updated only if I explicitly call this method.
-            //Also, two duplicate lat/lng come in at same time, triggering 2 queries. This prevents duplicate queries.
-//            if (getLocationCalled == TRUE)
-//            {
-//                getLocationCalled = FALSE;
-            
-                self.deviceLocation = newLocation.coordinate;
-//            }
+            self.deviceLocation = newLocation.coordinate;
         }
     }
 }

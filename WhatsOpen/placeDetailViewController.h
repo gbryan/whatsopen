@@ -11,13 +11,13 @@
 #import "restaurant.h"
 #import "keys.h"
 #import "locationServices.h"
-#import "websiteViewController.h"
 #import "hoursViewController.h"
 #import "queryController.h"
 #import "selectProblemViewController.h"
 #import "moreDetailsViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "mapViewController.h"
+#import "SVWebViewController.h"
 
 @interface placeDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *ratingIcon;

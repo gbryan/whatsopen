@@ -161,6 +161,50 @@
     return 5;
 }
 
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //Disable cells if there is there is no info for that cell.
+        //Example: If there is no phone #, gray out the "Call Restaurant" cell and disable user interaction.
+    switch (indexPath.row)
+    {
+        case 0:
+            if (restaurantObject.phone.length < 1)
+            {
+                cell.alpha = 0.2;
+                cell.userInteractionEnabled = FALSE;
+            }
+            break;
+        case 1:
+            if (restaurantObject.address.length < 1)
+            {
+                cell.alpha = 0.2;
+                cell.userInteractionEnabled = FALSE;
+            }
+            break;
+        case 2:
+            if (restaurantObject.website.length < 1)
+            {
+                cell.alpha = 0.2;
+                cell.userInteractionEnabled = FALSE;
+            }
+            break;
+        case 3:
+            if (restaurantObject.openHours.length < 1)
+            {
+                cell.alpha = 0.2;
+                cell.userInteractionEnabled = FALSE;
+            }
+            break;
+        case 4:
+            if (restaurantObject.detailsDisplay.length < 1)
+            {
+                cell.alpha = 0.2;
+                cell.userInteractionEnabled = FALSE;
+            }
+            break;
+    }
+}
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //to-do: check when to display these based on whether current restaurant has a website, phone number, hours, etc.
@@ -179,29 +223,24 @@
         case 0:
             cell.textLabel.text = @"Call Restaurant";
             cell.imageView.image = [UIImage imageNamed:@"iPhone.png"];
-            if (restaurantObject.phone.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 1:
             cell.textLabel.text = @"Directions";
             cell.detailTextLabel.text = restaurantObject.address;
             cell.imageView.image = [UIImage imageNamed:@"signpost.png"];
-            if (restaurantObject.address.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 2:
             cell.textLabel.text = @"Website";
             cell.imageView.image = [UIImage imageNamed:@"webicon.png"];
-            if (restaurantObject.website.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 3:
             cell.textLabel.text = @"Hours";
             cell.detailTextLabel.text = hoursDetail;
             cell.imageView.image = [UIImage imageNamed:@"clock.png"];
-            if (restaurantObject.openHours.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 4:
             cell.textLabel.text = @"More Details";
             cell.imageView.image = [UIImage imageNamed:@"moredetails.png"];
-            if (restaurantObject.detailsDisplay.length < 1) cell.userInteractionEnabled = FALSE;
             break;
             
             //to-do: add menu if I can get access to Locu and have time
@@ -291,9 +330,12 @@
 
 -(void)viewWebsite
 {
-    websiteViewController *webVC = [self.storyboard instantiateViewControllerWithIdentifier:@"webView"];
-    webVC.restaurantObject = self.restaurantObject;
-    [self presentViewController:webVC animated:TRUE completion:nil];
+    // Thanks to Oliver Letterer for the browser: https://github.com/samvermette/SVWebViewController
+	NSURL *URL = [NSURL URLWithString:self.restaurantObject.website];
+	SVModalWebViewController *webViewController = [[SVModalWebViewController alloc] initWithURL:URL];
+	webViewController.modalPresentationStyle = UIModalPresentationPageSheet;
+    webViewController.availableActions = SVWebViewControllerAvailableActionsOpenInSafari | SVWebViewControllerAvailableActionsOpenInChrome | SVWebViewControllerAvailableActionsCopyLink | SVWebViewControllerAvailableActionsMailLink;
+    [self presentViewController:webViewController animated:YES completion:nil];
 }
 
 -(void)viewMoreDetails
