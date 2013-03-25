@@ -15,4 +15,7 @@
 @property (nonatomic, strong) restaurant* restaurantObject;
 - (IBAction)flagButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;
+@property (weak, nonatomic) IBOutlet UITextView *detailsTextView;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navBar;
+
 @end

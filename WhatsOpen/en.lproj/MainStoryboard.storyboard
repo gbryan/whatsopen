@@ -34,7 +34,7 @@
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3wR-CN-z2b">
                                 <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Lgv-IH-FJn">
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Lgv-IH-FJn">
                                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     </activityIndicatorView>
                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Yd2-2U-Ye2">
@@ -193,7 +193,7 @@
         <scene sceneID="cee-2m-OKL">
             <objects>
                 <viewController storyboardIdentifier="map" id="Ttr-RO-7MV" customClass="mapViewController" sceneMemberID="viewController">
-                    <view key="view" userInteractionEnabled="NO" contentMode="scaleToFill" id="8uo-II-IOa">
+                    <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="8uo-II-IOa">
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -398,6 +398,10 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="Vnr-AU-MpQ"/>
+                    <connections>
+                        <outlet property="detailsTextView" destination="s6p-vT-qrM" id="Bvm-o4-fPR"/>
+                        <outlet property="navBar" destination="XTa-nH-Kgg" id="4aj-jz-1mk"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="P8h-xL-XBF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

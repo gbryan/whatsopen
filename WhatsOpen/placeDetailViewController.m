@@ -43,8 +43,7 @@
     
     
     NSLog(@"restaurant Factual id %@: %@", restaurantObject.name, restaurantObject.factualID);
-    NSLog(@"opennext: %@      closeNext: %@", restaurantObject.openNextDisplay, restaurantObject.closingNextDisplay);
-    NSLog(@"open now? %i", restaurantObject.isOpenNow);
+    NSLog(@"details: %@", restaurantObject.detailsDisplay);
     
     
     [self startListeningForCompletedQuery];
@@ -171,52 +170,76 @@
     if (restaurantObject.isOpenNow == TRUE) hoursDetail = restaurantObject.closingNextDisplay;
     if (restaurantObject.isOpenNow == FALSE) hoursDetail = restaurantObject.openNextDisplay;
     
+    UIView *selectionColor = [[UIView alloc] init];
+    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
+    cell.selectedBackgroundView = selectionColor;
+    
     switch (indexPath.row)
     {        
         case 0:
             cell.textLabel.text = @"Call Restaurant";
             cell.imageView.image = [UIImage imageNamed:@"iPhone.png"];
+            if (restaurantObject.phone.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 1:
             cell.textLabel.text = @"Directions";
             cell.detailTextLabel.text = restaurantObject.address;
             cell.imageView.image = [UIImage imageNamed:@"signpost.png"];
+            if (restaurantObject.address.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 2:
             cell.textLabel.text = @"Website";
             cell.imageView.image = [UIImage imageNamed:@"webicon.png"];
+            if (restaurantObject.website.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 3:
             cell.textLabel.text = @"Hours";
             cell.detailTextLabel.text = hoursDetail;
             cell.imageView.image = [UIImage imageNamed:@"clock.png"];
+            if (restaurantObject.openHours.length < 1) cell.userInteractionEnabled = FALSE;
             break;
         case 4:
             cell.textLabel.text = @"More Details";
             cell.imageView.image = [UIImage imageNamed:@"moredetails.png"];
+            if (restaurantObject.detailsDisplay.length < 1) cell.userInteractionEnabled = FALSE;
             break;
             
             //to-do: add menu if I can get access to Locu and have time
     }
-    UIView *selectionColor = [[UIView alloc] init];
-    selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
-    cell.selectedBackgroundView = selectionColor;
     return cell;
 }
 
-- (void)viewDirections
+- (void)viewDirectionsButtonPressed
 {
     //to-do: get location
-//    _deviceLocation = [_locationService getCurrentLocation];
-    
-    //to-do: this is terrible in Apple Maps bc it doesn't find the right place with just street address and city
-//    NSString* placeLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
+    [_locationService addObserver:self forKeyPath: @"deviceLocation"
+                         options:NSKeyValueObservingOptionNew
+                         context:nil];
+    [_locationService getLocation];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"deviceLocation"])
+    {
+        NSLog(@"placeDetailVC: location value changed");
+        
+        [_locationService removeObserver:self forKeyPath:@"deviceLocation"];
+        _deviceLocation = _locationService.deviceLocation;
+        
+        [self openDirections];
+    }
+}
+
+- (void)openDirections
+{
+    NSString* restaurantLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
     NSString* deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
-    NSString* restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-    NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, restaurantAddress]];
-    NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, restaurantAddress]];
-
+//    NSString* restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, restaurantLatLngString]];
+    NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, restaurantLatLngString]];
+    
     //try to open in Google Maps app but open in Apple maps if user doesn't have GM installed
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"comgooglemaps://"]]) {
         [[UIApplication sharedApplication] openURL:openGoogleMapsURL];
@@ -236,7 +259,7 @@
             break;
         case 1:
             //directions
-            [self viewDirections];
+            [self viewDirectionsButtonPressed];
             break;
         case 2:
             //website

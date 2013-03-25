@@ -319,6 +319,8 @@
         [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" InArray:categories]];
     
         //Do not include any results that are ONLY catering venues.
+//        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notBeginsWithAnyArray:[[NSArray alloc]initWithObjects:@"Catering", nil]]];
+    
         [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notEqualTo:@"Catering"]];
     
         CLLocationCoordinate2D geoFilterCoords = {
@@ -340,7 +342,6 @@
 }
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
-    NSLog(@"8 queryC: got results from Factual - %@", request.requestId);
     NSLog(@"array count totals: %d, %d, %d", openNow.count, openLater.count, hoursUnknown.count);
     
     /*
@@ -374,6 +375,7 @@
     for (int i=0; i < _queryResult.rowCount; i++)
     {
         restaurant* restaurantObject = [[restaurant alloc]init];
+        restaurantObject.detailsDisplay = @"";
         
         //run only if we have a valid response from Factual
         if ((_queryResult != nil) &&
@@ -506,9 +508,30 @@
                                        componentsJoinedByString:@""];
                 restaurantObject.phone = numbersOnly;
             }
-            if ([row valueForName:@"accessible_wheelchair"]) restaurantObject.wheelchair = [row valueForName:@"accessible_wheelchair"];
-            if ([row valueForName:@"alcohol"]) restaurantObject.servesAlcohol = [row valueForName:@"alcohol"];
-            if ([row valueForName:@"alcohol_bar"]) restaurantObject.hasFullBar = [row valueForName:@"alcohol_bar"];
+            if ([row valueForName:@"payment_cashonly"])
+            {
+                restaurantObject.cashOnly = ([[[row valueForName:@"payment_cashonly"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Cash only payment: %@ \n", restaurantObject.detailsDisplay, restaurantObject.cashOnly];
+            }
+            if ([row valueForName:@"parking_free"])
+            {
+                restaurantObject.parkingFree = ([[[row valueForName:@"parking_free"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Free parking: %@ \n", restaurantObject.detailsDisplay, restaurantObject.parkingFree];
+            }
+            if ([row valueForName:@"alcohol"])
+            {
+                restaurantObject.servesAlcohol = ([[[row valueForName:@"alcohol"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Serves alcohol: %@ \n", restaurantObject.detailsDisplay, restaurantObject.servesAlcohol];
+            }
+            
+            /*  This doesn't seem to be accurate enough yet to include.
+             
+            if ([row valueForName:@"alcohol_bar"])
+            {
+                restaurantObject.hasFullBar = ([[[row valueForName:@"alcohol_bar"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Full bar: %@ \n", restaurantObject.detailsDisplay, restaurantObject.hasFullBar];
+            }
+             */
             if ([row valueForName:@"address_extended"])
             {
                 restaurantObject.address = [[[row valueForName:@"address"]
@@ -519,14 +542,28 @@
             {
                 restaurantObject.address = [row valueForName:@"address"];
             }
-            if ([row valueForName:@"parking"]) restaurantObject.parking = [row valueForName:@"parking"];
-            if ([row valueForName:@"attire"]) restaurantObject.attire = [row valueForName:@"attire"];
-            if ([row valueForName:@"meal_takeout"]) restaurantObject.takeout = [row valueForName:@"meal_takeout"];
+            if ([row valueForName:@"meal_takeout"])
+            {
+                restaurantObject.takeout = ([[[row valueForName:@"meal_takeout"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Takeout available: %@ \n", restaurantObject.detailsDisplay, restaurantObject.takeout];
+            }
             if ([row valueForName:@"open_24hrs"]) restaurantObject.open24Hours = [row valueForName:@"open_24hrs"];
-            if ([row valueForName:@"seating_outdoor"]) restaurantObject.outdoorSeating = [row valueForName:@"seating_outdoor"];
-            if ([row valueForName:@"reservations"]) restaurantObject.reservations = [row valueForName:@"reservations"];
+            if ([row valueForName:@"seating_outdoor"])
+            {
+                restaurantObject.outdoorSeating = ([[[row valueForName:@"seating_outdoor"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Outdoor seating: %@ \n", restaurantObject.detailsDisplay, restaurantObject.outdoorSeating];
+            }
+            if ([row valueForName:@"reservations"])
+            {
+                restaurantObject.reservations = ([[[row valueForName:@"reservations"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Accepts reservations: %@ \n", restaurantObject.detailsDisplay, restaurantObject.reservations];
+            }
+            if ([row valueForName:@"accessible_wheelchair"])
+            {
+                restaurantObject.wheelchair = ([[[row valueForName:@"accessible_wheelchair"]stringValue] isEqualToString:@"1"]) ? @"Yes" : @"No";
+                restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Wheelchair accessible: %@ \n", restaurantObject.detailsDisplay, restaurantObject.wheelchair];
+            }
             if ([row valueForName:@"website"]) restaurantObject.website = [row valueForName:@"website"];
-            if ([row valueForName:@"payment_cashonly"]) restaurantObject.cashOnly = [row valueForName:@"payment_cashonly"];
             if ([row valueForName:@"cuisine"])
             {
                 restaurantObject.cuisine = [row valueForName:@"cuisine"];

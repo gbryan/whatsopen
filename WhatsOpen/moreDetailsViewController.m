@@ -18,7 +18,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+
+    //Set the nav bar title to the restaurant name
+    UIFont *titleFont = [UIFont boldSystemFontOfSize:18.0];
+    CGRect frame = CGRectMake(0, 0, [restaurantObject.name sizeWithFont:titleFont].width, 44);
+    UILabel *titleLabel = [[UILabel alloc]initWithFrame:frame];
+    titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.font = titleFont;
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.text = restaurantObject.name;
+    self.navBar.titleView = titleLabel;
+
+    self.detailsTextView.text = restaurantObject.detailsDisplay;
 }
 
 - (void)didReceiveMemoryWarning

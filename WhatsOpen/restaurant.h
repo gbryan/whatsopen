@@ -24,8 +24,7 @@
 @property (strong, nonatomic) NSString* priceLevelDisplay;
 @property (strong, nonatomic) UIImage *priceIcon;
 @property (strong, nonatomic) NSString* phone;
-@property (strong, nonatomic) NSString* parking;
-@property (strong, nonatomic) NSString* attire;
+@property (strong, nonatomic) NSString* parkingFree;
 @property (strong, nonatomic) NSString* cashOnly;
 @property (strong, nonatomic) NSString* website;
 @property (strong, nonatomic) NSArray* cuisine;
@@ -50,5 +49,6 @@
 @property (strong, nonatomic) NSString* region; //=state in U.S.
 @property (strong, nonatomic) NSString* country;
 @property (strong, nonatomic) NSString* whichTab;
+@property (strong, nonatomic) NSString* detailsDisplay;
 
 @end

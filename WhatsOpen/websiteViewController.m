@@ -27,7 +27,6 @@
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text = restaurantObject.name;
     self.navBar.titleView = titleLabel;
-    NSLog(@"name: %@", restaurantObject.name);
     
     //Load the restaurant's website if there isn't a problem with the URL or the server
     NSURL *restaurantURL = [NSURL URLWithString:restaurantObject.website];
