@@ -271,7 +271,7 @@
 //This loads more restaurants if user scrolls to the end of the existing results.
 //to-do:if there are < a few restaurants, it will append when you pull down to refresh
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    
+/*
     NSInteger currentOffset = scrollView.contentOffset.y;
     NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
 //    NSLog(@"current:%i  max:%i", currentOffset, maximumOffset);
@@ -279,6 +279,20 @@
     if (currentOffset >= (maximumOffset + 40)) {
         NSLog(@"adding more restaurants to the list");
         _spinner.center = CGPointMake(160, currentOffset+150);
+        [self loadRestaurantList];
+    }
+ */
+    NSInteger currentOffset = scrollView.contentOffset.y;
+    NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
+    NSLog(@"current: %i    max:%i", currentOffset, maximumOffset);
+    
+    //If offset is < 0, user is probably trying to refresh, not append.
+        //To append new results only when user scrolls beyond end of results (pulls up), set
+        // to something higher than 0 for maxOffset + 0.
+    if ((currentOffset > 0) && (currentOffset >= (maximumOffset + 0)))
+    {
+        NSLog(@"adding more restaurants to the list");
+        _spinner.center = CGPointMake(160, currentOffset + 150);
         [self loadRestaurantList];
     }
 }
