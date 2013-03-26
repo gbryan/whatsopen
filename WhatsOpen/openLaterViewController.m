@@ -12,8 +12,6 @@
 {
     NSMutableArray *_openLater;
     BOOL isInitialLoad;
-    BOOL internationalQuery;
-//    BOOL _lastResultWasNull;
     BOOL _isListening;
 }
 @end
@@ -62,25 +60,24 @@
                                              selector:@selector(stopSpinner)
                                                  name:@"stopSpinner"
                                                object:nil];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:TRUE];
+    
     isInitialLoad = FALSE;
     [_restaurantTableView reloadData];
 }
 
 - (void)startSpinner
 {
-    NSLog(@"openLaterVC: start spinner called");
     //display spinner to indicate to the user that the query is still running
     _spinner = [[UIActivityIndicatorView alloc]
                 initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _spinner.hidesWhenStopped = YES;
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
-    
     
     //Ensure that spinner is centered wherever user has scrolled in tableView
     _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.contentOffset.y)+(self.view.center.y));
@@ -98,9 +95,7 @@
 }
 
 - (void)startListeningForCompletedQuery
-{
-    NSLog(@"openLaterVC: LISTENING!!!!");
-    
+{    
     _isListening = TRUE;
     
     //listViewController will listen for queryController to give notification that it has finished the query
@@ -112,16 +107,17 @@
 
 - (void)loadRestaurantList
 {
-    //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
+    //This runs when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
     if ([[UMAAppDelegate queryControllerShared]noMoreResults] == FALSE)
     {
-//        [_spinner startAnimating];
-        
         if (_isListening == FALSE)
         {
             [self startListeningForCompletedQuery];
         }
 
+        //This keeps the user from scrolling and sending an additional query request while this one executes.
+        [_restaurantTableView setScrollEnabled:FALSE];
+        
         [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
@@ -133,31 +129,21 @@
     {
         [self startListeningForCompletedQuery];
     }
+    
+    //This keeps the user from scrolling and sending an additional query request while this one executes.
+    [_restaurantTableView setScrollEnabled:FALSE];
+    
     [[UMAAppDelegate queryControllerShared] refreshRestaurants];
+    
+    // queryC tells the spinner to start, but we don't want it to animate if user pulls down to refresh
+        //because the refreshControl already has a spinning animation.
+    [_spinner stopAnimating];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
-{   
-    //to-do: set internationalQuery based on value pulled from queryController
-    internationalQuery = FALSE;
-    
-    if (internationalQuery == TRUE)
-    {
-        //Only non-U.S. queries are using Google data, so only load footer with attribution if international
-        UIImage *footerImage = [UIImage imageNamed:@"google.png"];
-        UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
-        footerImageView.contentMode = UIViewContentModeScaleAspectFit;
-        [_restaurantTableView setTableFooterView:footerImageView];
-    }
-    else
-    {
-        //display Factual attribution (if required)
-    }
-    
+{       
     _openLater = [[NSMutableArray alloc]
                   initWithArray:[UMAAppDelegate queryControllerShared].openLater];
-    
-    NSLog(@"openLaterVC: restaurants acquired:  openLater: %i", [_openLater count]);
     
     if (isInitialLoad == TRUE)
     {
@@ -167,6 +153,7 @@
     [_restaurantTableView reloadData];
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
+    [_restaurantTableView setScrollEnabled:TRUE];
 }
 
 
@@ -182,11 +169,6 @@
 {
     return 1;
 }
-
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    return @"Open Later Today";
-//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -219,31 +201,16 @@
     {
         restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
         
-//        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
         nameLabel.text = restaurantObject.name;
         nameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:15.5];
         nameLabel.numberOfLines = 2;
         nameLabel.backgroundColor = [UIColor clearColor];
         
-//        UILabel *cuisine = (UILabel *)[cell viewWithTag:2];
         cuisine.text = restaurantObject.cuisineLabel;
-        
-//        UILabel *openNext = (UILabel *)[cell viewWithTag:3];
         openNext.text = restaurantObject.openNextDisplay;
-        
-//        UIImageView *ratingView = (UIImageView *)[cell viewWithTag:4];
         ratingView.image = restaurantObject.ratingImage;
-        
-//        UILabel *distance = (UILabel *)[cell viewWithTag:5];
         distance.text = restaurantObject.proximity;
-        
-//        UILabel *price = (UILabel *)[cell viewWithTag:6];
         price.text = restaurantObject.priceLevelDisplay;
-        
-//        //Make cell dark blue when selecting it
-//        UIView *selectionColor = [[UIView alloc] init];
-//        selectionColor.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0];
-//        cell.selectedBackgroundView = selectionColor;
     }
     else
     {
@@ -266,7 +233,7 @@
     if (currentOffset >= (maximumOffset + 40))
     {
         NSLog(@"adding more restaurants to the list");
-        _spinner.center = CGPointMake(160, currentOffset+150);
+        _spinner.center = CGPointMake(160, currentOffset + 150);
         [self loadRestaurantList];
     }
 }
@@ -291,7 +258,6 @@
         }
     }
 }
-
 
 - (void)viewDidUnload
 {
@@ -326,8 +292,6 @@
 
 - (IBAction)homeButtonPressed:(id)sender
 {
-//    homeViewController *homeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
-//    [self presentViewController:homeVC animated:TRUE completion:nil];
     [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 

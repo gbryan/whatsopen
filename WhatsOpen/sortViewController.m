@@ -64,6 +64,9 @@
                             SORT_RATING,
                             SORT_CLOSED_NEXT,
                             SORT_PRICE_LEVEL, nil];
+        
+        //to-do: Set pickerView to previous setting
+//        NSInteger previouslySelected = [UMAAppDelegate queryControllerShared].openNowSort
     }
     else if ([self.arrayToSort isEqualToString:@"openLater"])
     {

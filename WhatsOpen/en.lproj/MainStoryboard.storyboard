@@ -133,9 +133,9 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RP-ZL-LZJ">
+                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RP-ZL-LZJ">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="1jb-ba-DzE"/>
+                                    <constraint firstAttribute="width" constant="285" id="6kq-zW-ucL"/>
                                     <constraint firstAttribute="height" constant="100" id="zJO-7j-JAE"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -150,9 +150,9 @@
                                     <segue destination="kJk-D5-CPq" kind="modal" identifier="meal" modalTransitionStyle="flipHorizontal" id="zQb-BO-awi"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zo-jP-7RM">
+                            <button opaque="NO" tag="1" contentMode="scaleAspectFit" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zo-jP-7RM">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="90" id="Ova-T1-4Fd"/>
+                                    <constraint firstAttribute="width" constant="284" id="Fy9-Ln-fOb"/>
                                     <constraint firstAttribute="height" constant="90" id="mxZ-Wm-gj8"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -167,7 +167,7 @@
                                     <segue destination="kJk-D5-CPq" kind="modal" identifier="dessert" modalTransitionStyle="flipHorizontal" id="TzM-3q-9pR"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="2" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HbY-5I-jeW">
+                            <button opaque="NO" tag="2" contentMode="scaleAspectFit" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HbY-5I-jeW">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="90" id="Ebr-lz-gMx"/>
                                 </constraints>
@@ -185,6 +185,7 @@
                             </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="I'm looking for a..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZDt-bT-TIi">
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="307" id="UfA-aw-Qaa"/>
                                     <constraint firstAttribute="height" constant="27" id="gSa-cM-YIZ"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="24"/>
@@ -220,21 +221,20 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="HbY-5I-jeW" firstAttribute="trailing" secondItem="1zo-jP-7RM" secondAttribute="trailing" type="default" id="097-po-ssC"/>
                             <constraint firstItem="gPg-lk-qPk" firstAttribute="leading" secondItem="AYB-KX-1BW" secondAttribute="leading" type="default" id="0gE-EA-JKH"/>
                             <constraint firstItem="0RP-ZL-LZJ" firstAttribute="top" secondItem="aaK-qF-hcu" secondAttribute="top" constant="74" id="8xe-mf-Zvs"/>
-                            <constraint firstItem="1zo-jP-7RM" firstAttribute="leading" secondItem="aaK-qF-hcu" secondAttribute="leading" constant="7" id="9q7-w0-Dw1"/>
-                            <constraint firstItem="r0J-9M-wO1" firstAttribute="centerX" secondItem="aaK-qF-hcu" secondAttribute="centerX" type="default" id="Fvp-wR-dFS"/>
+                            <constraint firstItem="gPg-lk-qPk" firstAttribute="centerX" secondItem="aaK-qF-hcu" secondAttribute="centerX" type="default" id="EQf-8a-73m"/>
                             <constraint firstItem="1zo-jP-7RM" firstAttribute="leading" secondItem="HbY-5I-jeW" secondAttribute="leading" type="default" id="GCO-k9-BcC"/>
                             <constraint firstItem="gPg-lk-qPk" firstAttribute="top" secondItem="aaK-qF-hcu" secondAttribute="top" constant="113" id="MpR-h8-1fc"/>
                             <constraint firstAttribute="bottom" secondItem="AYB-KX-1BW" secondAttribute="bottom" constant="187" id="Nvw-oq-qK2"/>
                             <constraint firstItem="AYB-KX-1BW" firstAttribute="leading" secondItem="r0J-9M-wO1" secondAttribute="leading" type="default" id="Owi-FM-VPP"/>
                             <constraint firstItem="1zo-jP-7RM" firstAttribute="top" secondItem="aaK-qF-hcu" secondAttribute="top" constant="174" id="VBL-R2-sGX"/>
-                            <constraint firstItem="0RP-ZL-LZJ" firstAttribute="leading" secondItem="aaK-qF-hcu" secondAttribute="leading" constant="6" id="VZd-yy-ySB"/>
+                            <constraint firstItem="1zo-jP-7RM" firstAttribute="trailing" secondItem="HbY-5I-jeW" secondAttribute="trailing" type="default" id="Wpf-lP-tcF"/>
                             <constraint firstAttribute="bottom" secondItem="r0J-9M-wO1" secondAttribute="bottom" constant="89" id="YC1-zt-PjJ"/>
                             <constraint firstItem="1zo-jP-7RM" firstAttribute="leading" secondItem="ZDt-bT-TIi" secondAttribute="leading" type="default" id="ZM1-df-XTh"/>
                             <constraint firstItem="r0J-9M-wO1" firstAttribute="trailing" secondItem="gPg-lk-qPk" secondAttribute="trailing" type="default" id="dTX-NM-Gaa"/>
                             <constraint firstItem="ZDt-bT-TIi" firstAttribute="top" secondItem="aaK-qF-hcu" secondAttribute="top" constant="32" id="evB-DO-Fsc"/>
+                            <constraint firstItem="0RP-ZL-LZJ" firstAttribute="trailing" secondItem="1zo-jP-7RM" secondAttribute="trailing" type="default" id="jHk-Db-QGc"/>
                             <constraint firstItem="HbY-5I-jeW" firstAttribute="top" secondItem="1zo-jP-7RM" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="x64-7l-Tsu"/>
                             <constraint firstItem="gPg-lk-qPk" firstAttribute="centerX" secondItem="ZDt-bT-TIi" secondAttribute="centerX" type="default" id="xZe-U4-gyE"/>
                         </constraints>
@@ -690,7 +690,7 @@
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="5" contentMode="left" text="10.27 miles" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7bE-z8-cA0">
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="61" id="ksd-WK-FGs"/>
+                                                <constraint firstAttribute="width" constant="93" id="EuN-RS-Zn8"/>
                                                 <constraint firstAttribute="height" constant="21" id="qNb-sn-ZKs"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="12"/>
@@ -717,7 +717,6 @@
                                         <imageView userInteractionEnabled="NO" tag="4" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AWe-Qt-Sdy">
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="18" id="1fG-hw-TYd"/>
-                                                <constraint firstAttribute="width" constant="94" id="xC7-sT-Xna"/>
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="left" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JsP-16-am7">
@@ -736,14 +735,15 @@
                                     <constraint firstItem="Ib1-LV-caw" firstAttribute="bottom" secondItem="Shc-Ss-hWH" secondAttribute="bottom" type="default" id="140-Ph-jbn"/>
                                     <constraint firstItem="7bE-z8-cA0" firstAttribute="leading" secondItem="JsP-16-am7" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="2DP-qV-5f0"/>
                                     <constraint firstItem="JsP-16-am7" firstAttribute="leading" secondItem="Shc-Ss-hWH" secondAttribute="leading" constant="7" id="GUh-ca-edj"/>
-                                    <constraint firstAttribute="trailing" secondItem="AWe-Qt-Sdy" secondAttribute="trailing" constant="6" id="KnE-Ax-OZC"/>
                                     <constraint firstItem="eky-md-u2x" firstAttribute="leading" secondItem="Ib1-LV-caw" secondAttribute="leading" type="default" id="Vet-rt-xMs"/>
                                     <constraint firstItem="JsP-16-am7" firstAttribute="leading" secondItem="eky-md-u2x" secondAttribute="leading" type="default" id="Weh-xe-t1x"/>
+                                    <constraint firstItem="7bE-z8-cA0" firstAttribute="trailing" secondItem="AWe-Qt-Sdy" secondAttribute="trailing" type="default" id="Zcf-aS-VPq"/>
                                     <constraint firstItem="AWe-Qt-Sdy" firstAttribute="top" secondItem="Shc-Ss-hWH" secondAttribute="top" constant="10" id="adl-sR-X9t"/>
                                     <constraint firstAttribute="bottom" secondItem="eky-md-u2x" secondAttribute="bottom" constant="18" id="alz-78-hoy"/>
                                     <constraint firstAttribute="bottom" secondItem="fEZ-aY-6yI" secondAttribute="bottom" constant="12" id="cLo-lJ-Vmf"/>
                                     <constraint firstItem="7bE-z8-cA0" firstAttribute="centerY" secondItem="Shc-Ss-hWH" secondAttribute="centerY" type="default" id="j08-Bb-Nm3"/>
                                     <constraint firstItem="7bE-z8-cA0" firstAttribute="leading" secondItem="fEZ-aY-6yI" secondAttribute="leading" type="default" id="l3a-kq-MGu"/>
+                                    <constraint firstItem="7bE-z8-cA0" firstAttribute="centerX" secondItem="AWe-Qt-Sdy" secondAttribute="centerX" type="default" id="oJD-KD-81q"/>
                                     <constraint firstItem="JsP-16-am7" firstAttribute="top" secondItem="Shc-Ss-hWH" secondAttribute="top" constant="4" id="rmq-GX-oOQ"/>
                                     <constraint firstItem="Ib1-LV-caw" firstAttribute="top" secondItem="7bE-z8-cA0" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="tfs-bz-Npb"/>
                                 </constraints>
@@ -766,7 +766,6 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Filter &amp; Sort" id="koC-rn-VCm">
                             <connections>
-                                <action selector="sortButtonPressed:" destination="UqC-eg-RCR" id="cuL-wQ-NrO"/>
                                 <segue destination="3Yc-80-WNZ" kind="modal" identifier="sort" id="7Ov-Nu-Mae"/>
                             </connections>
                         </barButtonItem>
@@ -973,10 +972,10 @@
                                             <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="5" contentMode="left" text="10.27 miles" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jp4-Rp-vKv">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="5" contentMode="left" text="137.84 miles" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Jp4-Rp-vKv">
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="BnY-4f-cY0"/>
-                                                <constraint firstAttribute="width" constant="61" id="l2V-uW-yb9"/>
+                                                <constraint firstAttribute="width" constant="96" id="cVC-Jt-G6Y"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="12"/>
                                             <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -994,7 +993,6 @@
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="3" contentMode="left" text="Opening at 5:00 p.m." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="56L-ga-Ua4">
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="22" id="aPV-JQ-KGX"/>
-                                                <constraint firstAttribute="width" constant="310" id="oD5-Vs-vXF"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="12"/>
                                             <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -1019,16 +1017,17 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
+                                    <constraint firstItem="FdR-U8-v9I" firstAttribute="leading" secondItem="JW3-NB-PDj" secondAttribute="leading" constant="6" id="2mv-m7-EI8"/>
                                     <constraint firstItem="FdR-U8-v9I" firstAttribute="top" secondItem="JW3-NB-PDj" secondAttribute="top" constant="2" id="PJw-80-sl5"/>
                                     <constraint firstItem="56L-ga-Ua4" firstAttribute="leading" secondItem="weW-ww-gTb" secondAttribute="leading" type="default" id="QiP-Yu-ntc"/>
                                     <constraint firstItem="56L-ga-Ua4" firstAttribute="top" secondItem="Jp4-Rp-vKv" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="Ymg-hr-6Sa"/>
                                     <constraint firstItem="Jp4-Rp-vKv" firstAttribute="top" secondItem="JW3-NB-PDj" secondAttribute="top" constant="27" id="Zfg-2r-NXU"/>
+                                    <constraint firstItem="Jp4-Rp-vKv" firstAttribute="trailing" secondItem="56L-ga-Ua4" secondAttribute="trailing" type="default" id="eOL-0f-mJu"/>
                                     <constraint firstItem="Jp4-Rp-vKv" firstAttribute="leading" secondItem="3Zc-NZ-cKp" secondAttribute="leading" type="default" id="fix-LW-dek"/>
                                     <constraint firstAttribute="bottom" secondItem="3Zc-NZ-cKp" secondAttribute="bottom" constant="14" id="hbX-bV-Kto"/>
                                     <constraint firstAttribute="bottom" secondItem="weW-ww-gTb" secondAttribute="bottom" constant="20" type="default" id="ile-aX-eGG"/>
                                     <constraint firstItem="Jp4-Rp-vKv" firstAttribute="leading" secondItem="FdR-U8-v9I" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="jze-0A-zSt"/>
                                     <constraint firstItem="FdR-U8-v9I" firstAttribute="leading" secondItem="weW-ww-gTb" secondAttribute="leading" type="default" id="wsu-gi-eE9"/>
-                                    <constraint firstItem="FdR-U8-v9I" firstAttribute="leading" secondItem="JW3-NB-PDj" secondAttribute="leading" constant="6" id="x7F-ap-DRK"/>
                                     <constraint firstItem="GLW-cx-fTs" firstAttribute="top" secondItem="JW3-NB-PDj" secondAttribute="top" constant="8" id="yOA-Y1-dhv"/>
                                     <constraint firstAttribute="trailing" secondItem="GLW-cx-fTs" secondAttribute="trailing" constant="7" id="yff-1X-9mB"/>
                                 </constraints>
@@ -1091,7 +1090,7 @@
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="5" contentMode="left" text="10.27 miles" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CJf-x5-brn">
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="3ON-H0-puc"/>
-                                                <constraint firstAttribute="width" constant="61" id="4gS-EW-meB"/>
+                                                <constraint firstAttribute="width" constant="96" id="V0i-yP-ckY"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="12"/>
                                             <color key="textColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -1108,7 +1107,6 @@
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="3" contentMode="left" text="100 West Franklin Street, Suite 3e, Chapel Hill" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="9Qa-tq-duX">
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="310" id="0Ea-ss-eJb"/>
                                                 <constraint firstAttribute="height" constant="22" id="Nyy-sn-Toe"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="12"/>
@@ -1134,6 +1132,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
+                                    <constraint firstItem="9Qa-tq-duX" firstAttribute="trailing" secondItem="CJf-x5-brn" secondAttribute="trailing" type="default" id="Bc2-Ry-hyb"/>
                                     <constraint firstAttribute="bottom" secondItem="MNq-0u-TYH" secondAttribute="bottom" constant="16" id="CpB-n2-guc"/>
                                     <constraint firstAttribute="bottom" secondItem="9Qa-tq-duX" secondAttribute="bottom" constant="2" id="Fjh-cX-xWw"/>
                                     <constraint firstItem="ZNP-1A-KHR" firstAttribute="leading" secondItem="Brg-da-YGo" secondAttribute="leading" type="default" id="OyB-NI-guO"/>
@@ -1301,7 +1300,6 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/openNowViewController.h"/>
             <relationships>
                 <relationship kind="action" name="homeButtonPressed:"/>
-                <relationship kind="action" name="sortButtonPressed:"/>
                 <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
                 <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
@@ -1357,7 +1355,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="zQb-BO-awi"/>
-        <segue reference="02n-SF-aTS"/>
-        <segue reference="7Ov-Nu-Mae"/>
+        <segue reference="ggO-WQ-L0a"/>
+        <segue reference="kMX-bH-bkt"/>
     </inferredMetricsTieBreakers>
 </document>

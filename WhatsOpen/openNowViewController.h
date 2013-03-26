@@ -16,6 +16,5 @@
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
 @property (nonatomic, readonly) IBOutlet UITableView *restaurantTableView;
 @property (nonatomic, readonly) IBOutlet UIActivityIndicatorView *spinner;
-- (IBAction)sortButtonPressed:(id)sender;
 - (IBAction)homeButtonPressed:(id)sender;
 @end

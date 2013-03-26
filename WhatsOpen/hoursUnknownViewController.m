@@ -17,7 +17,6 @@
     NSMutableArray *_hoursUnknown;
     BOOL isInitialLoad;
     BOOL internationalQuery;
-//    BOOL _lastResultWasNull;
     BOOL _isListening;
 }
 @end
@@ -31,7 +30,6 @@
     [super viewDidLoad];
     
     isInitialLoad = TRUE;
-//    _lastResultWasNull = FALSE;
     _isListening = FALSE;
     
     //Set title
@@ -69,6 +67,8 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:TRUE];
+    
     isInitialLoad = FALSE;
     [_restaurantTableView reloadData];
 }
@@ -121,6 +121,10 @@
         {
             [self startListeningForCompletedQuery];
         }
+        
+        //This keeps the user from scrolling and sending an additional query request while this one executes.
+        [_restaurantTableView setScrollEnabled:FALSE];
+        
         [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
@@ -132,30 +136,19 @@
     {
         [self startListeningForCompletedQuery];
     }
-//    [_spinner startAnimating];
+
+    //This keeps the user from scrolling and sending an additional query request while this one executes.
+    [_restaurantTableView setScrollEnabled:FALSE];
+    
     [[UMAAppDelegate queryControllerShared] refreshRestaurants];
+    
+    // queryC tells the spinner to start, but we don't want it to animate if user pulls down to refresh
+        //because the refreshControl already has a spinning animation.
+    [_spinner stopAnimating];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
 {
-    NSLog(@"hoursUnknownVC: restaurantsAcquired");
-    //to-do: set internationalQuery based on value pulled from queryController
-    internationalQuery = FALSE;
-    
-    if (internationalQuery == TRUE)
-    {
-        //Only non-U.S. queries are using Google data, so only load footer with attribution if international
-        UIImage *footerImage = [UIImage imageNamed:@"google.png"];
-        UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
-        footerImageView.contentMode = UIViewContentModeScaleAspectFit;
-        [_restaurantTableView setTableFooterView:footerImageView];
-    }
-    else
-    {
-        //display Factual attribution (if required)
-    }
-    
-//    _lastResultWasNull = [[UMAAppDelegate queryControllerShared] lastResultWasNull];
     _hoursUnknown = [[NSMutableArray alloc]
                 initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     
@@ -172,7 +165,7 @@
     [_restaurantTableView reloadData];
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
-    
+    [_restaurantTableView setScrollEnabled:TRUE];
 }
 
 
@@ -187,11 +180,6 @@
 {
     return 1;
 }
-
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    return @"Restaurants with Unknown Hours";
-//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -301,8 +289,6 @@
 
 - (IBAction)homeButtonPressed:(id)sender
 {
-//    homeViewController *homeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
-//    [self presentViewController:homeVC animated:TRUE completion:nil];
     [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 

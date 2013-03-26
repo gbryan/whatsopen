@@ -19,7 +19,6 @@
 		9324AB2C16DF6EA00076E8BA /* rating4point5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2116DF6E9F0076E8BA /* rating4point5.png */; };
 		9324AB2D16DF6EA00076E8BA /* rating5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2216DF6E9F0076E8BA /* rating5.png */; };
 		9324AB2E16DF6EA00076E8BA /* ratingpoint5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2316DF6E9F0076E8BA /* ratingpoint5.png */; };
-		9324AB3016DF6EE40076E8BA /* google.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB2F16DF6EE40076E8BA /* google.png */; };
 		9324AB3216DF7C240076E8BA /* webicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3116DF7C240076E8BA /* webicon.png */; };
 		9324AB3416DF7E110076E8BA /* iPhone.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3316DF7E110076E8BA /* iPhone.png */; };
 		9324AB3616DF80FC0076E8BA /* signpost.png in Resources */ = {isa = PBXBuildFile; fileRef = 9324AB3516DF80FC0076E8BA /* signpost.png */; };
@@ -99,7 +98,6 @@
 		9324AB2116DF6E9F0076E8BA /* rating4point5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rating4point5.png; path = ../rating4point5.png; sourceTree = "<group>"; };
 		9324AB2216DF6E9F0076E8BA /* rating5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rating5.png; path = ../rating5.png; sourceTree = "<group>"; };
 		9324AB2316DF6E9F0076E8BA /* ratingpoint5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ratingpoint5.png; path = ../ratingpoint5.png; sourceTree = "<group>"; };
-		9324AB2F16DF6EE40076E8BA /* google.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = google.png; path = ../google.png; sourceTree = "<group>"; };
 		9324AB3116DF7C240076E8BA /* webicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = webicon.png; path = ../webicon.png; sourceTree = "<group>"; };
 		9324AB3316DF7E110076E8BA /* iPhone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iPhone.png; path = ../iPhone.png; sourceTree = "<group>"; };
 		9324AB3516DF80FC0076E8BA /* signpost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = signpost.png; path = ../signpost.png; sourceTree = "<group>"; };
@@ -306,7 +304,6 @@
 				9324AB2316DF6E9F0076E8BA /* ratingpoint5.png */,
 				93D04F9516A0725400FD3B43 /* whatsopen_retina.png */,
 				93D04F9316A0721B00FD3B43 /* whatsopen.png */,
-				9324AB2F16DF6EE40076E8BA /* google.png */,
 				9324AB3316DF7E110076E8BA /* iPhone.png */,
 				9324AB3116DF7C240076E8BA /* webicon.png */,
 				9324AB3516DF80FC0076E8BA /* signpost.png */,
@@ -511,7 +508,6 @@
 				9324AB2C16DF6EA00076E8BA /* rating4point5.png in Resources */,
 				9324AB2D16DF6EA00076E8BA /* rating5.png in Resources */,
 				9324AB2E16DF6EA00076E8BA /* ratingpoint5.png in Resources */,
-				9324AB3016DF6EE40076E8BA /* google.png in Resources */,
 				9324AB3216DF7C240076E8BA /* webicon.png in Resources */,
 				9324AB3416DF7E110076E8BA /* iPhone.png in Resources */,
 				9324AB3616DF80FC0076E8BA /* signpost.png in Resources */,

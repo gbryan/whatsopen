@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #define SORT_NAME @"name"
-#define SORT_DISTANCE @"proximity"
+#define SORT_DISTANCE @"proximitySort"
 #define SORT_RATING @"ratingSort"
 #define SORT_PRICE_LEVEL @"priceLevel"
 #define SORT_OPEN_NEXT @"openNextSort"
@@ -28,6 +28,7 @@
 @property (strong, nonatomic) NSString *latitude;
 @property (strong, nonatomic) NSString *longitude;
 @property (strong, nonatomic) NSString *proximity;
+@property (nonatomic) float proximitySort;
 @property (strong, nonatomic) NSString *openHours;
 @property (strong, nonatomic) NSString *ratingSort;
 @property (strong, nonatomic) UIImage *ratingImage;

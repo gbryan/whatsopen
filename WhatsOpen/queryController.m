@@ -64,9 +64,9 @@
     openNow = [[NSMutableArray alloc]init];
     openLater = [[NSMutableArray alloc]init];
     hoursUnknown = [[NSMutableArray alloc]init];
-    self.openNowSort = @"proximity";
-    self.openLaterSort = @"proximity";
-    self.hoursUnknownSort = @"proximity";
+    self.openNowSort = @"proximitySort";
+    self.openLaterSort = @"proximitySort";
+    self.hoursUnknownSort = @"proximitySort";
     
     return self;
 }
@@ -480,15 +480,16 @@
                 }
             }
             
-            NSLog(@"%@", row);
+//            NSLog(@"%@", row);
             
             //calculate proximity of mobile device to the restaurant
             float lat = [[row valueForName:@"latitude"]floatValue];
             float lng = [[row valueForName:@"longitude"]floatValue];
+            restaurantObject.proximitySort = [self calculateDistanceFromDeviceLatitudeInMiles:_deviceLocation.latitude
+                                                                              deviceLongitude:_deviceLocation.longitude
+                                                                              toPlaceLatitude:lat placeLongitude:lng];
             NSString *proximity = [NSString stringWithFormat:@"%.2f miles",
-                                   [self calculateDistanceFromDeviceLatitudeInMiles:_deviceLocation.latitude
-                                                                    deviceLongitude:_deviceLocation.longitude
-                                                                    toPlaceLatitude:lat placeLongitude:lng]];
+                                   restaurantObject.proximitySort];
             
             restaurantObject.factualID = [row rowId];
             restaurantObject.name = [row valueForName:@"name"];

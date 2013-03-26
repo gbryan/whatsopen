@@ -20,7 +20,6 @@
 {
     NSMutableArray *_openNow;
     BOOL isInitialLoad;
-    BOOL internationalQuery;
     BOOL _isListening;
 }
 
@@ -30,11 +29,6 @@
 
 @synthesize restaurantTableView=_restaurantTableView;
 @synthesize spinner=_spinner;
-
--(void)viewWillAppear:(BOOL)animated
-{
-    
-}
 
 - (void)viewDidLoad
 {
@@ -124,14 +118,16 @@
             [self startListeningForCompletedQuery];
         }
         
-//        [_spinner startAnimating];
+        //This keeps the user from scrolling and sending an additional query request while this one executes.
+        [_restaurantTableView setScrollEnabled:FALSE];
+        
         [[UMAAppDelegate queryControllerShared] appendNewRestaurants];
     }
 }
 
 - (void)refreshRestaurantList
 {
-    NSLog(@"1 user refreshed list");
+    NSLog(@"user refreshed list");
     
     //This runs only when user pulls down to refresh. It clears out existing arrays and gets all new results.
     if (_isListening == FALSE)
@@ -139,29 +135,18 @@
         [self startListeningForCompletedQuery];
     }
     
-//    [_spinner startAnimating];
+    //This keeps the user from scrolling and sending an additional query request while this one executes.
+    [_restaurantTableView setScrollEnabled:FALSE];
+    
     [[UMAAppDelegate queryControllerShared] refreshRestaurants];
+    
+    // queryC tells the spinner to start, but we don't want it to animate if user pulls down to refresh
+        //because the refreshControl already has a spinning animation.
+    [_spinner stopAnimating];
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
-{
-    //to-do: set internationalQuery based on value pulled from queryController
-    //to-do: if I use Google results for something other than just international queries, I need to display attribution then
-    internationalQuery = FALSE;
-    
-    if (internationalQuery == TRUE)
-    {
-        //Only non-U.S. queries are using Google data, so only load footer with attribution if international
-        UIImage *footerImage = [UIImage imageNamed:@"google.png"];
-        UIImageView *footerImageView = [[UIImageView alloc] initWithImage:footerImage];
-        footerImageView.contentMode = UIViewContentModeScaleAspectFit;
-        [_restaurantTableView setTableFooterView:footerImageView];
-    }
-    else
-    {
-        //to-do: display Factual attribution (if required)
-    }
-    
+{    
     NSLog(@"openNowVC: # openNow before removeAll:%d", _openNow.count);
     
     [_openNow removeAllObjects];
@@ -180,11 +165,9 @@
     }
     
     [_restaurantTableView reloadData];
-    
-    NSLog(@"openNowVC: restaurantsAcquired");
-    
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
+    [_restaurantTableView setScrollEnabled:TRUE];
 }
 
 - (void)didReceiveMemoryWarning
@@ -330,18 +313,8 @@
     [self startSpinner];
 }
 
-- (IBAction)sortButtonPressed:(id)sender
-{
-    //to-do: show options for how to sort - I'm just testing here
-    NSSortDescriptor *sortByName = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
-    [_openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByName]];
-    [_restaurantTableView reloadData];
-}
-
 - (IBAction)homeButtonPressed:(id)sender
 {
-//    homeViewController *homeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
-//    [self presentViewController:homeVC animated:TRUE completion:nil];
     [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 

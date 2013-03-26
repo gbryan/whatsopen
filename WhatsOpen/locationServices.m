@@ -43,7 +43,7 @@
     NSTimeInterval age = fabs([updateDate timeIntervalSinceNow]);
     NSLog(@"loc age: %f", age);
     
-    if (age < 60.0)
+    if (age < 60)
     {        
         //Make sure acquired location meets our accuracy requirements of ~10 meters
         if(newLocation.horizontalAccuracy <= manager.desiredAccuracy)
