@@ -50,6 +50,9 @@
     [self.takeoutButton setTitleColor:[UIColor whiteColor]
                                    forState:UIControlStateSelected];
     
+    //initialize this int
+    NSInteger previouslySelectedInt = -1;
+    
     if ([self.arrayToSort isEqualToString:@"openNow"])
     {
         self.sortOptionLabels = [[NSArray alloc]initWithObjects:
@@ -65,8 +68,9 @@
                             SORT_CLOSED_NEXT,
                             SORT_PRICE_LEVEL, nil];
         
-        //to-do: Set pickerView to previous setting
-//        NSInteger previouslySelected = [UMAAppDelegate queryControllerShared].openNowSort
+        //Get previous setting for sorting
+        NSString *previouslySelected = [UMAAppDelegate queryControllerShared].openNowSort;
+        previouslySelectedInt = [self.sortKeys indexOfObject:previouslySelected];
     }
     else if ([self.arrayToSort isEqualToString:@"openLater"])
     {
@@ -82,6 +86,10 @@
                             SORT_RATING,
                             SORT_OPEN_NEXT,
                             SORT_PRICE_LEVEL, nil];
+        
+        //Get previous setting for sorting
+        NSString *previouslySelected = [UMAAppDelegate queryControllerShared].openNowSort;
+        previouslySelectedInt = [self.sortKeys indexOfObject:previouslySelected];
     }
     else if ([self.arrayToSort isEqualToString:@"hoursUnknown"])
     {
@@ -95,11 +103,18 @@
                             SORT_DISTANCE,
                             SORT_RATING,
                             SORT_PRICE_LEVEL, nil];
+        
+        //Get previous setting for sorting
+        NSString *previouslySelected = [UMAAppDelegate queryControllerShared].openNowSort;
+        previouslySelectedInt = [self.sortKeys indexOfObject:previouslySelected];
     }
     else
     {
         NSLog(@"sortVC: invalid array name specified for arrayToSort");
     }
+    
+    // Set picker to the previously set value.
+    [self.sortPicker selectRow:previouslySelectedInt inComponent:0 animated:FALSE];
 }
 
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
