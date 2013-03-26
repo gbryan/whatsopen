@@ -835,7 +835,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="153" id="t0v-rB-Rf6"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="14"/>
                                 <state key="normal" title="Accepts Credit Cards">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -848,10 +848,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kka-ia-SeR">
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="153" id="kDK-1Q-6h2"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="17"/>
                                 <state key="normal" title="Serves Alcohol">
                                     <color key="titleColor" red="0.19607843137254902" green="0.30980392156862746" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -864,7 +861,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zdR-mP-kKJ">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="152" id="KAd-dO-rSi"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="16"/>
                                 <state key="normal" title="Takeout Available">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -877,7 +877,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s6v-ni-zHG">
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <fontDescription key="fontDescription" name="Georgia-Bold" family="Georgia" pointSize="17"/>
                                 <state key="normal" title="Free Parking">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -1240,6 +1240,116 @@
         <image name="flag.png" width="32" height="32"/>
         <image name="whats_open.png" width="114" height="114"/>
     </resources>
+    <classes>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="aboutViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/aboutViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeButtonPressed:"/>
+            </relationships>
+        </class>
+        <class className="homeViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/homeViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="dessertButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="drinkButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="mealButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="hoursUnknownViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/hoursUnknownViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="homeButtonPressed:"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="hoursViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/hoursViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeHoursView:"/>
+                <relationship kind="action" name="flagButtonPressed:"/>
+                <relationship kind="outlet" name="hoursTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+            </relationships>
+        </class>
+        <class className="mapViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/mapViewController.h"/>
+        </class>
+        <class className="moreDetailsViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/moreDetailsViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeButtonPressed:"/>
+                <relationship kind="action" name="flagButtonPressed:"/>
+                <relationship kind="outlet" name="detailsTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+            </relationships>
+        </class>
+        <class className="openLaterViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/openLaterViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="homeButtonPressed:"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="openNowViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/openNowViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="homeButtonPressed:"/>
+                <relationship kind="action" name="sortButtonPressed:"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="restaurantTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="spinner" candidateClass="UIActivityIndicatorView"/>
+            </relationships>
+        </class>
+        <class className="placeDetailViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/placeDetailViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="flagButtonPressed:"/>
+                <relationship kind="outlet" name="contactInfoTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="distanceLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="googleMapView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="loadingIndicator" candidateClass="UIActivityIndicatorView"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UINavigationItem"/>
+                <relationship kind="outlet" name="openNowOrLater" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="priceIcon" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="ratingIcon" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="restaurantImage" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="topView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="selectProblemViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/selectProblemViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="closeButtonPressed:"/>
+                <relationship kind="action" name="submitButtonPressed:"/>
+                <relationship kind="outlet" name="navBar" candidateClass="UIToolbar"/>
+                <relationship kind="outlet" name="problemExplanation" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="problemPicker" candidateClass="UIPickerView"/>
+                <relationship kind="outlet" name="problemReference" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="sortViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/sortViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="acceptsCCButtonPressed:"/>
+                <relationship kind="action" name="doneButtonPressed:"/>
+                <relationship kind="action" name="freeParkingButtonPressed:"/>
+                <relationship kind="action" name="servesAlcoholButtonPressed:"/>
+                <relationship kind="action" name="takeoutButtonPressed:"/>
+                <relationship kind="outlet" name="acceptsCCButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="freeParkingButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="servesAlcoholButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="sortPicker" candidateClass="UIPickerView"/>
+                <relationship kind="outlet" name="takeoutButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

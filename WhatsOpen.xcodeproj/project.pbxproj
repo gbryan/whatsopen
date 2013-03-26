@@ -59,6 +59,7 @@
 		93559C5A170151D200A976DA /* bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C57170151D200A976DA /* bar.png */; };
 		93559C5B170151D200A976DA /* dessert.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C58170151D200A976DA /* dessert.png */; };
 		93559C5C170151D200A976DA /* meal.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C59170151D200A976DA /* meal.png */; };
+		93559C5E1702026900A976DA /* bg_color.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C5D1702026800A976DA /* bg_color.png */; };
 		9375E27416FE8A1A005980F2 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E27316FE8A1A005980F2 /* GoogleMaps.framework */; };
 		9375E27616FE8B19005980F2 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9375E27516FE8B19005980F2 /* GoogleMaps.bundle */; };
 		9375E27816FE8B4D005980F2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E27716FE8B4D005980F2 /* AVFoundation.framework */; };
@@ -158,6 +159,7 @@
 		93559C57170151D200A976DA /* bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bar.png; sourceTree = "<group>"; };
 		93559C58170151D200A976DA /* dessert.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dessert.png; sourceTree = "<group>"; };
 		93559C59170151D200A976DA /* meal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meal.png; sourceTree = "<group>"; };
+		93559C5D1702026800A976DA /* bg_color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_color.png; sourceTree = "<group>"; };
 		9375E27316FE8A1A005980F2 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		9375E27516FE8B19005980F2 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../../../Downloads/GoogleMaps-iOS-1.1.1/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		9375E27716FE8B4D005980F2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -282,6 +284,7 @@
 		93408E53168EA828004124BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				93559C5D1702026800A976DA /* bg_color.png */,
 				93559C57170151D200A976DA /* bar.png */,
 				93559C58170151D200A976DA /* dessert.png */,
 				93559C59170151D200A976DA /* meal.png */,
@@ -528,6 +531,7 @@
 				93559C5A170151D200A976DA /* bar.png in Resources */,
 				93559C5B170151D200A976DA /* dessert.png in Resources */,
 				93559C5C170151D200A976DA /* meal.png in Resources */,
+				93559C5E1702026900A976DA /* bg_color.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

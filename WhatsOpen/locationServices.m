@@ -38,12 +38,12 @@
     NSLog(@"got a location");
     NSLog(@"intermediate: %f,%f  accuracy:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude, newLocation.horizontalAccuracy);
     NSLog(@"desired accuracy: %f", manager.desiredAccuracy);
-    //Make sure we're using a location acquired in the last 15 seconds
+    //Make sure we're using a location acquired recently
     NSDate *updateDate = newLocation.timestamp;
     NSTimeInterval age = fabs([updateDate timeIntervalSinceNow]);
     NSLog(@"loc age: %f", age);
     
-    if (age < 15.0)
+    if (age < 60.0)
     {        
         //Make sure acquired location meets our accuracy requirements of ~10 meters
         if(newLocation.horizontalAccuracy <= manager.desiredAccuracy)

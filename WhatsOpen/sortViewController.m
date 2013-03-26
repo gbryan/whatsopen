@@ -33,10 +33,22 @@
     [self.freeParkingButton setSelected:[UMAAppDelegate queryControllerShared].filterFreeParking];
     [self.takeoutButton setSelected:[UMAAppDelegate queryControllerShared].filterTakeout];
     
-    [self.servesAlcoholButton setBackgroundImage:[UIImage imageNamed:@"bar.png"] forState:UIControlStateSelected];
-    [self.acceptsCCButton setBackgroundImage:[UIImage imageNamed:@"bar.png"] forState:UIControlStateSelected];
-    [self.freeParkingButton setBackgroundImage:[UIImage imageNamed:@"bar.png"] forState:UIControlStateSelected];
-    [self.takeoutButton setBackgroundImage:[UIImage imageNamed:@"bar.png"] forState:UIControlStateSelected];
+    [self.servesAlcoholButton setBackgroundImage:[UIImage imageNamed:@"bg_color.png"]
+                                        forState:UIControlStateSelected];
+    [self.servesAlcoholButton setTitleColor:[UIColor whiteColor]
+                                   forState:UIControlStateSelected];
+    [self.acceptsCCButton setBackgroundImage:[UIImage imageNamed:@"bg_color.png"]
+                                    forState:UIControlStateSelected];
+    [self.acceptsCCButton setTitleColor:[UIColor whiteColor]
+                                   forState:UIControlStateSelected];
+    [self.freeParkingButton setBackgroundImage:[UIImage imageNamed:@"bg_color.png"]
+                                      forState:UIControlStateSelected];
+    [self.freeParkingButton setTitleColor:[UIColor whiteColor]
+                                   forState:UIControlStateSelected];
+    [self.takeoutButton setBackgroundImage:[UIImage imageNamed:@"bg_color.png"]
+                                  forState:UIControlStateSelected];
+    [self.takeoutButton setTitleColor:[UIColor whiteColor]
+                                   forState:UIControlStateSelected];
     
     if ([self.arrayToSort isEqualToString:@"openNow"])
     {
@@ -110,59 +122,65 @@
 
 - (IBAction)acceptsCCButtonPressed:(id)sender
 {
-    NSLog(@"before: %d %d", self.acceptsCCButton.selected, [UMAAppDelegate queryControllerShared].filterAcceptsCC);
     [self.acceptsCCButton setSelected:!self.acceptsCCButton.selected];
-    NSLog(@"after: %d %d", self.acceptsCCButton.selected, [UMAAppDelegate queryControllerShared].filterAcceptsCC);
 }
 
 - (IBAction)servesAlcoholButtonPressed:(id)sender
 {
     [self.servesAlcoholButton setSelected:!self.servesAlcoholButton.selected];
-    [UMAAppDelegate queryControllerShared].filterServesAlcohol = !self.servesAlcoholButton.selected;
 }
 
 - (IBAction)takeoutButtonPressed:(id)sender
 {
     [self.takeoutButton setSelected:!self.takeoutButton.selected];
-    [UMAAppDelegate queryControllerShared].filterTakeout = !self.takeoutButton.selected;
 }
 
 - (IBAction)freeParkingButtonPressed:(id)sender
 {
     [self.freeParkingButton setSelected:!self.freeParkingButton.selected];
-    [UMAAppDelegate queryControllerShared].filterFreeParking = !self.freeParkingButton.selected;
 }
 
 - (IBAction)doneButtonPressed:(id)sender
 {
     NSInteger selectedRow = [self.sortPicker selectedRowInComponent:0];
-
-    //to-do: check if filter criteria changed
-        //if so, run query with new filter criteria, and make sure it sorts by new sort criteria (if they changed - but we don't need to check if they changed; just change them anyway)
     
-    //set sort criteria in queryC
-    if ([arrayToSort isEqualToString:@"openNow"])
-    {
-        [UMAAppDelegate queryControllerShared].openNowSort = [self.sortKeys objectAtIndex:selectedRow];
-    }
-    else if ([arrayToSort isEqualToString:@"openLater"])
-    {
-        [UMAAppDelegate queryControllerShared].openLaterSort = [self.sortKeys objectAtIndex:selectedRow];
-    }
-    else if ([arrayToSort isEqualToString:@"hoursUnknown"])
-    {
-        [UMAAppDelegate queryControllerShared].hoursUnknownSort = [self.sortKeys objectAtIndex:selectedRow];
-    }
-    //set filter criteria in queryC
-    //run query in queryC if filter values changed from initial state (if only sort changed, just re-sort the arrays without issuing new query)
-    [UMAAppDelegate queryControllerShared].filterAcceptsCC = self.acceptsCCButton.selected;
+    // Determine whether any filter values have changed
+    BOOL oldAcceptsCCValue = [UMAAppDelegate queryControllerShared].filterAcceptsCC;
+    BOOL oldTakeoutValue = [UMAAppDelegate queryControllerShared].filterTakeout;
+    BOOL oldFreeParkingValue = [UMAAppDelegate queryControllerShared].filterFreeParking;
+    BOOL oldServesAlcoholValue = [UMAAppDelegate queryControllerShared].filterServesAlcohol;
     
-    [[UMAAppDelegate queryControllerShared]sortArrayNamed:self.arrayToSort
-                                                    ByKey:[self.sortKeys objectAtIndex:selectedRow]];
+    if ((oldAcceptsCCValue != self.acceptsCCButton.selected) ||
+        (oldTakeoutValue != self.takeoutButton.selected) ||
+        (oldFreeParkingValue != self.freeParkingButton.selected) ||
+        (oldServesAlcoholValue != self.servesAlcoholButton.selected))
+    {
+        // One or more filter values has changed. Set new values.
+        [UMAAppDelegate queryControllerShared].filterAcceptsCC = self.acceptsCCButton.selected;
+        [UMAAppDelegate queryControllerShared].filterTakeout = self.takeoutButton.selected;
+        [UMAAppDelegate queryControllerShared].filterFreeParking = self.freeParkingButton.selected;
+        [UMAAppDelegate queryControllerShared].filterServesAlcohol = self.servesAlcoholButton.selected;
+        
+        // Set new sort value and re-sort array (we aren't checking whether or not the sort key has changed).
+        [[UMAAppDelegate queryControllerShared]sortArrayNamed:self.arrayToSort
+                                                        ByKey:[self.sortKeys objectAtIndex:selectedRow]];
+        
+        // Run the restaurant query with the new filter and sort criteria.
+        [[UMAAppDelegate queryControllerShared]refreshRestaurants];
+    }
+    else
+    {
+        // Even if filter values haven't changed, we will re-sort by the specified sort key (without re-querying Factual).
+            // We are not checking whether or not the key has actually changed from its old value.
+        [[UMAAppDelegate queryControllerShared]sortArrayNamed:self.arrayToSort
+                                                        ByKey:[self.sortKeys objectAtIndex:selectedRow]];
+        
+        // Tell the list VCs to reload the arrays from queryController and reload their table data.
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
+                                                            object:nil];
+    }
     
-    //This tells the list VCs to reload the arrays from queryController and reload their table data.
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
-                                                        object:nil];
     [self dismissViewControllerAnimated:TRUE completion:nil];
 }
+
 @end

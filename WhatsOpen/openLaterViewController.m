@@ -33,20 +33,12 @@
     
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
-    navBarTitle.textAlignment = NSTextAlignmentLeft;
+    navBarTitle.textAlignment = NSTextAlignmentCenter;
     navBarTitle.text = [UMAAppDelegate queryControllerShared].queryIntention;
     navBarTitle.backgroundColor = [UIColor clearColor];
     navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:20];
     navBarTitle.textColor = [UIColor whiteColor];
     _navBar.titleView = navBarTitle;
-    
-    //display spinner to indicate to the user that the query is still running
-    _spinner = [[UIActivityIndicatorView alloc]
-                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.center.y) - 44);
-    _spinner.hidesWhenStopped = YES;
-    _spinner.color = [UIColor blackColor];
-    [self.view addSubview:_spinner];
     
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
@@ -62,13 +54,13 @@
         [self startListeningForCompletedQuery];
     }
     
-    //to-do: do I use this anymore?
-    //Wait until app becomes active again after a period of inactivity, and when it
-    //becomes active, app delegate will refresh the tableview and notify openNowVC to
-    //start the spinner animation.
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(startSpinner)
                                                  name:@"startSpinner"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(stopSpinner)
+                                                 name:@"stopSpinner"
                                                object:nil];
 
 }
@@ -81,9 +73,28 @@
 
 - (void)startSpinner
 {
+    NSLog(@"openLaterVC: start spinner called");
+    //display spinner to indicate to the user that the query is still running
+    _spinner = [[UIActivityIndicatorView alloc]
+                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _spinner.hidesWhenStopped = YES;
+    _spinner.color = [UIColor blackColor];
+    [self.view addSubview:_spinner];
+    
+    
     //Ensure that spinner is centered wherever user has scrolled in tableView
     _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.contentOffset.y)+(self.view.center.y));
+    
+    if (isInitialLoad == TRUE)
+    {
+        _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.center.y) - 44);
+    }
     [_spinner startAnimating];
+}
+
+- (void)stopSpinner
+{
+    [_spinner stopAnimating];
 }
 
 - (void)startListeningForCompletedQuery
@@ -104,7 +115,7 @@
     //This runs when the view first loads (get initial list of results) and when user scrolls to bottom of list to request more restaurants (they are appended to bottom of list).
     if ([[UMAAppDelegate queryControllerShared]noMoreResults] == FALSE)
     {
-        [_spinner startAnimating];
+//        [_spinner startAnimating];
         
         if (_isListening == FALSE)
         {
@@ -293,6 +304,9 @@
 {
     if ([[segue identifier] isEqualToString:@"detailSegue"])
     {
+        //We have to load the animation on a separate thread or it won't appear at all.
+        [NSThread detachNewThreadSelector:@selector(threadStartAnimating:) toTarget:self withObject:nil];
+        
         // Get reference to the destination view controller
         placeDetailViewController *destinationVC = [segue destinationViewController];
         NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
@@ -303,6 +317,11 @@
         sortViewController *sortVC = [segue destinationViewController];
         sortVC.arrayToSort = @"openLater";
     }
+}
+
+- (void) threadStartAnimating:(id)data
+{
+    [self startSpinner];
 }
 
 - (IBAction)homeButtonPressed:(id)sender

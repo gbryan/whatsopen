@@ -67,14 +67,12 @@
     mapVC.markerTitle = restaurantObject.name;
     mapVC.markerSnippet = restaurantObject.cuisineLabel;
     [self.googleMapView addSubview:mapVC.view];
-    
-    
+}
 
-    
-    
-    
-//to-do: hide all these until 1) location is acquired, 2) detail query is completed, and 3) Google map loads
-    
+- (void)viewDidAppear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"stopSpinner"
+                                                        object:nil];
 }
 
 //this is called by restaurantDetailsAcquired so that the page show info reflecting the updated restaurantObject from the detail query

@@ -128,6 +128,9 @@
 {
     NSLog(@"queryC: refreshRestaurants");
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
+                                                        object:nil];
+    
     //Get notification when device location has been acquired
     _queryPurpose = @"refresh";
     [locationService addObserver:self forKeyPath: @"deviceLocation"
@@ -150,6 +153,9 @@
     //Don't run the query if there are already 500 restaurants acquired because Factual provides a max of 500, and the query will return an error.
     if (_totalResults < 500)
     {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
+                                                            object:nil];
+        
         [self queryFactualForRestaurantsNearLatitude:_deviceLocation.latitude longitude:_deviceLocation.longitude withOffset:offset];
     }
     else
@@ -334,7 +340,7 @@
 
 #pragma mark - Factual Query
 - (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng withOffset:(NSInteger)offset
-{
+{    
     _queryObject = [FactualQuery query];
 
     _queryObject.limit = 50;
