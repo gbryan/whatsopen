@@ -262,6 +262,7 @@
         cell.detailTextLabel.backgroundColor = [UIColor clearColor];
         cell.textLabel.font = [UIFont systemFontOfSize:18];
         cell.detailTextLabel.text = nil;
+        cell.userInteractionEnabled = FALSE;
     }
     return cell;
 }
