@@ -10,7 +10,7 @@
 
 @interface openLaterViewController ()
 {
-    NSMutableArray* _openLater;
+    NSMutableArray *_openLater;
     BOOL isInitialLoad;
     BOOL internationalQuery;
 //    BOOL _lastResultWasNull;
@@ -25,7 +25,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
 //    _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
 //    _lastResultWasNull = FALSE;
@@ -34,9 +34,9 @@
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
     navBarTitle.textAlignment = NSTextAlignmentLeft;
-    navBarTitle.text = @"Open Later Today";
+    navBarTitle.text = [UMAAppDelegate queryControllerShared].queryIntention;
     navBarTitle.backgroundColor = [UIColor clearColor];
-    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:25];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:20];
     navBarTitle.textColor = [UIColor whiteColor];
     _navBar.titleView = navBarTitle;
     
@@ -48,24 +48,21 @@
     _spinner.color = [UIColor blackColor];
     [self.view addSubview:_spinner];
     
-//    //set tint color of section headers
-//    [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
-    
     //set up pull to refresh
     UIRefreshControl *pullToRefresh = [[UIRefreshControl alloc]init];
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
-
-    //to-do: I commented this out bc restaurants will already be loaded from when app first loads on openNow and query is issued.
-//    [_spinner startAnimating];
-//    [self startListeningForCompletedQuery];
-    //    [self loadRestaurantList];
     
     _openLater = [[NSMutableArray alloc]
                   initWithArray:[UMAAppDelegate queryControllerShared].openLater];
     [_restaurantTableView reloadData];
 
-
+    if (_isListening == FALSE)
+    {
+        [self startListeningForCompletedQuery];
+    }
+    
+    //to-do: do I use this anymore?
     //Wait until app becomes active again after a period of inactivity, and when it
     //becomes active, app delegate will refresh the tableview and notify openNowVC to
     //start the spinner animation.
@@ -74,6 +71,12 @@
                                                  name:@"startSpinner"
                                                object:nil];
 
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    isInitialLoad = FALSE;
+    [_restaurantTableView reloadData];
 }
 
 - (void)startSpinner
@@ -85,7 +88,7 @@
 
 - (void)startListeningForCompletedQuery
 {
-    NSLog(@"LISTENING!!!!");
+    NSLog(@"openLaterVC: LISTENING!!!!");
     
     _isListening = TRUE;
     
@@ -150,12 +153,9 @@
         isInitialLoad = FALSE;
     }
     
-    NSLog(@"openLaterVC: restaurantsAcquired");
-    
     [_restaurantTableView reloadData];
     [_spinner stopAnimating];
     [self.refreshControl endRefreshing];
-    
 }
 
 
@@ -172,7 +172,7 @@
     return 1;
 }
 
-//- (NSString* )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 //{
 //    return @"Open Later Today";
 //}
@@ -206,7 +206,7 @@
 
     if (_openLater.count > 0)
     {
-        restaurant* restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
         
 //        UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
         nameLabel.text = restaurantObject.name;
@@ -272,7 +272,7 @@
     //Use green background to indicate that the restaurant is opening soon
     if (_openLater.count > 0)
     {
-        restaurant* restaurantObject = [_openLater objectAtIndex:indexPath.row];
+        restaurant *restaurantObject = [_openLater objectAtIndex:indexPath.row];
         if (restaurantObject.openingSoon == TRUE)
         {
             cell.backgroundColor = [UIColor colorWithRed:.05 green:1 blue:.05 alpha:.1];
@@ -291,10 +291,25 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get reference to the destination view controller
-    placeDetailViewController *destinationVC = [segue destinationViewController];
-    NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
-    destinationVC.restaurantObject = [_openLater objectAtIndex:indexPath.row];
+    if ([[segue identifier] isEqualToString:@"detailSegue"])
+    {
+        // Get reference to the destination view controller
+        placeDetailViewController *destinationVC = [segue destinationViewController];
+        NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
+        destinationVC.restaurantObject = [_openLater objectAtIndex:indexPath.row];
+    }
+    else if ([[segue identifier] isEqualToString:@"sort"])
+    {
+        sortViewController *sortVC = [segue destinationViewController];
+        sortVC.arrayToSort = @"openLater";
+    }
+}
+
+- (IBAction)homeButtonPressed:(id)sender
+{
+//    homeViewController *homeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
+//    [self presentViewController:homeVC animated:TRUE completion:nil];
+    [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 
 @end

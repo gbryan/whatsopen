@@ -10,10 +10,10 @@
 
 
 @interface FactualRowImpl : FactualRow {
-  NSArray*  _cells;
-  NSString* _rowId;  
-  NSString* _facetName;  
-  NSMutableArray*  _columns;
+  NSArray * _cells;
+  NSString *_rowId;  
+  NSString *_facetName;  
+  NSMutableArray * _columns;
   NSMutableDictionary* _columnIndex;
   NSMutableDictionary* _jsonObject;
   

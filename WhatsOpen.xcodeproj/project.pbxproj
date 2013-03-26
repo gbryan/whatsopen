@@ -52,6 +52,13 @@
 		93559C421700042300A976DA /* SVModalWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C3B1700042300A976DA /* SVModalWebViewController.m */; };
 		93559C431700042300A976DA /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 93559C3C1700042300A976DA /* SVWebViewController.bundle */; };
 		93559C441700042300A976DA /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C3E1700042300A976DA /* SVWebViewController.m */; };
+		93559C471700C13000A976DA /* sortViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C461700C13000A976DA /* sortViewController.m */; };
+		93559C49170111F800A976DA /* whats_open.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C48170111F800A976DA /* whats_open.png */; };
+		93559C4C17011A0800A976DA /* homeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C4B17011A0800A976DA /* homeViewController.m */; };
+		93559C5617011BBF00A976DA /* aboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93559C5517011BBF00A976DA /* aboutViewController.m */; };
+		93559C5A170151D200A976DA /* bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C57170151D200A976DA /* bar.png */; };
+		93559C5B170151D200A976DA /* dessert.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C58170151D200A976DA /* dessert.png */; };
+		93559C5C170151D200A976DA /* meal.png in Resources */ = {isa = PBXBuildFile; fileRef = 93559C59170151D200A976DA /* meal.png */; };
 		9375E27416FE8A1A005980F2 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E27316FE8A1A005980F2 /* GoogleMaps.framework */; };
 		9375E27616FE8B19005980F2 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9375E27516FE8B19005980F2 /* GoogleMaps.bundle */; };
 		9375E27816FE8B4D005980F2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9375E27716FE8B4D005980F2 /* AVFoundation.framework */; };
@@ -141,6 +148,16 @@
 		93559C3E1700042300A976DA /* SVWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVWebViewController.m; sourceTree = "<group>"; };
 		93559C3F1700042300A976DA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SVWebViewController.strings"; sourceTree = "<group>"; };
 		93559C401700042300A976DA /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/SVWebViewController.strings"; sourceTree = "<group>"; };
+		93559C451700C13000A976DA /* sortViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sortViewController.h; sourceTree = "<group>"; };
+		93559C461700C13000A976DA /* sortViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = sortViewController.m; sourceTree = "<group>"; };
+		93559C48170111F800A976DA /* whats_open.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whats_open.png; path = WhatsOpen/whats_open.png; sourceTree = SOURCE_ROOT; };
+		93559C4A17011A0800A976DA /* homeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = homeViewController.h; sourceTree = "<group>"; };
+		93559C4B17011A0800A976DA /* homeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = homeViewController.m; sourceTree = "<group>"; };
+		93559C5417011BBE00A976DA /* aboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aboutViewController.h; sourceTree = "<group>"; };
+		93559C5517011BBF00A976DA /* aboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = aboutViewController.m; sourceTree = "<group>"; };
+		93559C57170151D200A976DA /* bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bar.png; sourceTree = "<group>"; };
+		93559C58170151D200A976DA /* dessert.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dessert.png; sourceTree = "<group>"; };
+		93559C59170151D200A976DA /* meal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meal.png; sourceTree = "<group>"; };
 		9375E27316FE8A1A005980F2 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		9375E27516FE8B19005980F2 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../../../Downloads/GoogleMaps-iOS-1.1.1/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		9375E27716FE8B4D005980F2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -247,6 +264,7 @@
 		93408E52168EA828004124BE /* WhatsOpen */ = {
 			isa = PBXGroup;
 			children = (
+				93559C5317011A7000A976DA /* Home View */,
 				93973D2416D87364006C2B94 /* Restaurants */,
 				93DA346516D5B77100CC6C59 /* Location Services */,
 				93DA346416D5AE6100CC6C59 /* Query Controller */,
@@ -264,6 +282,10 @@
 		93408E53168EA828004124BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				93559C57170151D200A976DA /* bar.png */,
+				93559C58170151D200A976DA /* dessert.png */,
+				93559C59170151D200A976DA /* meal.png */,
+				93559C48170111F800A976DA /* whats_open.png */,
 				93A8173816E68D7A00C1CAFB /* moredetails.png */,
 				93EB0B8B16E57C34007A7021 /* clock.png */,
 				93EB0B8916E579B2007A7021 /* flag.png */,
@@ -335,6 +357,8 @@
 		93408E77168EAAA0004124BE /* Detail Views */ = {
 			isa = PBXGroup;
 			children = (
+				93559C451700C13000A976DA /* sortViewController.h */,
+				93559C461700C13000A976DA /* sortViewController.m */,
 				9305B2F916FEB20300B6E1C4 /* mapViewController.h */,
 				9305B2FA16FEB20300B6E1C4 /* mapViewController.m */,
 				93408E71168EAA35004124BE /* placeDetailViewController.h */,
@@ -358,6 +382,17 @@
 				93559C3E1700042300A976DA /* SVWebViewController.m */,
 			);
 			path = SVWebViewController;
+			sourceTree = "<group>";
+		};
+		93559C5317011A7000A976DA /* Home View */ = {
+			isa = PBXGroup;
+			children = (
+				93559C4A17011A0800A976DA /* homeViewController.h */,
+				93559C4B17011A0800A976DA /* homeViewController.m */,
+				93559C5417011BBE00A976DA /* aboutViewController.h */,
+				93559C5517011BBF00A976DA /* aboutViewController.m */,
+			);
+			name = "Home View";
 			sourceTree = "<group>";
 		};
 		93973D2416D87364006C2B94 /* Restaurants */ = {
@@ -489,6 +524,10 @@
 				9375E27616FE8B19005980F2 /* GoogleMaps.bundle in Resources */,
 				93559C411700042300A976DA /* SVWebViewController.strings in Resources */,
 				93559C431700042300A976DA /* SVWebViewController.bundle in Resources */,
+				93559C49170111F800A976DA /* whats_open.png in Resources */,
+				93559C5A170151D200A976DA /* bar.png in Resources */,
+				93559C5B170151D200A976DA /* dessert.png in Resources */,
+				93559C5C170151D200A976DA /* meal.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +554,9 @@
 				9305B2FB16FEB20300B6E1C4 /* mapViewController.m in Sources */,
 				93559C421700042300A976DA /* SVModalWebViewController.m in Sources */,
 				93559C441700042300A976DA /* SVWebViewController.m in Sources */,
+				93559C471700C13000A976DA /* sortViewController.m in Sources */,
+				93559C4C17011A0800A976DA /* homeViewController.m in Sources */,
+				93559C5617011BBF00A976DA /* aboutViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,7 +32,7 @@
     //    self.deviceLocation = CLLocationCoordinate2DMake(35.913164,-79.055765);
 }
 
--(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray* )locations
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {   
     CLLocation *newLocation = [locations lastObject];
     NSLog(@"got a location");

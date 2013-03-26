@@ -13,7 +13,7 @@
 
 @interface selectProblemViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
 
-@property (nonatomic, strong) restaurant* restaurantObject;
+@property (nonatomic, strong) restaurant *restaurantObject;
 - (IBAction)closeButtonPressed:(id)sender;
 - (IBAction)submitButtonPressed:(id)sender;
 @property (weak, nonatomic) IBOutlet UITextField *problemExplanation;

@@ -10,9 +10,9 @@
 
 @interface FactualRowMetadataImpl : FactualRowMetadata
 {
-    NSString* username;
-    NSString* comment;
-    NSString* reference;
+    NSString *username;
+    NSString *comment;
+    NSString *reference;
 }
 -(void) generateQueryString:(NSMutableString*)qryString;
 

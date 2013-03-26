@@ -88,10 +88,7 @@
 
     /*
      to-do: add image attribution: https://developers.google.com/places/documentation/photos
-     to-do: visit website icon attribution: "Uses icons from Project Icons by Mihaiciuc Bogdan." The text Mihaiciuc Bogdan should link to http://bogo-d.deviantart.com
-     to-do: if I add icons other than his, I need to provide attribution
-     to-do: flag icon by Kuswanto
-     */
+ */
     restaurantImage.image = restaurantObject.image;
     
     //Open status display
@@ -210,7 +207,7 @@
     //to-do: check when to display these based on whether current restaurant has a website, phone number, hours, etc.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactInfo"];
     
-    NSString* hoursDetail = [[NSString alloc]init];
+    NSString *hoursDetail = [[NSString alloc]init];
     if (restaurantObject.isOpenNow == TRUE) hoursDetail = restaurantObject.closingNextDisplay;
     if (restaurantObject.isOpenNow == FALSE) hoursDetail = restaurantObject.openNextDisplay;
     
@@ -272,9 +269,9 @@
 
 - (void)openDirections
 {
-    NSString* restaurantLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
-    NSString* deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
-//    NSString* restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *restaurantLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
+    NSString *deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
+//    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, restaurantLatLngString]];
     NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, restaurantLatLngString]];
@@ -323,7 +320,7 @@
 
 -(void)callRestaurant
 {
-    NSString* phoneNumber = [NSString stringWithFormat:@"telprompt:%@", restaurantObject.phone];
+    NSString *phoneNumber = [NSString stringWithFormat:@"telprompt:%@", restaurantObject.phone];
     NSURL *URL = [NSURL URLWithString:phoneNumber];
     [[UIApplication sharedApplication] openURL:URL];
 }

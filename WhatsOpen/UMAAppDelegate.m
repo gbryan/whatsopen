@@ -9,12 +9,20 @@
 #import "UMAAppDelegate.h"
 
 @implementation UMAAppDelegate
+{
+    BOOL isInitialLoad;
+    NSDate *wentInactiveTimestamp;
+}
+
 @synthesize apiObject = _apiObject;
 @synthesize queryControllerShared = _queryControllerShared;
 //@synthesize locationServiceShared = _locationServiceShared;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{    
+{
+    isInitialLoad = TRUE;
+    wentInactiveTimestamp = nil;
+    
     //set navigation bar and toolbar tint to dark blue
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     [[UIToolbar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
@@ -61,6 +69,8 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    wentInactiveTimestamp = [NSDate date];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -69,26 +79,19 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+{    
+    //When re-opening app, show the main screen if it's been more than 5 minutes since user made app inactive.
+        //We don't want it to always show main screen again bc the app will become active again following a phone call
+        //or viewing directions to the restaurant in another maps app. User may want to look back at this app immediately afterward.
     
-    //App will appear to become active more than once on initial load when user is prompted to allow location services, but
-        //we don't want to run the query twice, so we check whehter or not user has allowed location services already.
-        //If loc services not allowed for this app, we attempt to get location, which causes the app
-        //to prompt the user to allow location services (unless they already said they don't want to allow them).
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized)
+    NSInteger secondsInactive = abs([wentInactiveTimestamp timeIntervalSinceNow]);
+    
+    if (isInitialLoad == FALSE && secondsInactive > 300)
     {
-        NSLog(@"UMAAppDelegate: refreshing restaurants");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
-                                                            object:nil];
-        [_queryControllerShared refreshRestaurants];
+        [self.window.rootViewController dismissViewControllerAnimated:TRUE completion:nil];
     }
-    else
-    {
-        NSLog(@"UMAAppDelegate: calling getLocation");
-        locationServices *locationService = [[locationServices alloc]init];
-        [locationService getLocation];
-    }
+    
+    isInitialLoad = FALSE;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

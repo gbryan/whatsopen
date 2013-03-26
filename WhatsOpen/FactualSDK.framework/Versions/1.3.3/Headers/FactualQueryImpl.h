@@ -48,12 +48,12 @@ typedef enum {
  ------------------------------------------------------------------------------*/
 
 @interface FactualSimpleValueFilterPredicate : FactualRowFilter {
-    NSString* _fieldName;
+    NSString *_fieldName;
     SimplePredicateType _type;
     id _value;
 }
 
-@property (nonatomic,copy)   NSString* fieldName;
+@property (nonatomic,copy)   NSString *fieldName;
 @property (nonatomic,assign) SimplePredicateType type;
 @property (nonatomic,retain) id value;
 
@@ -69,11 +69,11 @@ typedef enum {
 
 @interface FactualCompoundRowFilterPredicate : FactualRowFilter {
     CompoundFilterPredicateType _type;
-    NSMutableArray* _filters;
+    NSMutableArray *_filters;
 }
 
 @property (nonatomic,assign) CompoundFilterPredicateType type;
-@property (nonatomic,readonly) NSMutableArray* filterValues;
+@property (nonatomic,readonly) NSMutableArray *filterValues;
 
 -(id) initWithPredicateType:(CompoundFilterPredicateType) type filterValues:(NSArray*) filterValues;
 
@@ -86,12 +86,12 @@ typedef enum {
 @interface FactualCompoundValueFilterPredicate : FactualRowFilter
 {
     CompoundValuePredicateType _type;
-    NSArray* _values;
-    NSString* _fieldName;
+    NSArray *_values;
+    NSString *_fieldName;
 }
 @property (nonatomic,assign) CompoundValuePredicateType type;
-@property (nonatomic,retain) NSArray* values;
-@property (nonatomic,copy) NSString* fieldName;
+@property (nonatomic,retain) NSArray *values;
+@property (nonatomic,copy) NSString *fieldName;
 
 -(id) initWithPredicateType:(CompoundValuePredicateType) type fieldName:(NSString*) fieldName  values:(NSArray*) values;
 
@@ -130,15 +130,15 @@ typedef enum {
  ------------------------------------------------------------------------------*/
 
 @interface FactualQueryImplementation : FactualQuery {
-    NSString*   _rowId;
+    NSString *  _rowId;
     NSUInteger  _offset;
     NSUInteger  _limit;
     FactualSortCriteria* _primarySortCriteria;
     FactualSortCriteria* _secondarySortCriteria;
-    NSMutableArray*    _rowFilters;
-    NSMutableArray*    _textTerms;
+    NSMutableArray *   _rowFilters;
+    NSMutableArray *   _textTerms;
     FactualGeoFilter* _geoFilter;
-    NSMutableArray*    _selectTerms;
+    NSMutableArray *   _selectTerms;
     NSUInteger  _minCountPerFacetValue;
     NSUInteger  _maxValuesPerFacet;
 }

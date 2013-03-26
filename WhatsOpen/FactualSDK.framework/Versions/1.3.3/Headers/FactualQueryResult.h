@@ -19,7 +19,7 @@
 /*! @property 
  @discussion The id of the table from which this result set was produced
  */ 
-@property (nonatomic,readonly)    NSString* tableId;
+@property (nonatomic,readonly)    NSString *tableId;
 
 
 /*! @property 
@@ -35,7 +35,7 @@
 /*! @property 
  @discussion The array of FactualRow objects
  */ 
-@property (nonatomic,readonly)    NSArray* rows;
+@property (nonatomic,readonly)    NSArray *rows;
 
 @end
 

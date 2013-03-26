@@ -46,12 +46,12 @@
 /*! @property 
  @discussion The opaque row identifier associated with this particular row object.  nil if no row id exists.
  */ 
-@property (nonatomic,readonly) NSString* rowId;
+@property (nonatomic,readonly) NSString *rowId;
 
 /*! @property 
  @discussion The name of the facet for this row object.  nil if no facet name exists.
  */ 
-@property (nonatomic,readonly) NSString* facetName;
+@property (nonatomic,readonly) NSString *facetName;
 
 /*! @property 
  @discussion A dictionary of name value pairs.

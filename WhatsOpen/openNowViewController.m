@@ -18,7 +18,7 @@
 
 @interface openNowViewController ()
 {
-    NSMutableArray* _openNow;
+    NSMutableArray *_openNow;
     BOOL isInitialLoad;
     BOOL internationalQuery;
     BOOL _isListening;
@@ -31,6 +31,11 @@
 @synthesize restaurantTableView=_restaurantTableView;
 @synthesize spinner=_spinner;
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -41,20 +46,12 @@
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
     navBarTitle.textAlignment = NSTextAlignmentLeft;
-    navBarTitle.text = @"Open Now";
+    navBarTitle.text = [UMAAppDelegate queryControllerShared].queryIntention;
     navBarTitle.backgroundColor = [UIColor clearColor];
-    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:25];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:20];
     navBarTitle.textColor = [UIColor whiteColor];
     _navBar.titleView = navBarTitle;
-    
-    //display spinner to indicate to the user that the query is still running
-    _spinner = [[UIActivityIndicatorView alloc]
-               initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.center.y) - 44);
-    _spinner.hidesWhenStopped = YES;
-    _spinner.color = [UIColor blackColor];
-    [self.view addSubview:_spinner];
-        
+            
     //set tint color of section headers
     [[UITableViewHeaderFooterView appearance]setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
@@ -63,24 +60,30 @@
     [pullToRefresh addTarget:self action:@selector(refreshRestaurantList) forControlEvents:UIControlEventValueChanged];
     self.refreshControl = pullToRefresh;
     
-    //Load the list of restaurants
-//    [self refreshRestaurantList];
-    
-    //Wait until app becomes active again after a period of inactivity, and when it
-    //becomes active, app delegate will refresh the tableview and notify openNowVC to
-    //start the spinner animation.
+    //Other views can notify openNowVC to start its spinner if they are presenting this VC.
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(startSpinner)
                                                  name:@"startSpinner"
                                                object:nil];
+    [self startSpinner];
     [self startListeningForCompletedQuery];
     
 }
 
 - (void)startSpinner
 {
+    NSLog(@"openNowVC: start spinner called");
+    //display spinner to indicate to the user that the query is still running
+    _spinner = [[UIActivityIndicatorView alloc]
+                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.center.y) - 44);
+    _spinner.hidesWhenStopped = YES;
+    _spinner.color = [UIColor blackColor];
+    [self.view addSubview:_spinner];
+    
+    
     //Ensure that spinner is centered wherever user has scrolled in tableView
-    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.contentOffset.y)+(self.view.center.y));
+//    _spinner.center = CGPointMake(self.tableView.center.x, (self.tableView.contentOffset.y)+(self.view.center.y));
     [_spinner startAnimating];
 }
 
@@ -205,7 +208,7 @@
     //Use red background to indicate that the restaurant is closing soon
     if (_openNow.count > 0)
     {
-        restaurant* restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
         if (restaurantObject.closingSoon == TRUE)
         {
             cell.backgroundColor = [UIColor colorWithRed:.7 green:0 blue:.1 alpha:.3];
@@ -243,7 +246,7 @@
     
     if (_openNow.count > 0)
     {
-        restaurant* restaurantObject = [_openNow objectAtIndex:indexPath.row];
+        restaurant *restaurantObject = [_openNow objectAtIndex:indexPath.row];
         
         nameLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:15.5];
         nameLabel.numberOfLines = 2;
@@ -300,5 +303,26 @@
         NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
         destinationVC.restaurantObject = [_openNow objectAtIndex:indexPath.row];
     }
+    else if ([[segue identifier] isEqualToString:@"sort"])
+    {
+        sortViewController *sortVC = [segue destinationViewController];
+        sortVC.arrayToSort = @"openNow";
+    }
 }
+
+- (IBAction)sortButtonPressed:(id)sender
+{
+    //to-do: show options for how to sort - I'm just testing here
+    NSSortDescriptor *sortByName = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+    [_openNow sortUsingDescriptors:[NSArray arrayWithObject:sortByName]];
+    [_restaurantTableView reloadData];
+}
+
+- (IBAction)homeButtonPressed:(id)sender
+{
+//    homeViewController *homeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
+//    [self presentViewController:homeVC animated:TRUE completion:nil];
+    [self dismissViewControllerAnimated:TRUE completion:nil];
+}
+
 @end

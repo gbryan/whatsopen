@@ -46,8 +46,8 @@
     
     // internal data members ...
 @private
-    NSString*              _apiKey;
-    NSString*              _secret;
+    NSString *             _apiKey;
+    NSString *             _secret;
     BOOL*                  _debug;
 }
 
@@ -65,7 +65,7 @@ typedef enum  {
  @discussion Returns the read-only api-key used to authenticate a connection
  to Factual
  */
-@property (nonatomic, readonly) NSString* apiKey;
+@property (nonatomic, readonly) NSString *apiKey;
 /*! @property
  @discussion Returns the version number of the Factual API for
  debugging purposes.
@@ -75,7 +75,7 @@ typedef enum  {
 /*! @property
  @discussion The base URL at which to contact Factual's API
  */
-@property (nonatomic, retain) NSString* factualHome;
+@property (nonatomic, retain) NSString *factualHome;
 
 @property (nonatomic) BOOL* debug;
 

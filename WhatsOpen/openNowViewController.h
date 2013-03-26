@@ -9,10 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "UMAAppDelegate.h"
 #import "placeDetailViewController.h"
+#import "sortViewController.h"
+//#import "homeViewController.h"
 
 @interface openNowViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;
 @property (nonatomic, readonly) IBOutlet UITableView *restaurantTableView;
 @property (nonatomic, readonly) IBOutlet UIActivityIndicatorView *spinner;
-
+- (IBAction)sortButtonPressed:(id)sender;
+- (IBAction)homeButtonPressed:(id)sender;
 @end

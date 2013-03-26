@@ -12,7 +12,7 @@
 
 @interface moreDetailsViewController : UIViewController
 
-@property (nonatomic, strong) restaurant* restaurantObject;
+@property (nonatomic, strong) restaurant *restaurantObject;
 - (IBAction)flagButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;
 @property (weak, nonatomic) IBOutlet UITextView *detailsTextView;

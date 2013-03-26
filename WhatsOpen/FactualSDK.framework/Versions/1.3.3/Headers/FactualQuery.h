@@ -22,13 +22,13 @@ typedef enum  {
  Query object (see below) to specify the primary or secondary sort criteria.
  */
 @interface FactualSortCriteria : NSObject {
-    NSString* _fieldName;
+    NSString *_fieldName;
     FactualSortOrder _sortOrder;
 }
 /*! @property 
  @discussion the field, within the factual table, to sort by
  */ 
-@property (nonatomic, copy) NSString* fieldName;
+@property (nonatomic, copy) NSString *fieldName;
 /*! @property 
  @discussion the sort direction (ascending or descending)
  */ 
@@ -205,11 +205,11 @@ typedef enum  {
 /*! @property 
  @discussion row filter that are going to be applied to this query 
  */
-@property (nonatomic,readonly) NSMutableArray* rowFilters;
+@property (nonatomic,readonly) NSMutableArray *rowFilters;
 /*! @property 
  @discussion text query terms used to perform a full-text query 
  */
-@property(nonatomic,readonly) NSMutableArray* fullTextTerms;
+@property(nonatomic,readonly) NSMutableArray *fullTextTerms;
 /*! @property 
  @discussion when true, the response will include a count of the total number of rows in the table that conform to the request based on included filters.  Requesting the row count will increase the time required to return a response. The default behavior is to NOT include a row count 
  */
@@ -218,7 +218,7 @@ typedef enum  {
 /*! @property 
  @discussion Sets the fields to select. This is optional.
  */
-@property (nonatomic,readonly) NSMutableArray* selectTerms;
+@property (nonatomic,readonly) NSMutableArray *selectTerms;
 
 /*! @property 
  @discussion For each facet value count, the minimum number of results it must have in order to be returned in the response. Must be zero or greater. The default is 1.

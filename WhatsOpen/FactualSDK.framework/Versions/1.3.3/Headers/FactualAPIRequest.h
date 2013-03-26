@@ -39,7 +39,7 @@ typedef enum  {
 /*! @property 
  @discussion get unique request id associated with this object
  */
-@property(nonatomic,readonly) NSString* requestId;
+@property(nonatomic,readonly) NSString *requestId;
 
 /*! @property 
  @discussion get the delegate to fire events to
@@ -54,7 +54,7 @@ typedef enum  {
 /*! @property 
  @discussion the table id (optional) associated with this request
  */
-@property (nonatomic,readonly) NSString* tableId;
+@property (nonatomic,readonly) NSString *tableId;
 
 
 @end

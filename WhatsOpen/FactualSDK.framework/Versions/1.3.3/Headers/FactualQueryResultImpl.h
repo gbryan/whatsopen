@@ -11,10 +11,10 @@
 
 @interface FactualQueryResultImpl : FactualQueryResult {
     NSUInteger       _totalRows;
-    NSMutableArray* _rows;
-    NSArray* _columns;
+    NSMutableArray *_rows;
+    NSArray *_columns;
     NSDictionary* _columnToIndex;
-    NSString* _tableId;
+    NSString *_tableId;
 }
 
 +(FactualQueryResult *) queryResultFromJSON:(NSDictionary *)jsonResponse;

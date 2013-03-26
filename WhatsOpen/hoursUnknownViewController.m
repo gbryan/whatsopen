@@ -14,7 +14,7 @@
 
 @interface hoursUnknownViewController ()
 {
-    NSMutableArray* _hoursUnknown;
+    NSMutableArray *_hoursUnknown;
     BOOL isInitialLoad;
     BOOL internationalQuery;
 //    BOOL _lastResultWasNull;
@@ -37,9 +37,9 @@
     //Set title
     UILabel *navBarTitle = [[UILabel alloc] initWithFrame:CGRectMake(0,40,320,40)];
     navBarTitle.textAlignment = NSTextAlignmentLeft;
-    navBarTitle.text = @"Restaurants with Unknown Hours";
+    navBarTitle.text = [UMAAppDelegate queryControllerShared].queryIntention;
     navBarTitle.backgroundColor = [UIColor clearColor];
-    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:16.5];
+    navBarTitle.font = [UIFont fontWithName:@"Georgia-Bold" size:20];
     navBarTitle.textColor = [UIColor whiteColor];
     _navBar.titleView = navBarTitle;
     
@@ -60,6 +60,7 @@
                      initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     [_restaurantTableView reloadData];
 
+    //to-do: do I use this anymore?
     //Wait until app becomes active again after a period of inactivity, and when it
     //becomes active, app delegate will refresh the tableview and notify openNowVC to
     //start the spinner animation.
@@ -67,7 +68,17 @@
                                              selector:@selector(startSpinner)
                                                  name:@"startSpinner"
                                                object:nil];
+    if (_isListening == FALSE)
+    {
+        [self startListeningForCompletedQuery];
+    }
     
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    isInitialLoad = FALSE;
+    [_restaurantTableView reloadData];
 }
 
 - (void)startSpinner
@@ -81,7 +92,7 @@
 {
     _isListening = TRUE;
     
-    NSLog(@"LISTENING!!!!");
+    NSLog(@"hoursUnknownVC: LISTENING!!!!");
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(restaurantsAcquired:)
@@ -116,7 +127,8 @@
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
-{   
+{
+    NSLog(@"hoursUnknownVC: restaurantsAcquired");
     //to-do: set internationalQuery based on value pulled from queryController
     internationalQuery = FALSE;
     
@@ -166,7 +178,7 @@
     return 1;
 }
 
-//- (NSString* )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 //{
 //    return @"Restaurants with Unknown Hours";
 //}
@@ -183,7 +195,7 @@
 
     if (_hoursUnknown.count > 0)
     {
-        restaurant* restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
+        restaurant *restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
         
         UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
         nameLabel.text = restaurantObject.name;
@@ -254,10 +266,26 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get reference to the destination view controller
-    placeDetailViewController *destinationVC = [segue destinationViewController];
-    NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
-    destinationVC.restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
+{    
+    if ([[segue identifier] isEqualToString:@"detailSegue"])
+    {
+        // Get reference to the destination view controller
+        placeDetailViewController *destinationVC = [segue destinationViewController];
+        NSIndexPath *indexPath = [_restaurantTableView indexPathForSelectedRow];
+        destinationVC.restaurantObject = [_hoursUnknown objectAtIndex:indexPath.row];
+    }
+    else if ([[segue identifier] isEqualToString:@"sort"])
+    {
+        sortViewController *sortVC = [segue destinationViewController];
+        sortVC.arrayToSort = @"hoursUnknown";
+    }
 }
+
+- (IBAction)homeButtonPressed:(id)sender
+{
+//    homeViewController *homeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
+//    [self presentViewController:homeVC animated:TRUE completion:nil];
+    [self dismissViewControllerAnimated:TRUE completion:nil];
+}
+
 @end

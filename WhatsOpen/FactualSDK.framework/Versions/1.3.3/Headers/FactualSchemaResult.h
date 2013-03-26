@@ -21,28 +21,28 @@
 /*! @property 
  @discussion The id of the Factual Table
  */ 
-@property (nonatomic,readonly) NSString* tableId;
+@property (nonatomic,readonly) NSString *tableId;
 
 /*! @property 
  @discussion The table name of the Factual Table
  */ 
-@property (nonatomic,readonly) NSString* tableName;
+@property (nonatomic,readonly) NSString *tableName;
 /*! @property 
  @discussion The Table description
  */ 
-@property (nonatomic,readonly) NSString* tableDescription;
+@property (nonatomic,readonly) NSString *tableDescription;
 /*! @property 
  @discussion The user who created the Table
  */ 
-@property (nonatomic,readonly) NSString* creator;
+@property (nonatomic,readonly) NSString *creator;
 /*! @property 
  @discussion The date/time on which this table was created.
  */ 
-@property (nonatomic,readonly) NSString* createdAt;
+@property (nonatomic,readonly) NSString *createdAt;
 /*! @property 
  @discussion The date/time on which this table was last updated.
  */ 
-@property (nonatomic,readonly) NSString* updatedAt;
+@property (nonatomic,readonly) NSString *updatedAt;
 /*! @property 
  @discussion boolean that is set to True if the table has support for Geo
  queries.
@@ -56,7 +56,7 @@
 /*! @property 
  @discussion attribution information for this table
  */ 
-@property (nonatomic,readonly) NSString* source;
+@property (nonatomic,readonly) NSString *source;
 /*! @property 
  @discussion total row count for this table
  */ 
@@ -65,6 +65,6 @@
  @discussion an array of FactualFieldMetadata objects for each field in the 
  table.
  */ 
-@property (nonatomic,readonly) NSArray*  fieldMetadata;
+@property (nonatomic,readonly) NSArray * fieldMetadata;
 
 @end

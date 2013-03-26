@@ -18,7 +18,7 @@
 /*! @property 
  @discussion The name of the field
  */ 
-@property (nonatomic,readonly) NSString* fieldName;
+@property (nonatomic,readonly) NSString *fieldName;
 /*! @property 
  @discussion The numerical field id of the field
  */ 
@@ -26,7 +26,7 @@
 /*! @property 
  @discussion The data type associated with this field
  */ 
-@property (nonatomic,readonly) NSString* dataType;
+@property (nonatomic,readonly) NSString *dataType;
 /*! @property 
  @discussion a boolean set to True if this is a system generated field
  */ 
@@ -52,7 +52,7 @@
  @discussion an array of enumerated value strings if this field is an enumerated
  value field.
  */ 
-@property (nonatomic,readonly) NSArray*  enumerationList;
+@property (nonatomic,readonly) NSArray * enumerationList;
 
 
 @end

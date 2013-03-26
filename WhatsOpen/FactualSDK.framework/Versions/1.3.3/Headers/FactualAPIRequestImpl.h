@@ -14,17 +14,17 @@
 @interface FactualAPIRequestImpl : FactualAPIRequest {
     
 @private  
-    NSString*               _requestId;
-    NSString*               _tableId;
+    NSString *              _requestId;
+    NSString *              _tableId;
     FactualRequestType      _requestType;
     id<FactualAPIDelegate>  _delegate;
     NSURLConnection*        _connection;
-    NSString*               _url;
-    NSString*               _httpMethod;
+    NSString *              _url;
+    NSString *              _httpMethod;
     NSMutableData*          _responseText;
 }
 
-@property (nonatomic,readonly) NSString* url;
+@property (nonatomic,readonly) NSString *url;
 
 -(id) initWithURL:(NSString *) url
       requestType:(NSInteger) requestType

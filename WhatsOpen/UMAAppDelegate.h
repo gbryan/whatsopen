@@ -10,8 +10,9 @@
 #import <FactualSDK/FactualAPI.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import "queryController.h"
-#import "locationServices.h"
+//#import "locationServices.h"
 #import "keys.h"
+#import "homeViewController.h"
 
 @class queryController;
 //@class locationServices;

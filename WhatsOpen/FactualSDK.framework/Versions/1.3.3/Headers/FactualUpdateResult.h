@@ -23,20 +23,20 @@
  */
 
 @interface FactualUpdateResult : NSObject {
-  NSString* _affectedRowId;
+  NSString *_affectedRowId;
   BOOL _exists;
-  NSString* _tableId;
+  NSString *_tableId;
 }
 
 /*! @property 
  @discussion The id of the table related to the orignal request
  */ 
-@property (nonatomic,readonly)    NSString* tableId;
+@property (nonatomic,readonly)    NSString *tableId;
 
 /*! @property 
  @discussion The Factual Row Id of the updated/inserted row.
  */ 
-@property (nonatomic,readonly) NSString* affectedRowId;
+@property (nonatomic,readonly) NSString *affectedRowId;
 
 /*! @property 
  @discussion A boolean that is True if the submit call updated an existing row.

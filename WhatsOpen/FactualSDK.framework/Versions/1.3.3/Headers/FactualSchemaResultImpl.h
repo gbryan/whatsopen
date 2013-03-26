@@ -11,17 +11,17 @@
 @interface FactualSchemaResultImpl : FactualSchemaResult {
   
 @public  
-  NSString* _tableId;
-  NSString* _tableName;
-  NSString* _tableDescription;
-  NSString* _creator;
-  NSString* _createDateAndTime;
-  NSString* _updateDateAndTime;
+  NSString *_tableId;
+  NSString *_tableName;
+  NSString *_tableDescription;
+  NSString *_creator;
+  NSString *_createDateAndTime;
+  NSString *_updateDateAndTime;
   BOOL _isGeoEnabled;
   BOOL _isDownloadable;
-  NSString* _source;
+  NSString *_source;
   NSUInteger _totalRowCount;
-  NSArray*  _fieldMetadata;
+  NSArray * _fieldMetadata;
 }
 
 // initialization ... 

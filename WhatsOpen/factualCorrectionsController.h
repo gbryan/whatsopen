@@ -16,7 +16,7 @@
 @interface factualCorrectionsController : NSObject <FactualAPIDelegate>
 @property (retain, nonatomic) FactualAPIRequest *apiRequest;
 @property (nonatomic, retain) FactualQueryResult *queryResult;
-@property (nonatomic, strong) NSArray* problemTypeRowLabels;
+@property (nonatomic, strong) NSArray *problemTypeRowLabels;
 
--(void)flagRestaurantWithID:(NSString* )factualID problemType:(NSInteger)problemType comment:(NSString* )comment reference:(NSString* )reference;
+-(void)flagRestaurantWithID:(NSString *)factualID problemType:(NSInteger)problemType comment:(NSString *)comment reference:(NSString *)reference;
 @end
