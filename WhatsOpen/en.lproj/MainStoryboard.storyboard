@@ -323,7 +323,7 @@
                                             <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LrP-hv-eeH">
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="158" id="X8y-R3-ols"/>
+                                                    <constraint firstAttribute="width" constant="179" id="OLp-4d-fQH"/>
                                                     <constraint firstAttribute="height" constant="30" id="svf-kc-vAC"/>
                                                 </constraints>
                                                 <attributedString key="attributedText">
@@ -1218,7 +1218,6 @@
         <!--Navigation Controller - Home-->
         <scene sceneID="xr0-LC-xxo">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XpY-Zc-y4c" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController storyboardIdentifier="" id="bov-At-Q4c" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Home" id="NNF-9k-lrl"/>
                     <toolbarItems/>
@@ -1231,6 +1230,7 @@
                         <segue destination="6oX-FV-k9k" kind="relationship" relationship="rootViewController" id="1YL-kb-mxD"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XpY-Zc-y4c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-3428" y="398"/>
         </scene>
