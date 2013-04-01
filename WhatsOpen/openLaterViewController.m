@@ -24,9 +24,7 @@
 {
     [super viewDidLoad];
     
-//    _queryController = [[queryController alloc]init];
     isInitialLoad = TRUE;
-//    _lastResultWasNull = FALSE;
     _isListening = FALSE;
     
     //Set title
@@ -223,8 +221,8 @@
     return cell;
 }
 
-//Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 //This loads more restaurants if user scrolls to the end of the existing results.
+    //Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     
     NSInteger currentOffset = scrollView.contentOffset.y;

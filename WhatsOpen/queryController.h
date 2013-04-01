@@ -19,8 +19,7 @@
 
 @interface queryController : NSObject <FactualAPIDelegate>
 
-//to-do: should these really be "retain"?
-@property (retain, nonatomic) FactualAPIRequest *apiRequest;
+@property (nonatomic, retain) FactualAPIRequest *apiRequest;
 @property (nonatomic, retain) FactualQueryResult *queryResult;
 @property (nonatomic, strong) NSArray *queryCategories;
 @property (nonatomic, strong) NSMutableArray *openNow;

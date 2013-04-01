@@ -21,7 +21,6 @@
 
 @interface restaurant : NSObject
 
-//to-do: see if I end up using all of these properties
 @property (strong, nonatomic) NSString *googleID;
 @property (strong, nonatomic) NSString *factualID;
 @property (strong, nonatomic) NSString *name;

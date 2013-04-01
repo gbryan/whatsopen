@@ -16,21 +16,19 @@
 
 @synthesize apiObject = _apiObject;
 @synthesize queryControllerShared = _queryControllerShared;
-//@synthesize locationServiceShared = _locationServiceShared;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     isInitialLoad = TRUE;
     wentInactiveTimestamp = nil;
     
-    //set navigation bar and toolbar tint to dark blue
+    //Set navigation bar and toolbar tint to dark blue
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     [[UIToolbar appearance] setTintColor:[UIColor colorWithRed:0.0 green:0.1 blue:0.45 alpha:1.0]];
     
     [GMSServices provideAPIKey:GOOGLE_API_KEY];
     _apiObject = [[FactualAPI alloc] initWithAPIKey:FACTUAL_KEY secret:FACTUAL_SECRET];
     _queryControllerShared = [[queryController alloc]init];
-//    _locationServiceShared = [[locationServices alloc]init];
     
     return YES;
 }
@@ -52,13 +50,7 @@
     UIApplication* app = [UIApplication sharedApplication];
     return ((UMAAppDelegate *)app.delegate).queryControllerShared;
 }
-/*
-+(locationServices *)locationServiceShared
-{
-    UIApplication* app = [UIApplication sharedApplication];
-    return ((UMAAppDelegate *)app.delegate).locationServiceShared;
-}
-*/
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

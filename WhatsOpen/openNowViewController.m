@@ -5,14 +5,6 @@
 //  Created by Bryan Gaston on 12/25/12.
 //  Copyright (c) 2012 UNC-CH. All rights reserved.
 //
-
-
-/*
- //to-do: will queries fail gracefully if there's no location found?
-//to-do: what happens if there are none open now in 3 pages?
-//to-do: what if there are none open later today?
-//to-do: what if factual returns null result? will it crash?
-*/
  
 #import "openNowViewController.h"
 
@@ -98,7 +90,6 @@
 {
     _isListening = TRUE;
     
-    NSLog(@"LISTENING!!!!");
     //listViewController will listen for queryController to give notification that it has finished the query
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(restaurantsAcquired:)
@@ -146,19 +137,10 @@
 }
 
 - (void)restaurantsAcquired:(NSNotification *)notification
-{    
-    NSLog(@"openNowVC: # openNow before removeAll:%d", _openNow.count);
-    
-    [_openNow removeAllObjects];
-    
-    NSLog(@"openNowVC: # openNow after removeAll:%d", _openNow.count);
-    
+{        
+    [_openNow removeAllObjects];    
     _openNow = [[NSMutableArray alloc]initWithArray:[UMAAppDelegate queryControllerShared].openNow];
-    
-    NSLog(@"Restaurants acquired:  openNow: %i", [_openNow count]);
-    NSLog(@"# openNow in queryC: %d", [UMAAppDelegate queryControllerShared].openNow.count);
 
-    NSLog(@"10 openNowVC: update private arrays and reload table");
     if (isInitialLoad == TRUE)
     {
         isInitialLoad = FALSE;
@@ -219,7 +201,6 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //to-do: once I update tableViewCell with custom design, I need to use separate identifier for cell showing no results
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"openNowCell"];
     
     UILabel *nameLabel = (UILabel *)[cell viewWithTag:1];
@@ -267,21 +248,10 @@
     return cell;
 }
 
-//Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 //This loads more restaurants if user scrolls to the end of the existing results.
-//to-do:if there are < a few restaurants, it will append when you pull down to refresh
+    //Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-/*
-    NSInteger currentOffset = scrollView.contentOffset.y;
-    NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
-//    NSLog(@"current:%i  max:%i", currentOffset, maximumOffset);
-    
-    if (currentOffset >= (maximumOffset + 40)) {
-        NSLog(@"adding more restaurants to the list");
-        _spinner.center = CGPointMake(160, currentOffset+150);
-        [self loadRestaurantList];
-    }
- */
+
     NSInteger currentOffset = scrollView.contentOffset.y;
     NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
     NSLog(@"current: %i    max:%i", currentOffset, maximumOffset);

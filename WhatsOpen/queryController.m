@@ -6,22 +6,6 @@
 //  Copyright (c) 2013 UNC-CH. All rights reserved.
 //
 
-
-/*
- to-do: future version of app will support international queries
- 
--attempt Factual query first, and if there are no results, fall back to Google Places API.
-    This will fix problem of international queries (for which Factual has no restaurant info currently)
-    and will also make the app usable even if Factual fails for some reason, though we will have fewer results (20).
--check country of first result to see if it is U.S. or not, and set isInternational 
-    accordingly (and tell VC to update this value in their instance so that they will 
-    display Google attribution on tableview)
- 
- to-do: check if it has overlapping blocks of hours: ["11:00","16:00"],["16:00","22:00"]
-    //right now, it's saying that it will close at 16:00 even though it's really open until 22:00
- */
-
-
 #import "queryController.h"
 
 @implementation queryController
@@ -74,15 +58,14 @@
 
 -(NSString *)getFirstSignificantWordInRestaurantName:(NSString *)restaurantName
 {
-    //clean restaurant name from Google before using the name to search Factual
+    //Clean restaurant name from Google before using the name to search Factual
     NSString *queryString = restaurantName;
     queryString = [queryString lowercaseString];
-//    queryString = [queryString stringByReplacingOccurrencesOfString:@"'" withString:@""];
     queryString = [queryString stringByReplacingOccurrencesOfString:@"-" withString:@" "];
     queryString = [queryString stringByReplacingOccurrencesOfString:@" & " withString:@" "];
     NSArray *restaurantNameExploded = [queryString componentsSeparatedByString:@" "];
     
-    //use the first non "a", "an", or "the" word of the restaurant full name (from Google) to search Factual
+    //Use the first non "a", "an", or "the" word of the restaurant full name (from Google) to search Factual
     if (!([[restaurantNameExploded objectAtIndex:0] isEqualToString:@"a"] ||
           [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"an"] ||
           [[restaurantNameExploded objectAtIndex:0] isEqualToString:@"the"]))
@@ -97,7 +80,6 @@
     return queryString;
 }
 
-//sortVC calls this when user specifies a new sort key
 -(void)sortArrayNamed:(NSString *)array ByKey:(NSString *)sortKey
 {    
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:sortKey ascending:YES];
@@ -125,9 +107,7 @@
 
 //This clears out existing restaurants in the arrays and issues a new query.
 -(void)refreshRestaurants
-{
-    NSLog(@"queryC: refreshRestaurants");
-    
+{    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startSpinner"
                                                         object:nil];
     
@@ -140,14 +120,7 @@
 }
 
 -(void)appendNewRestaurants
-{
-    //to-do: make sure that when restaurants are appended to bottom of list in any tab, the data source array is sorted such that
-    //all new results are added to the bottom of the list instead of somewhere else in the list in the listView
-    
-//    _deviceLocation = locationService.deviceLocation;
-    
-    //    [self queryGooglePlacesWithTypes:queryCategories nextPageToken:nil];
-    
+{    
     NSInteger offset = _totalResults;
     
     //Don't run the query if there are already 500 restaurants acquired because Factual provides a max of 500, and the query will return an error.
@@ -171,9 +144,7 @@
 {    
     if ([keyPath isEqualToString:@"deviceLocation"] &&
              [_queryPurpose isEqualToString:@"refresh"])
-    {
-        NSLog(@"value changed");
-        
+    {       
         [locationService removeObserver:self forKeyPath:@"deviceLocation"];
         _deviceLocation = locationService.deviceLocation;
         
@@ -216,9 +187,7 @@
 -(void)getGoogleMatchForRestaurant:(restaurant *)restaurantObject
 {
     NSString *restaurantQueryName = [self getFirstSignificantWordInRestaurantName:restaurantObject.name];
-    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSString *restaurantAddress = [@"125 W Franklin St" stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
+    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];    
     NSString *googleURLString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%@,%@&radius=110&name=%@&vicinity=%@&sensor=true&key=%@",
                                  restaurantObject.latitude,
                                  restaurantObject.longitude,
@@ -230,9 +199,8 @@
     
     if (!googleQueryData)
     {
-        //occasionally, data is nil, and the app crashes if I don't check !data
-        //just start the query over again if data is nil for some reason
-        //        [self getRestaurants];
+        //Occasionally, data is nil, and the app crashes if I don't check !data
+            //just start the query over again if data is nil for some reason
         NSLog(@"googleQueryData was invalid for some reason. Oops.");
         
         _numFailedGoogleQueries++;
@@ -250,10 +218,10 @@
 
 - (void)fetchedGoogleRestaurantDetails:(NSData *)responseData
 {
-    //reset this since we successfully completed this query
+    //Reset this since we successfully completed this query
     _numFailedGoogleQueries = 0;
     
-    //parse out the json data
+    //Parse out the json data
     NSError* error;
     NSDictionary* json = [NSJSONSerialization
                           JSONObjectWithData:responseData
@@ -263,21 +231,13 @@
     
     NSArray *restaurantResults = [json objectForKey:@"results"];
     
-    //if Google returned a result
+    //If Google returned a result
     if ([restaurantResults count] > 0)
     {
         NSDictionary *restaurantDetails = [restaurantResults objectAtIndex:0];
         
-        //Google's address information appears to be more accurate than Factual's in some cases, so I'll use it.
-        //to-do: need to provide attribution to Google on placeDetailVC if I do this
-//        detailRestaurant.address = [restaurantDetails objectForKey:@"vicinity"];
         detailRestaurant.googleID = [restaurantDetails objectForKey:@"reference"];
-        
-        
-        //to-do: remove this and the test stuff at line 120ish
-        //        [self queryGooglePlaces:detailRestaurant.googleID];
-        
-        
+                
         //If there is a photo available for this restaurant, get the photo
         if ([restaurantDetails objectForKey:@"photos"] &&
             [[[restaurantDetails objectForKey:@"photos"]objectAtIndex:0]objectForKey:@"photo_reference"])
@@ -288,14 +248,14 @@
         }
         else
         {
-            //if we don't send notification to placeDetailVC, the view will never load
+            //If we don't send notification to placeDetailVC, the view will never load
             [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
                                                                 object:nil];
         }
     }
     else
     {
-        //if we don't send notification to placeDetailVC, the view will never load
+        //If we don't send notification to placeDetailVC, the view will never load
         [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
                                                             object:nil];
     }
@@ -309,8 +269,8 @@
     NSData* restaurantImageRequestData = [NSData dataWithContentsOfURL: googleRequestURL];
     if (!restaurantImageRequestData)
     {
-        //occasionally, data is nil, and the app crashes if I don't check !data
-        //just start the query over again if data is nil for some reason
+        //Occasionally, data is nil, and the app crashes if I don't check !data
+            //just start the query over again if data is nil for some reason
         NSLog(@"googleQueryData was invalid for some reason. Oops.");
         
         _numFailedGoogleQueries++;
@@ -328,7 +288,7 @@
 
 -(void)acquiredGoogleRestaurantImage:(NSData *)responseData
 {
-    //reset this since we successfully completed this query
+    //Reset this since we successfully completed this query
     _numFailedGoogleQueries = 0;
     
     UIImage *restaurantImage = [UIImage imageWithData:(NSData *)responseData];
@@ -336,7 +296,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantDetailsAcquired"
                                                         object:nil];
 }
-
 
 #pragma mark - Factual Query
 - (void)queryFactualForRestaurantsNearLatitude:(float)lat longitude:(float)lng withOffset:(NSInteger)offset
@@ -362,32 +321,53 @@
     #define FACTUAL_CATEGORY_INTERNET_CAFES @"345"
     #define FACTUAL_CATEGORY_RESTAURANTS @"347"    
     
-    NSArray *categories = [[NSArray alloc]init];
-    
     if ([self.queryIntention isEqualToString:QUERY_INTENTION_MEAL])
     {
-        categories = [[NSArray alloc]initWithObjects:
+        NSArray *mealCategories = [[NSArray alloc]initWithObjects:
                       FACTUAL_CATEGORY_BAGELS_AND_DONUTS,
                       FACTUAL_CATEGORY_BAKERIES,
                       FACTUAL_CATEGORY_CAFES,
                       FACTUAL_CATEGORY_INTERNET_CAFES,
                       FACTUAL_CATEGORY_RESTAURANTS,
                       nil];
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" InArray:mealCategories]];
     }
     else if ([self.queryIntention isEqualToString:QUERY_INTENTION_DESSERT])
     {
-        categories = [[NSArray alloc]initWithObjects:
+        NSArray *dessertCategories = [[NSArray alloc]initWithObjects:
                       FACTUAL_CATEGORY_DESSERT,
                       FACTUAL_CATEGORY_ICE_CREAM,
                       nil];
+
+        /*
+         When searching for a dessert, Ben & Jerry's and some other places are not returned becuase they are classified as "restaurant" (347). This query below will find those.  However, the beginsWithAnyArray is not functioning properly, and it sounds like Factual is still working on this functionality for restaurant table. I'll uncomment this when it appears to be working.
+         
+        //Return results that are (classified as "restaurants" but have cuisine of ice cream or frozen yogurt)
+            //OR (classified as dessert or ice cream establishments).
+        FactualRowFilter *restaurantCategory = [FactualRowFilter fieldName:@"category_ids" equalTo:FACTUAL_CATEGORY_RESTAURANTS];
+        
+        FactualRowFilter *servingDesserts = [FactualRowFilter fieldName:@"cuisine"
+                                                     beginsWithAnyArray:[NSArray arrayWithObjects:
+                                                                         @"ice cream",
+                                                                         @"frozen yogurt", nil]];
+        
+        [_queryObject addRowFilter:[FactualRowFilter orFilter:
+                                    [FactualRowFilter fieldName:@"category_ids" InArray:dessertCategories],
+                                    [FactualRowFilter andFilter:
+                                        restaurantCategory,
+                                        servingDesserts,
+                                        nil]
+                                    ,nil]];
+         */
+        
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" InArray:dessertCategories]];
     }
     else if ([self.queryIntention isEqualToString:QUERY_INTENTION_DRINK])
     {
-        categories = [[NSArray alloc]initWithObjects:FACTUAL_CATEGORY_BARS, nil];
+        NSArray *drinkCategories = [[NSArray alloc]initWithObjects:FACTUAL_CATEGORY_BARS, nil];
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" InArray:drinkCategories]];
     }
-        
-    [_queryObject addRowFilter:[FactualRowFilter fieldName:@"category_ids" InArray:categories]];
-        
+    
     //Set user-specified filter criteria
     if (filterAcceptsCC == TRUE)
     {
@@ -406,18 +386,22 @@
         [_queryObject addRowFilter:[FactualRowFilter fieldName:@"meal_takeout" equalTo:@"true"]];
     }
 
+    /*
+     I contacted Factual becuase this is not working with the strict equals, and it sounds like they're still working on it for this (restaurants) table.
+     
     //Do not include any results that are ONLY catering venues.
-//        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notBeginsWithAnyArray:[[NSArray alloc]initWithObjects:@"Catering", nil]]];
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notBeginsWithAnyArray:[[NSArray alloc]initWithObjects:@"Catering", nil]]];
 
-//        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notEqualTo:@"Catering"]];
-
+        [_queryObject addRowFilter:[FactualRowFilter fieldName:@"cuisine" notEqualTo:@"Catering"]];
+*/
+    
     CLLocationCoordinate2D geoFilterCoords = {
         lat, lng
     };
 
     [_queryObject setGeoFilter:geoFilterCoords radiusInMeters:500000.0];
     
-    //execute the Factual request
+    //Execute the Factual request
     self.apiRequest = [[UMAAppDelegate getAPIObject] queryTable:@"restaurants" optionalQueryParams:_queryObject withDelegate:self];
 }
 
@@ -428,6 +412,7 @@
 {
     NSLog(@"requestComplete:receivedRawResult type:%d    result: %@", request.requestType, result);
 }
+
 -(void) requestComplete:(FactualAPIRequest *)request receivedQueryResult:(FactualQueryResult *)queryResultObj
 {
     NSLog(@"array count totals: %d, %d, %d", openNow.count, openLater.count, hoursUnknown.count);
@@ -479,8 +464,6 @@
                     continue;
                 }
             }
-            
-//            NSLog(@"%@", row);
             
             //calculate proximity of mobile device to the restaurant
             float lat = [[row valueForName:@"latitude"]floatValue];
@@ -580,7 +563,6 @@
                         priceLevelDisplay = @"$$$$$";                        
                         break;
                     default:
-                        //to-do: image for no pricing info available
                         priceLevelImageName = @"";
                         priceLevelDisplay = @"";                        
                         break;
@@ -615,7 +597,7 @@
                 restaurantObject.detailsDisplay = [NSString stringWithFormat:@"%@Serves alcohol: %@ \n", restaurantObject.detailsDisplay, restaurantObject.servesAlcohol];
             }
             
-            /*  This doesn't seem to be accurate enough yet to include.
+            /*  This doesn't seem to be accurate enough yet in Factual's db to include.
              
             if ([row valueForName:@"alcohol_bar"])
             {
@@ -676,8 +658,6 @@
                 }
             }
             
-//            NSLog(@"%@ hours: %@", restaurantObject.name, [row valueForName:@"hours"]);
-            
             if ([row valueForName:@"open_24hrs"])
             {
                 restaurantObject.open24Hours = [[row valueForName:@"open_24hrs"]stringValue];
@@ -729,7 +709,6 @@
             else
             {
                 //No value for Factual "hours" key
-                
                 [hoursUnknown addObject:restaurantObject];
             }
         } //end if !empty query result
@@ -743,19 +722,22 @@
     [openLater sortUsingDescriptors:[NSArray arrayWithObject:openLaterSortDescriptor]];
     [hoursUnknown sortUsingDescriptors:[NSArray arrayWithObject:hoursUnknownSortDescriptor]];
     
-    NSLog(@"9 queryC: send notification to openNowVC that restaurants were acquired \n");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"restaurantsAcquired"
                                                             object:nil];
-    NSLog(@"number open now: %i", [openNow count]);
-    NSLog(@"number open later: %i", [openLater count]);
-    NSLog(@"number unknown hours: %i", [hoursUnknown count]);
-    NSLog(@"total acquired: %i", _totalResults);
 }
 
 
 - (NSString *)getStringFromFacualHoursFormat:(NSDictionary *)hours
 {
-    NSArray *daysOfWeek = [NSArray arrayWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
+    NSArray *daysOfWeek = [NSArray arrayWithObjects:
+                           @"Monday",
+                           @"Tuesday",
+                           @"Wednesday",
+                           @"Thursday",
+                           @"Friday",
+                           @"Saturday",
+                           @"Sunday", nil];
+    
     NSString *hoursFormattedForTextView = [[NSString alloc]init];
     for (NSString *day in daysOfWeek)
     {
@@ -885,7 +867,7 @@
                                     withDayOffset:0];
     
     //If the restaurant closes after midnight, set the close date to the close hour on the NEXT day
-    //example: ["11:00","2:00"] opens at 11am, closes at 2am the next day
+        //example: ["11:00","2:00"] opens at 11am, closes at 2am the next day
     if (closeHour < openHour)
     {
         closeTimeDate = [self getDateWithHour:closeHour
@@ -917,9 +899,7 @@
 }
 
 -(restaurant *)calculateOpenHoursForRestaurant:(restaurant *)restaurantObject withHours:(NSDictionary *)hours
-{
-    NSLog(@"%@ hours: %@", restaurantObject.name, hours);
-    
+{    
     restaurantObject.whichTab = @"closed";
     
     NSDate* GMTDate = [NSDate date];
@@ -992,8 +972,6 @@
             NSDate* thisOpenDate = [[self getHoursWithOpenTime:thisOpen closeTime:thisClose onDate:now]objectAtIndex:0];
             NSDate* thisCloseDate = [[self getHoursWithOpenTime:thisOpen closeTime:thisClose onDate:now]objectAtIndex:1];
             
-            //[11:00, 14:00],[14:00,17:00],[17:00,22:00],[22:00,2:00] it's now 15:00
-            
             if ([now compare:thisCloseDate] == NSOrderedAscending)
             {
                 if ([now compare:thisOpenDate] == NSOrderedDescending)
@@ -1035,7 +1013,6 @@
                     }
                     
                     //See if it's closing within 30 mins
-                    //to-do: make sure this is right time zone
                     NSTimeInterval timeUntilClose = abs([restaurantObject.closingNextSort timeIntervalSinceDate:now]);
                     if (timeUntilClose < 1800)
                     {
@@ -1053,7 +1030,6 @@
                     restaurantObject.whichTab = @"openLater";
                     
                     //See if it's opening within 30 mins
-                    //to-do: make sure this is right time zone
                     NSTimeInterval timeUntilOpen = abs([restaurantObject.openNextSort timeIntervalSinceDate:now]);
                     if (timeUntilOpen < 1800)
                     {

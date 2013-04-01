@@ -28,9 +28,6 @@
     
     //Get center point of view when it loads so we know where to put it back later when we move it
     originalViewCenter = self.view.center;
-    
-    NSLog(@"retaurant: %@", restaurantObject.name);
-
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -74,11 +71,6 @@
 {
     //move view back down to original point
     self.view.center = CGPointMake(originalViewCenter.x, originalViewCenter.y);
-}
-
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-        //to-do: implement this
 }
 
 - (void)didReceiveMemoryWarning

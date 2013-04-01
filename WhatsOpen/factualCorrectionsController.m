@@ -36,11 +36,7 @@
 }
 
 -(void)flagRestaurantWithID:(NSString *)factualID problemType:(NSInteger)problemType comment:(NSString *)comment reference:(NSString *)reference
-{
-    NSLog(@"begin submitting correction");
-    NSLog(@"--------------------------");
-    NSLog(@"id: %@    comment:%@    reference:%@", factualID, comment, reference);
-    
+{    
     NSInteger factualProblemType = -1;
     
     //Translate my problem type labels to Factual's problem types
@@ -70,23 +66,22 @@
             break;
     }
     
-    NSLog(@"problem: %d", factualProblemType);
-    
     if (factualProblemType != -1)
     {
         FactualRowMetadata *flagMetadata = [FactualRowMetadata metadata:username];
         if ([comment length] > 0) flagMetadata.comment = comment;
         if ([reference length] > 0) flagMetadata.reference = reference;
         self.apiRequest = [[UMAAppDelegate getAPIObject] flagProblem:FactualFlagType_Inaccurate tableId:table factualId:factualID metadata:flagMetadata withDelegate:self];
+        
         //Even though the request hasn't completed, the user can't do anything about it if it fails,
-        //so just thank them for trying.
+            //so just thank them for trying.
         [[NSNotificationCenter defaultCenter] postNotificationName:@"correctionSubmitted"
                                                             object:nil];
     }
 }
 
 //Some problem types can be submitted to Factual as flags, but if a business is closed/out of business,
-//you must submit it to Factual as status=0 instead of flagging it.
+    //you must submit it to Factual as status=0 instead of flagging it.
 -(void)submitClosedRestaurantWithID:(NSString *)factualId comment:(NSString *)comment reference:(NSString *)reference
 {
     FactualRowMetadata *metadata = [FactualRowMetadata metadata:username];
@@ -100,7 +95,7 @@
     self.apiRequest = [[UMAAppDelegate getAPIObject] submitRowWithId:factualId tableId:table withValues:values withMetadata:metadata withDelegate:self];
     
     //Even though the request hasn't completed, the user can't do anything about it if it fails,
-    //so just thank them for trying.
+        //so just thank them for trying.
     [[NSNotificationCenter defaultCenter] postNotificationName:@"correctionSubmitted"
                                                         object:nil];
 }
@@ -113,7 +108,6 @@
 -(void)requestComplete:(FactualAPIRequest *)request failedWithError:(NSError *)error {
     NSLog(@"Factual request FAILED with error: ");
     NSLog(@"%@", [error localizedDescription]);
-    
 }
 
 @end

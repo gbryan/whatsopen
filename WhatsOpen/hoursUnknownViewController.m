@@ -7,9 +7,6 @@
 //
 
 
-
-
-//to-do: make sure that I have placeholders for the missing information so that these don't look stupid. Provide way for users to add missing info on Factual
 #import "hoursUnknownViewController.h"
 
 @interface hoursUnknownViewController ()
@@ -152,11 +149,6 @@
     _hoursUnknown = [[NSMutableArray alloc]
                 initWithArray:[UMAAppDelegate queryControllerShared].hoursUnknown];
     
-    NSLog(@"hoursUnknownVC: Restaurants acquired:  hoursUnknown: %i", [_hoursUnknown count]);
-    
-    //Since reloadSections withRowAnimation will crash the app if there are < 1 array items, we run reloadData the first time and then subsequent times ensure that there is at least 1 restaurant in the array before reloadingSections.
-    
-    //to-do: am I using this anymore? if not, remove on all 3 tableview controllers
     if (isInitialLoad == TRUE)
     {
         isInitialLoad = FALSE;
@@ -233,8 +225,8 @@
     return cell;
 }
 
-//Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 //This loads more restaurants if user scrolls to the end of the existing results.
+    //Thanks to Henri Normak for this: http://stackoverflow.com/questions/6023683/add-rows-to-uitableview-when-scrolled-to-bottom
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     
     NSInteger currentOffset = scrollView.contentOffset.y;
@@ -243,7 +235,7 @@
     
     //If offset is < 0, user is probably trying to refresh, not append.
         //To append new results only when user scrolls beyond end of results (pulls up), set
-            // to something higher than 0 for maxOffset + 0.
+        // to something higher than 0 for maxOffset + 0.
     if ((currentOffset > 0) && (currentOffset >= (maximumOffset + 0)))
     {
         NSLog(@"adding more restaurants to the list");

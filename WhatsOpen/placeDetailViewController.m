@@ -42,10 +42,6 @@
     [[self.googleMapView layer] setMasksToBounds:TRUE];
     
     
-    NSLog(@"restaurant Factual id %@: %@", restaurantObject.name, restaurantObject.factualID);
-    NSLog(@"details: %@", restaurantObject.detailsDisplay);
-    
-    
     [self startListeningForCompletedQuery];
     _locationService = [[locationServices alloc]init];
     _queryControl = [[queryController alloc]init];
@@ -84,9 +80,7 @@
     openNowOrLater.font = labelsFont;
     distanceLabel.text = restaurantObject.proximity;
 
-    /*
-     to-do: add image attribution: https://developers.google.com/places/documentation/photos
- */
+//     to-do: add image attribution if publishing app to Apple app store: https://developers.google.com/places/documentation/photos
     restaurantImage.image = restaurantObject.image;
     
     //Open status display
@@ -102,10 +96,8 @@
     }
     
     priceIcon.image = restaurantObject.priceIcon;
-
     ratingIcon.image = restaurantObject.ratingImage;
     
-    //to-do: stop animating loading indicator when Google map finishes loading
     [self.loadingIndicator stopAnimating];
 }
 
@@ -124,7 +116,7 @@
 
 - (void)restaurantDetailsAcquired
 {
-    //once queryC finishes filling in details for restaurant object, get that updated restaurant object
+    //Once queryC finishes filling in details for restaurant object, get that updated restaurant object
     restaurantObject = [_queryControl detailRestaurant];
     
     [self loadDisplay];
@@ -132,9 +124,7 @@
 }
 
 - (void)startListeningForCompletedQuery
-{
-    NSLog(@"LISTENING!!!!");
-    
+{    
     [self.loadingIndicator startAnimating];
     
     //placeDetailViewController will listen for queryController to give notification that it has finished the query
@@ -202,7 +192,6 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //to-do: check when to display these based on whether current restaurant has a website, phone number, hours, etc.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactInfo"];
     
     NSString *hoursDetail = [[NSString alloc]init];
@@ -237,15 +226,12 @@
             cell.textLabel.text = @"More Details";
             cell.imageView.image = [UIImage imageNamed:@"moredetails.png"];
             break;
-            
-            //to-do: add menu if I can get access to Locu and have time
     }
     return cell;
 }
 
 - (void)viewDirectionsButtonPressed
 {
-    //to-do: get location
     [_locationService addObserver:self forKeyPath: @"deviceLocation"
                          options:NSKeyValueObservingOptionNew
                          context:nil];
@@ -269,12 +255,11 @@
 {
     NSString *restaurantLatLngString = [NSString stringWithFormat:@"%@,%@", restaurantObject.latitude, restaurantObject.longitude];
     NSString *deviceLatLngString = [NSString stringWithFormat:@"%f,%f", _deviceLocation.latitude, _deviceLocation.longitude];
-//    NSString *restaurantAddress = [restaurantObject.address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSURL *openGoogleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?saddr=%@&daddr=%@&directionsmode=walking&zoom=17", deviceLatLngString, restaurantLatLngString]];
     NSURL *openAppleMapsURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://maps.apple.com/maps?saddr=%@&daddr=%@",deviceLatLngString, restaurantLatLngString]];
     
-    //try to open in Google Maps app but open in Apple maps if user doesn't have GM installed
+    //Try to open in Google Maps app but open in Apple maps if user doesn't have GM installed
     if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"comgooglemaps://"]]) {
         [[UIApplication sharedApplication] openURL:openGoogleMapsURL];
     }

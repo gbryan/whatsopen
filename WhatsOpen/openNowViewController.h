@@ -10,7 +10,6 @@
 #import "UMAAppDelegate.h"
 #import "placeDetailViewController.h"
 #import "sortViewController.h"
-//#import "homeViewController.h"
 
 @interface openNowViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, weak) IBOutlet UINavigationItem *navBar;

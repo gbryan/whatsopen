@@ -35,9 +35,12 @@
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {   
     CLLocation *newLocation = [locations lastObject];
-    NSLog(@"got a location");
-    NSLog(@"intermediate: %f,%f  accuracy:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude, newLocation.horizontalAccuracy);
-    NSLog(@"desired accuracy: %f", manager.desiredAccuracy);
+    
+    NSLog(@"intermediate: %f,%f  accuracy:%f",
+          newLocation.coordinate.latitude,
+          newLocation.coordinate.longitude,
+          newLocation.horizontalAccuracy);
+    
     //Make sure we're using a location acquired recently
     NSDate *updateDate = newLocation.timestamp;
     NSTimeInterval age = fabs([updateDate timeIntervalSinceNow]);
